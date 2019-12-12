@@ -8,7 +8,7 @@ import ch.epfl.cs107.play.window.Window;
 public abstract class ARPGArea extends Area {
 	
 	
-	public ARPGBehavior behavior;
+	private ARPGBehavior behavior;
 
 	protected abstract void createArea();
 

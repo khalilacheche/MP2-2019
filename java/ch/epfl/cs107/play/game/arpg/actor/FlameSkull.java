@@ -9,7 +9,6 @@ import ch.epfl.cs107.play.game.areagame.actor.Interactable;
 import ch.epfl.cs107.play.game.areagame.actor.Orientation;
 import ch.epfl.cs107.play.game.areagame.actor.Sprite;
 import ch.epfl.cs107.play.game.areagame.handler.AreaInteractionVisitor;
-import ch.epfl.cs107.play.game.arpg.ARPGAttackType;
 import ch.epfl.cs107.play.game.arpg.handler.ARPGInteractionVisitor;
 import ch.epfl.cs107.play.game.rpg.FlyableEntity;
 import ch.epfl.cs107.play.game.rpg.actor.RPGSprite;
@@ -20,13 +19,15 @@ import ch.epfl.cs107.play.window.Canvas;
 public class FlameSkull extends ARPGMonster implements FlyableEntity {
 	
 	
-	static List<ARPGAttackType> vulnerabilities = new ArrayList<ARPGAttackType>(Arrays.asList(
-			ARPGAttackType.WATER,ARPGAttackType.PHYSICAL));
+	private static List<ARPGAttackType> vulnerabilities = new ArrayList<ARPGAttackType>(Arrays.asList(
+			ARPGAttackType.MAGIC,ARPGAttackType.PHYSICAL));
 	private final int ANIMATION_DURATION=8;
+	private final static float MAX_HEALTH=1;
+	private final static float DAMAGE=1;
 	private FlameSkullHandler handler;
 	private Animation currentAnimation;
 	private Animation[] idleAnimations;
-	protected ARPGAttackType attack =ARPGAttackType.FIRE;
+	private ARPGAttackType attack =ARPGAttackType.FIRE;
 	private boolean isImmortal;
 	
 	private final float MIN_LIFE_TIME=1f;
@@ -35,15 +36,15 @@ public class FlameSkull extends ARPGMonster implements FlyableEntity {
 	private float lifeTime;
 	
 	
-	class FlameSkullHandler implements ARPGInteractionVisitor{
+	private class FlameSkullHandler implements ARPGInteractionVisitor{
 		
 		@Override
 		public void interactWith(ARPGMonster monster) {
-			monster.receiveAttack(attack,1f);
+			monster.receiveAttack(attack,DAMAGE);
 		}
 		@Override
 		public void interactWith(ARPGPlayer player) {
-			player.addHealth(-1f);
+			player.addHealth(-DAMAGE);
 		}
 		@Override
 		public void interactWith(Bomb bomb) {
@@ -68,7 +69,7 @@ public class FlameSkull extends ARPGMonster implements FlyableEntity {
      * @param isImmortal (boolean): if true, then skull only dies by hits
      */
 	public FlameSkull(Area area, Orientation orientation, DiscreteCoordinates position,boolean isImmortal) {
-		super(area, orientation, position, vulnerabilities);
+		super(area, orientation, position, vulnerabilities,MAX_HEALTH);
 		Sprite [][] sprites = RPGSprite.extractSprites("zelda/flameSkull",
 				3, 2, 2,
 				this , 32, 32, new Orientation[] {Orientation.UP ,
@@ -76,8 +77,11 @@ public class FlameSkull extends ARPGMonster implements FlyableEntity {
 		idleAnimations=RPGSprite.createAnimations(ANIMATION_DURATION, sprites);
 		handler= new FlameSkullHandler();
 		health=1;
-		lifeTime = MAX_LIFE_TIME;
+		
+		lifeTime =MIN_LIFE_TIME+RandomGenerator.getInstance().nextFloat()*(MAX_LIFE_TIME-MIN_LIFE_TIME);
 		this.isImmortal=isImmortal;
+		vulnerabilities = new ArrayList<ARPGAttackType>(Arrays.asList(
+				ARPGAttackType.MAGIC,ARPGAttackType.PHYSICAL));
 	}
     /**
      * Default FlameSkull constructor
@@ -97,18 +101,16 @@ public class FlameSkull extends ARPGMonster implements FlyableEntity {
 	@Override
 	public void interactWith(Interactable other) {
 		other.acceptInteraction(handler);
-		
 	}
 	
 	
 	@Override
 	public void update(float deltaTime) {
 		super.update(deltaTime);
-		if(isDead) {			
-			currentAnimation=vanish;
-			currentAnimation.update(deltaTime);
-			if(currentAnimation.isCompleted()) {
-				dropLoot();
+		if(isDead()) {			
+			deathAnimation.update(deltaTime);
+			if(deathAnimation.isCompleted()) {
+				dropLoot(new Heart(getOwnerArea(),getCurrentMainCellCoordinates()));
 				getOwnerArea().unregisterActor(this);
 			}
 			return;
@@ -125,7 +127,7 @@ public class FlameSkull extends ARPGMonster implements FlyableEntity {
 			currentAnimation.reset();
 		}
 		if(lifeTime<=0) {
-			isDead=true;
+			health=0;
 		}
 		
 		
@@ -141,12 +143,6 @@ public class FlameSkull extends ARPGMonster implements FlyableEntity {
 		}		
 	}
 	
-
-	
-	@Override
-	public void dropLoot() {
-		
-	}
 	
 	@Override
 	public boolean takeCellSpace() {
@@ -172,7 +168,10 @@ public class FlameSkull extends ARPGMonster implements FlyableEntity {
 
 	@Override
 	public void draw(Canvas canvas) {
-		currentAnimation.draw(canvas);
+		if(isDead())
+			super.draw(canvas);
+		else
+			currentAnimation.draw(canvas);
 	}
 
 
@@ -181,7 +180,7 @@ public class FlameSkull extends ARPGMonster implements FlyableEntity {
 
 	@Override
 	public boolean wantsCellInteraction() {
-		return true;
+		return !isDead();
 	}
 	@Override
 	public boolean wantsViewInteraction() {

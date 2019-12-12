@@ -9,17 +9,19 @@ import ch.epfl.cs107.play.game.areagame.actor.Interactor;
 import ch.epfl.cs107.play.game.areagame.actor.MovableAreaEntity;
 import ch.epfl.cs107.play.game.areagame.actor.Orientation;
 import ch.epfl.cs107.play.game.areagame.actor.Sprite;
-import ch.epfl.cs107.play.game.arpg.ARPGAttackType;
-import ch.epfl.cs107.play.game.arpg.ARPGLootDropper;
 import ch.epfl.cs107.play.math.DiscreteCoordinates;
 import ch.epfl.cs107.play.math.RegionOfInterest;
+import ch.epfl.cs107.play.window.Canvas;
 
-public abstract class ARPGMonster extends MovableAreaEntity implements Interactor,ARPGLootDropper{
-	
-	
-	protected Animation vanish;
+public abstract class ARPGMonster extends MovableAreaEntity implements Interactor{
+	protected enum ARPGAttackType {
+		FIRE,
+		MAGIC,
+		PHYSICAL;
+	}
+	protected final float MAX_HEALTH;
+	protected Animation deathAnimation;
 	protected float health;
-	protected boolean isDead;
 	List<ARPGAttackType> vulnerabilities;
 	
 	
@@ -31,15 +33,24 @@ public abstract class ARPGMonster extends MovableAreaEntity implements Interacto
      * @param vuln (List<ARPGAttackType>): List of the monster's vulnerabilities.Can be empty, but not null
      */
 	
-	public ARPGMonster(Area area, Orientation orientation, DiscreteCoordinates position,List<ARPGAttackType> vuln) {
+	public ARPGMonster(Area area, Orientation orientation, DiscreteCoordinates position,List<ARPGAttackType> vuln, float maxHealth) {
 		super(area, orientation, position);
 		Sprite[] sprites = new Sprite[7];
 		for(int i=0;i<7;++i) {
 			sprites[i]= new Sprite("zelda/vanish",1,1,this,new RegionOfInterest(i*32,0,32,32));
 		}
-		vanish = new Animation(2,sprites,false);
+		MAX_HEALTH = health = maxHealth;
+		
+		deathAnimation = new Animation(2,sprites,false);
 		vulnerabilities = vuln;
-		isDead=false;
+	}
+	
+	protected void dropLoot(ARPGCollectableAreaEntity item) {
+		getOwnerArea().registerActor(item);
+	}
+	
+	protected boolean isDead() {
+		return health<=0;
 	}
 	
     /**
@@ -62,7 +73,7 @@ public abstract class ARPGMonster extends MovableAreaEntity implements Interacto
 	
 	@Override
 	public boolean takeCellSpace() {
-		return !isDead;
+		return !isDead();
 	}	
 	
 	@Override
@@ -75,24 +86,27 @@ public abstract class ARPGMonster extends MovableAreaEntity implements Interacto
 		return true;
 	}
     /** Add the health amount to the monster
-     * @param: amount (float): The damage amount: Can be postive for adding healthh, negative for removing
+     * @param: amount (float): The damage amount: Can be postive for adding health, negative for removing
      */
 	protected void addHealth(float amount) {
 		health+=amount;
-		if(health<=0)
-			isDead=true;
 	}
 	
     /** Monster receives and handles attack
      * @param: attack (ARPGAttackType): The type of the received attack
      * @param: damage (float): The damage amount
      */
-	public void receiveAttack(ARPGAttackType attack, float damage) {
+	protected void receiveAttack(ARPGAttackType attack, float damage) {
 		if(vulnerabilities.contains(attack)) {
 			addHealth(-damage);
 			
 		}
 	}
+	@Override
+	public void draw(Canvas canvas) {
+		deathAnimation.draw(canvas);
+	}
+	
 	
 	
 

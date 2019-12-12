@@ -12,8 +12,6 @@ import ch.epfl.cs107.play.game.areagame.actor.Orientation;
 import ch.epfl.cs107.play.game.areagame.actor.Sprite;
 import ch.epfl.cs107.play.game.areagame.handler.AreaInteractionVisitor;
 import ch.epfl.cs107.play.game.arpg.handler.ARPGInteractionVisitor;
-import ch.epfl.cs107.play.game.arpg.ARPGAttackType;
-import ch.epfl.cs107.play.game.arpg.area.ARPGArea;
 import ch.epfl.cs107.play.game.rpg.actor.RPGSprite;
 import ch.epfl.cs107.play.math.DiscreteCoordinates;
 import ch.epfl.cs107.play.math.RandomGenerator;
@@ -21,263 +19,282 @@ import ch.epfl.cs107.play.math.Vector;
 import ch.epfl.cs107.play.window.Canvas;
 
 public class DarkLord extends ARPGMonster {
-	
-	private enum State{
-		IDLE,
-		TELEPORTING,
-		INVOKINGTELEPORT,
-		INVOKINGSPELL,
-		ATTACKING;
+	private  enum DarkLordState{
+		IDLE, 
+		ATTACKING, 
+		INVOKING, 
+		INVOKINGTELEPORT, 
+		TELEPORTING;
 	}
-	private final static int ANIMATION_DURATION=4;
-	private final static int MIN_SPELL_WAIT_DURATION=30;
-	private final static int MAX_SPELL_WAIT_DURATION=20;
-	private final static int NEIGHBOR_CELLS_RADIUS=1;
-	private final static int TELEPORTATION_RADIUS=3;
-	private DarkLordHandler handler;
-	private int n=40;
-	private int currentSpell=1;
-	private Animation[] idleAnimations;
-	private Animation[] invokeAnimations;
-	private Animation currentAnimation;
-	private State currentState;
-	static List<ARPGAttackType> vulnerabilities = new ArrayList<ARPGAttackType>(Arrays.asList(
-			ARPGAttackType.WATER));
+	private static final float MAX_HEALTH = 3;
+	private static final float PROBABILITY_OF_ATTACK = 0.4f; 
+	private static final float PROBABILITY_OF_INACTIVE = 0.1f;
+	private static final int ANIMATION_DURATION = 8;
+	private static final int RADIUS=2;
+	private static final int MIN_SPELL_WAIT_DURATION=50;
+	private static final int MAX_SPELL_WAIT_DURATION=100;
+	private static final int TELEPORTATION_RADIUS = 10 ;
+	private static final int MAX_INACTION_TIME = 24;
+	private static final List<ARPGAttackType> vulnerabilities = new ArrayList<ARPGAttackType>(Arrays.asList(
+			ARPGAttackType.MAGIC));
+	private final  int CYCLE; 
+	private Animation[] idleAnimations; 
+	private Animation[] attackAnimations;
+	private Animation currentAnimation; 
+	private DarkLordHandler handler ; 
+	private int cycleCounter = 0;
+	private float inactionTime;
+	private DarkLordState state; 
 	
-	
-	class DarkLordHandler implements ARPGInteractionVisitor{
-		@Override
-		public void interactWith(ARPGPlayer player) {
-			if(currentState==State.IDLE) {
-				currentState=State.INVOKINGTELEPORT;
-			}
-		}
-	}
-	
-	
-	
-    /**
-     * Default DarkLord constructor
-     * @param area (Area): Owner area. Not null
-     * @param position (Coordinate): Initial position of the entity. Not null
-     * @param orientation (Orientation): Initial orientation of the entity. Not null
-     */
+
+
 	public DarkLord(Area area, Orientation orientation, DiscreteCoordinates position) {
-		super(area, orientation, position, vulnerabilities);
-		Sprite [][] sprites = RPGSprite.extractSprites("zelda/darkLord",
-				3, 2, 2,
-				this , 32, 32, new Orientation[] {Orientation.UP ,
+		super(area, orientation, position, vulnerabilities,MAX_HEALTH);
+		
+		
+		Sprite[][] sprites = RPGSprite.extractSprites("zelda/darkLord", 3, 2, 2, this, 32, 32, new Orientation[] {Orientation.UP ,
 				Orientation.LEFT , Orientation.DOWN, Orientation.RIGHT});
-		idleAnimations=RPGSprite.createAnimations(ANIMATION_DURATION, sprites);
+		idleAnimations = RPGSprite.createAnimations(ANIMATION_DURATION, sprites);
 		
-		sprites = RPGSprite.extractSprites("zelda/darkLord.spell",
-				3, 2, 2,
-				this , 32, 32, new Orientation[] {Orientation.UP ,
+		
+		
+		sprites = RPGSprite.extractSprites("zelda/darkLord.spell", 3, 2,2 , this, 32, 32, new Orientation[] {Orientation.UP ,
 				Orientation.LEFT , Orientation.DOWN, Orientation.RIGHT});
-		invokeAnimations=RPGSprite.createAnimations(ANIMATION_DURATION, sprites,false);
+		attackAnimations = RPGSprite.createAnimations(ANIMATION_DURATION/2, sprites,false);
 		
-		handler=new DarkLordHandler();
-		currentState=State.IDLE;
-		health=3;
 		
+		
+		handler = new DarkLordHandler(); 
+		CYCLE = RandomGenerator.getInstance().nextInt(MAX_SPELL_WAIT_DURATION-MIN_SPELL_WAIT_DURATION)+MIN_SPELL_WAIT_DURATION ;
+		currentAnimation =setAnimation(); 
+		inactionTime=0;
+		state=DarkLordState.IDLE;
 		
 	}
-
-
 	@Override
-	public void dropLoot() {
-		getOwnerArea().registerActor(new CastleKey(getOwnerArea(),getCurrentMainCellCoordinates()));
-	}
-
-	
-	@Override
-	public List<DiscreteCoordinates> getFieldOfViewCells(){
-		List<DiscreteCoordinates> field = new ArrayList<DiscreteCoordinates>();
-		for(int i=-NEIGHBOR_CELLS_RADIUS ;i<NEIGHBOR_CELLS_RADIUS + 1;++i) {
-			for(int j=-NEIGHBOR_CELLS_RADIUS;j<NEIGHBOR_CELLS_RADIUS + 1;++j) {
-				if(i!=0 || j!=0)
-					field.add(getCurrentMainCellCoordinates().jump(i,j));	
+	public List<DiscreteCoordinates> getFieldOfViewCells() {
+		List<DiscreteCoordinates> coord = new ArrayList<>(); 
+		for(int x=this.getCurrentMainCellCoordinates().x-RADIUS ; x<this.getCurrentMainCellCoordinates().x+RADIUS+1 ; ++x) {
+			for(int y=this.getCurrentMainCellCoordinates().y-RADIUS ; y<this.getCurrentMainCellCoordinates().y+RADIUS+1 ; ++y) {
+				if(this.getCurrentMainCellCoordinates().x==x && this.getCurrentMainCellCoordinates().y==y) 
+					continue; //omit the maincellcoordinates it may cause a bug 
+				coord.add(new DiscreteCoordinates(x,y));
 			}
 		}
-		return field;
-	}
-	
-	
-	boolean teleport() {
-		boolean success=false;
-		List<DiscreteCoordinates> cells= chooseRandomCell();
-		success = getOwnerArea().leaveAreaCells(this, getCurrentCells());
-		setCurrentPosition(cells.get(0).toVector());
-		success = success&&getOwnerArea().enterAreaCells(this,cells);
-		
-		if(!success)
-			System.out.println("Error occured while teleporting");
-		return success; 	
+		return coord ;
 	}
 	
 	@Override
 	public void update(float deltaTime) {
-		super.update(deltaTime);
 		
-		if(health<=0) {
-			currentAnimation=vanish;
+		++cycleCounter; 
+		if(cycleCounter == CYCLE) {
+			this.currentAnimation.reset();
+			if(RandomGenerator.getInstance().nextDouble()>PROBABILITY_OF_ATTACK) {
+				setState(DarkLordState.ATTACKING);
+			}
+			else {
+			setState(DarkLordState.INVOKING);
+			}
+			orientateToOpenSpace();
+			
+		}
+		switch(state) {
+		case IDLE : 
+			if(!this.isDisplacementOccurs() && inactionTime <=0) {
+				if(RandomGenerator.getInstance().nextDouble()<0.2) 
+					moveOrientate(Orientation.fromInt(RandomGenerator.getInstance().nextInt(4)));
+				else
+		             moveOrientate(getOrientation());
+				currentAnimation=idleAnimations[this.getOrientation().ordinal()];
+				if(RandomGenerator.getInstance().nextDouble()<PROBABILITY_OF_INACTIVE)
+					inactionTime=RandomGenerator.getInstance().nextInt(MAX_INACTION_TIME);		        
+			}else {
+				if(this.isDisplacementOccurs()) {
+		        	currentAnimation.update(deltaTime);
+		        }
+		        else  {
+		        	inactionTime-=deltaTime;
+		        	currentAnimation.reset();
+		        }
+			}
+			break; 
+		case ATTACKING:
+			if(!this.isDisplacementOccurs())
+			{	
+				this.getOwnerArea().registerActor(new FireSpell(getOwnerArea(),getOrientation(),getCurrentMainCellCoordinates().jump(getOrientation().toVector()),4));
+				setState(DarkLordState.IDLE);
+			}
+			break; 
+		case INVOKING:
+			currentAnimation = setAnimation();
+			if(currentAnimation.isCompleted()) {
+	    	   currentAnimation.reset();
+	    	   this.getOwnerArea().registerActor(new FlameSkull(getOwnerArea(),getOrientation(),getCurrentMainCellCoordinates().jump(getOrientation().toVector())));
+	    	   setState(DarkLordState.IDLE);
+	       }else {
+	    	   currentAnimation.update(deltaTime);   
+	       }
+			break; 
+		case INVOKINGTELEPORT :
+			if(this.isDisplacementOccurs()) {		        	
+		        this.currentAnimation.update(deltaTime);
+			}else{   	
+				this.currentAnimation.reset();
+		        setState(DarkLordState.TELEPORTING);
+		        currentAnimation = setAnimation();
+		        	
+	     	}
+			break; 
+		case TELEPORTING : 
 			currentAnimation.update(deltaTime);
 			if(currentAnimation.isCompleted()) {
-				getOwnerArea().unregisterActor(this);
-				dropLoot();
-			}
-			return;	
-		}
-		++currentSpell;
-		
-		if(currentSpell%n==0 && currentState==State.IDLE) {
-			
-			orientateToOpenSpace();
-			if(RandomGenerator.getInstance().nextDouble()>0.5)
-				currentState=State.ATTACKING;
-			else
-				currentState=State.INVOKINGSPELL;
-		}
-		
-		
-		
-		switch(currentState) {
-			case IDLE:
-				moveOrientate();
-				currentAnimation=idleAnimations[this.getOrientation().ordinal()];
-				break;
-			case TELEPORTING:
+				this.currentAnimation.reset();
 				teleport();
-				currentAnimation.reset();
-				currentState=State.IDLE;
-				
-				break;
-			case INVOKINGTELEPORT:
-				currentAnimation= invokeAnimations[this.getOrientation().ordinal()];
-				if(currentAnimation.isCompleted())
-					currentState=State.TELEPORTING;
-				break;
-			case INVOKINGSPELL:
-				currentAnimation= invokeAnimations[this.getOrientation().ordinal()];
-				if(currentAnimation.isCompleted()) {
-					castFlameSkull();
-					currentState=State.IDLE;
+				setState(DarkLordState.IDLE);
+		 }
+			break; 
+		
+		}
+		
+		
+		
+		if(deathAnimation.isCompleted()) {
+			this.getOwnerArea().unregisterActor(this);
+			this.dropLoot(new CastleKey(this.getOwnerArea(), this.getCurrentMainCellCoordinates()));
+		}       
+	   if(isDead()) {
+		   this.deathAnimation.update(deltaTime);	
+	   }
+	   super.update(deltaTime);
+			
+	}
+	
+	
+	private void teleport() {
+		int k=0 ; 
+		while(k<1000) {
+			int x= RandomGenerator.getInstance().nextInt(TELEPORTATION_RADIUS)+2*RADIUS; 
+			int y= RandomGenerator.getInstance().nextInt(TELEPORTATION_RADIUS)+2*RADIUS; 
+			if(this.getOwnerArea().leaveAreaCells(this,this.getCurrentCells()))		
+			{
+				if(this.getOwnerArea().enterAreaCells(this,Collections.singletonList(new DiscreteCoordinates(x,y)))) {
+					this.setCurrentPosition(new Vector(x,y));
+					
+					break;
 				}
+				else {
+					++k;
+					continue;
+				}
+			}
+			else {
 				break;
-			case ATTACKING:
-				castFireSpell();
-				currentState=State.IDLE;
 				
-				break;
-		
-		
+			} 
+			
 		}
-		currentAnimation.update(deltaTime);
-		
 	}
 	
-	
-	List<DiscreteCoordinates> chooseRandomCell(){
-		List<DiscreteCoordinates> field = new ArrayList<DiscreteCoordinates>();
-		int randx;
-		int randy;
-		do {
-			randx= RandomGenerator.getInstance().nextInt(2*TELEPORTATION_RADIUS)-TELEPORTATION_RADIUS;
-			randy= RandomGenerator.getInstance().nextInt(2*TELEPORTATION_RADIUS)-TELEPORTATION_RADIUS;
-			field=Collections.singletonList(getCurrentMainCellCoordinates().jump(new Vector(randx,randy)));
-		}while(!canEnter(field));
-		return field;
-	} 
-	
-	void castFireSpell() {
-		getOwnerArea().registerActor(new FireSpell(getOwnerArea(),getOrientation(),
-				getCurrentMainCellCoordinates().jump(getOrientation().toVector()),
-				4));
-	
-	}
-	void castFlameSkull() {
-		if(canPlaceActor(getOrientation()));
-		getOwnerArea().registerActor(new FlameSkull(getOwnerArea(),getOrientation(),
-				getCurrentMainCellCoordinates().jump(getOrientation().toVector())));
-	
-	}
-	
-	
-	void orientateToOpenSpace() {
-		Orientation or=getOrientation();
-		while(!canPlaceActor(or)) {
-			 or=getRandomOrientation();
-		}
-		orientate(or);
-	}
-	
-	
-	boolean canPlaceActor(Orientation orientation) {
-		return canEnter(Collections.singletonList(getCurrentMainCellCoordinates().jump(orientation.toVector())));
-	}
-	boolean canEnter(List<DiscreteCoordinates> coord) {
-		return((ARPGArea)getOwnerArea()).behavior.canEnter(null,coord);
-	}
-	
-	
-	
-	void moveOrientate() {
-		if(RandomGenerator.getInstance().nextDouble()<=0.8f) {
-			move(ANIMATION_DURATION);
-		}else {
-			orientate(getRandomOrientation());
-		}		
-		orientateToOpenSpace();
-	}
-	
-	
-	Orientation getRandomOrientation() {
-		return Orientation.fromInt(RandomGenerator.getInstance().nextInt(4));
-	}
-	
-
 	@Override
 	public void draw(Canvas canvas) {
-		currentAnimation.draw(canvas);
+		if(isDead()) {
+			super.draw(canvas);
+		}
+		else
+			this.currentAnimation.draw(canvas);
 		
+	}
+	
+	private void moveOrientate(Orientation orientation){
+	    
+	      
+        if(getOrientation() == orientation) move(ANIMATION_DURATION);
+        else orientate(orientation);
+    
+      }
+	private void orientateToOpenSpace() {
+		int j= 0 ; 
+		while (j<8) {// getting a good orientation if the counter passes the conditon it stays the same		
+			Orientation orientation = Orientation.fromInt(RandomGenerator.getInstance().nextInt(4));
+			DiscreteCoordinates nextPlace =  getCurrentMainCellCoordinates().jump(orientation.toVector());
+			if(this.getOwnerArea().canEnterAreaCells(new FireSpell(getOwnerArea(),orientation,nextPlace,5),Collections.singletonList(nextPlace))){
+				this.orientate(orientation);
+				break;
+			}
+			++j; 
+					    
+		}
+		cycleCounter=0;
+	}
+
+	private Animation setAnimation() {
+		if(state == DarkLordState.IDLE) {
+		for(Orientation direction : Orientation.values()) {
+			int index = direction.ordinal();
+			if(this.getOrientation().equals(direction) ) {
+				return idleAnimations[index];
+			}
+				
+		}
+		return idleAnimations[0] ; 
+		}
+		else if(state == DarkLordState.TELEPORTING || state== DarkLordState.ATTACKING|| state == DarkLordState.INVOKING){
+			for(Orientation direction : Orientation.values()) {
+				int index = direction.ordinal();
+				if(this.getOrientation().equals(direction) ) {
+					return attackAnimations[index];
+				}
+					
+			}
+			return attackAnimations[0] ; 
+		}
+		return idleAnimations[0];
 	}
 	
 	@Override
 	public boolean takeCellSpace() {
-		return true;
-	}
-
-
-	@Override
-	public boolean isViewInteractable() {
-		return false;
-	}
-	@Override
-	public boolean isCellInteractable() {
-		return true;
-	}
-
-
-	@Override
-	public boolean wantsViewInteraction() {
+		// TODO Auto-generated method stub
 		return true;
 	}
 
 	@Override
 	public boolean wantsCellInteraction() {
+		// TODO Auto-generated method stub
 		return false;
 	}
-	
+
 	@Override
-	public void interactWith(Interactable other) {
-		other.acceptInteraction(handler);
-	}
-	
-	@Override
-	public void acceptInteraction(AreaInteractionVisitor v) {
-		((ARPGInteractionVisitor)v).interactWith(this);
-		
+	public boolean wantsViewInteraction() {
+		// TODO Auto-generated method stub
+		return !isDead();
 	}
 
+	@Override
+	public void interactWith(Interactable other) {
+		other.acceptInteraction(handler);		
+
+
+	}
+
+	@Override
+	public void acceptInteraction(AreaInteractionVisitor v) {
+        ((ARPGInteractionVisitor)v).interactWith(this);
+
+	}
+	
+	private void setState(DarkLordState state ) {
+		this.state= state; 
+	}
+	
+	private class DarkLordHandler implements ARPGInteractionVisitor {
+		 @Override 
+		 public void interactWith(ARPGPlayer player){
+			 if(state == DarkLordState.TELEPORTING)
+				 return; 
+			 setState(DarkLordState.INVOKINGTELEPORT);
+		 }	 
+
+	}
 
 }

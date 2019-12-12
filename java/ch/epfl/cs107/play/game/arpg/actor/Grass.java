@@ -10,23 +10,22 @@ import ch.epfl.cs107.play.game.areagame.actor.Orientation;
 import ch.epfl.cs107.play.game.areagame.actor.Sprite;
 import ch.epfl.cs107.play.game.areagame.handler.AreaInteractionVisitor;
 import ch.epfl.cs107.play.game.arpg.handler.ARPGInteractionVisitor;
-import ch.epfl.cs107.play.game.arpg.ARPGLootDropper;
 import ch.epfl.cs107.play.math.DiscreteCoordinates;
 import ch.epfl.cs107.play.math.RandomGenerator;
 import ch.epfl.cs107.play.math.RegionOfInterest;
 import ch.epfl.cs107.play.signal.logic.Logic;
 import ch.epfl.cs107.play.window.Canvas;
 
-public class Grass extends AreaEntity implements ARPGLootDropper {
-	Animation fadeout;
-	Animation idle;
-	Animation current;
-	Logic signal;
-	double PROBABILITY_TO_DROP_ITEM=0.5f;
-	double PROBABILITY_TO_DROP_HEART=0.5f;
+public class Grass extends AreaEntity{
+	private Animation fadeout;
+	private Animation idle;
+	private Animation current;
+	private Logic signal;
+	private static final double PROBABILITY_TO_DROP_ITEM=0.5f;
+	private static final double PROBABILITY_TO_DROP_HEART=0.5f;
 	
+	private boolean wasExecuted=false;
 	
-	boolean wasExecuted=false;
 
 	public Grass(Area area, Orientation orientation, DiscreteCoordinates position) {
 		super(area, orientation, position);
@@ -62,7 +61,7 @@ public class Grass extends AreaEntity implements ARPGLootDropper {
 	}
 	
 	 
-	 public void dropLoot() {
+	 private void dropLoot() {
 		 if(!wasExecuted) {
 			 double rand = RandomGenerator.getInstance().nextDouble();
 			 if(rand>PROBABILITY_TO_DROP_ITEM) {

@@ -5,8 +5,8 @@ import java.util.Arrays;
 import ch.epfl.cs107.play.game.areagame.Area;
 import ch.epfl.cs107.play.game.areagame.actor.Orientation;
 import ch.epfl.cs107.play.game.areagame.actor.Sprite;
-import ch.epfl.cs107.play.game.arpg.actor.ARPGPlayer.ARPGPlayerHandler;
 import ch.epfl.cs107.play.game.areagame.handler.AreaInteractionVisitor;
+import ch.epfl.cs107.play.game.arpg.handler.ARPGInteractionVisitor;
 import ch.epfl.cs107.play.game.rpg.actor.Door;
 import ch.epfl.cs107.play.math.DiscreteCoordinates;
 import ch.epfl.cs107.play.math.RegionOfInterest;
@@ -57,8 +57,7 @@ public class CastleDoor extends Door {
 	
 	@Override
 	public void acceptInteraction(AreaInteractionVisitor v) {
-		if(v instanceof ARPGPlayerHandler)
-			((ARPGPlayerHandler)v).interactWith(this);
+		((ARPGInteractionVisitor)v).interactWith(this);
 	}
 	
 

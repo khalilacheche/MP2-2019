@@ -10,7 +10,6 @@ import ch.epfl.cs107.play.game.arpg.actor.CaveDoor;
 import ch.epfl.cs107.play.game.arpg.actor.Chest;
 import ch.epfl.cs107.play.game.arpg.actor.FireSpell;
 import ch.epfl.cs107.play.game.arpg.actor.Grass;
-import ch.epfl.cs107.play.game.arpg.actor.LadderDoor;
 import ch.epfl.cs107.play.game.arpg.actor.Rock;
 import ch.epfl.cs107.play.game.rpg.handler.RPGInteractionVisitor;
 
@@ -95,6 +94,13 @@ public interface ARPGInteractionVisitor extends RPGInteractionVisitor {
 	default void interactWith(Rock rock) {
 		
 	}
+	/**
+     * Simulate and interaction between ARPG Interactor and a CaveDoor
+     * @param door (CaveDoor), not null
+     */
+	default void interactWith(CaveDoor door) {
+		
+	}	
 
 	/**
      * Simulate and interaction between ARPG Interactor and a Chest

@@ -12,7 +12,6 @@ import ch.epfl.cs107.play.game.areagame.actor.Sprite;
 import ch.epfl.cs107.play.game.areagame.handler.AreaInteractionVisitor;
 import ch.epfl.cs107.play.game.arpg.handler.ARPGInteractionVisitor;
 import ch.epfl.cs107.play.game.rpg.actor.Door;
-import ch.epfl.cs107.play.game.arpg.ARPGAttackType;
 import ch.epfl.cs107.play.game.arpg.ARPGInventory;
 import ch.epfl.cs107.play.game.arpg.ARPGItem;
 import ch.epfl.cs107.play.game.arpg.ARPGPlayerStatusGUI;
@@ -54,7 +53,7 @@ public class ARPGPlayer extends Player{
 	private final static float MAX_HEALTH=6;
 	
 	
-	class ARPGPlayerHandler implements ARPGInteractionVisitor{
+	private class ARPGPlayerHandler implements ARPGInteractionVisitor{
 		
 		public void interactWith(CollectableAreaEntity entity) {//TODO: change instanceof
 			if(entity instanceof Heart)
@@ -81,13 +80,16 @@ public class ARPGPlayer extends Player{
 		public void interactWith(Door door) {
 			setIsPassingADoor(door);
 		}
+		public void interactWith(CaveDoor door) {
+			setIsPassingADoor(door);
+		}
 		public void interactWith(Grass grass) {
 			if(currentItem==ARPGItem.SWORD)
 				grass.cut();
 		}
 		public void interactWith(ARPGMonster monster) {
 			if(currentItem==ARPGItem.SWORD)
-				monster.receiveAttack(ARPGAttackType.PHYSICAL, 1);
+				monster.receiveAttack(ARPGMonster.ARPGAttackType.PHYSICAL, 1);
 		}
 		public void interactWith(Chest chest) {
 			chest.open();
@@ -251,7 +253,7 @@ public class ARPGPlayer extends Player{
     /** Add the health amount to the ARPGPlayer
      * @param: amount (float): The damage amount: Can be positive for adding health, negative for removing
      */
-	public void addHealth(float amount) {
+	protected void addHealth(float amount) {
 		health+=amount;
 		//Clamping health between max and min value
 		if(health>MAX_HEALTH)

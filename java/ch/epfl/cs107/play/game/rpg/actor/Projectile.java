@@ -15,10 +15,10 @@ import ch.epfl.cs107.play.window.Canvas;
 
 abstract public class Projectile extends MovableAreaEntity implements Interactor,FlyableEntity {
 	
-	int maxDistance;
-	int traveledDistance; 
-	int speed;
-	boolean hasFinishedRun;
+	protected int maxDistance;
+	protected int traveledDistance; 
+	protected int speed;
+	protected boolean hasFinishedRun;
 	
 
 	public Projectile(Area area, Orientation orientation, DiscreteCoordinates position,int maxDistance , int speed) {
@@ -93,10 +93,6 @@ abstract public class Projectile extends MovableAreaEntity implements Interactor
 		return false;
 	}
 
-	@Override
-	public void interactWith(Interactable other) {
-		// TODO Auto-generated method stub
-		
-	}
+	
 
 }

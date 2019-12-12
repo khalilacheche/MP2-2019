@@ -12,7 +12,6 @@ import ch.epfl.cs107.play.game.areagame.actor.Orientation;
 import ch.epfl.cs107.play.game.areagame.actor.Sprite;
 import ch.epfl.cs107.play.game.areagame.handler.AreaInteractionVisitor;
 import ch.epfl.cs107.play.game.arpg.handler.ARPGInteractionVisitor;
-import ch.epfl.cs107.play.game.arpg.ARPGAttackType;
 import ch.epfl.cs107.play.game.rpg.actor.RPGSprite;
 import ch.epfl.cs107.play.math.DiscreteCoordinates;
 import ch.epfl.cs107.play.math.RandomGenerator;
@@ -40,7 +39,9 @@ public class LogMonster extends ARPGMonster {
 	private static final int ANIMATION_DURATION = 3;
 	private static final int FACING_CELLS=8;
 	private final static int MAX_INACTION_TIME=24;
-	private static float playerDamage=2;
+	private static final double PROBABILITY_OF_INACTIVE = 0.1;
+	private static float PLAYER_DAMAGE=2;
+	private static float MAX_HEALTH=1;
 	private static float MIN_SLEEPING_DURATION=4;
 	private static float MAX_SLEEPING_DURATION=7;
 	private double sleepTime;
@@ -48,19 +49,21 @@ public class LogMonster extends ARPGMonster {
 	private LogMonsterHandler handler;
 	
 	
-	class LogMonsterHandler implements ARPGInteractionVisitor{
+	private class LogMonsterHandler implements ARPGInteractionVisitor{
 		@Override
 		public void interactWith(ARPGPlayer player) {
 			if(currentState==State.ATTACKING)
-				player.addHealth(-playerDamage);
-			else
+				player.addHealth(-PLAYER_DAMAGE);
+			else {
 				currentState=State.ATTACKING;
+				System.out.println("assba");
+			}
 		}
 	}
 	
 
 	public LogMonster(Area area, Orientation orientation, DiscreteCoordinates position) {
-		super(area, orientation, position, vulnerabilities);
+		super(area, orientation, position, vulnerabilities,MAX_HEALTH);
 		
 		
 		
@@ -88,12 +91,12 @@ public class LogMonster extends ARPGMonster {
 		
 		handler = new LogMonsterHandler();
 		
-		inactionTime=24;
+		inactionTime=0;
 		
-		currentState=State.SLEEPING;
+		currentState=State.IDLE;
 		sleepTime=MIN_SLEEPING_DURATION;
-		health=1;
-		
+		currentAnimation=idleAnimations[this.getOrientation().ordinal()];
+
 	}
 
 	@Override
@@ -113,11 +116,6 @@ public class LogMonster extends ARPGMonster {
 		other.acceptInteraction(handler);
 		
 	}
-
-	@Override
-	public void dropLoot() {
-		getOwnerArea().registerActor(new Coin(getOwnerArea(),getCurrentMainCellCoordinates()));
-	}
 	
 	@Override
 	public boolean wantsViewInteraction() {
@@ -134,16 +132,89 @@ public class LogMonster extends ARPGMonster {
 		((ARPGInteractionVisitor)v).interactWith(this);
 		
 	}
-	@Override
+	public void update(float deltaTime) {
+		
+		
+		switch(currentState) {
+			case IDLE : 
+				if(!this.isDisplacementOccurs() && inactionTime <=0) {
+					if(RandomGenerator.getInstance().nextDouble()<0.2) 
+						moveOrientate();
+					
+					else
+			             moveOrientate();
+					currentAnimation=idleAnimations[this.getOrientation().ordinal()];
+					if(RandomGenerator.getInstance().nextDouble()<PROBABILITY_OF_INACTIVE)
+						inactionTime=RandomGenerator.getInstance().nextInt(MAX_INACTION_TIME);
+                    
+			        
+				}
+				else {
+					if(this.isDisplacementOccurs()) {
+			        	currentAnimation.update(deltaTime);
+			        }
+			        else  {
+			        	inactionTime-=deltaTime;
+			        	System.out.println(inactionTime);
+			        	currentAnimation.reset();
+			        }
+				}
+			break ;
+			case ATTACKING : 
+				move(ANIMATION_DURATION); 
+				if(this.isDisplacementOccurs()) {
+		        	currentAnimation = idleAnimations[this.getOrientation().ordinal()]; 
+		        	currentAnimation.update(deltaTime);
+		        }
+		        else  {
+		        	if(!this.getOwnerArea().canEnterAreaCells(this, getFieldOfViewCells())) {
+		        		currentState=State.FALLINGASLEEP;
+		        	}
+		        }
+			break ; 
+			case FALLINGASLEEP: 
+				sleepTime = MIN_SLEEPING_DURATION+(MAX_SLEEPING_DURATION-MIN_SLEEPING_DURATION)*RandomGenerator.getInstance().nextDouble();
+				setState(State.SLEEPING,this.sleeping); 
+			break; 
+			case SLEEPING:
+				if(sleepTime >0) {
+					sleepTime -=deltaTime; 
+					this.currentAnimation.update(deltaTime);		
+			}
+
+				if(sleepTime<=0)
+					setState(State.WAKINGUP,this.wakingUp);
+			break;
+			case WAKINGUP:
+				this.currentAnimation.update(deltaTime);
+				if(this.currentAnimation.isCompleted()) {
+					setState(State.IDLE,idleAnimations[this.getOrientation().ordinal()]); 
+				}
+			break ; 
+			
+			}
+		if(deathAnimation.isCompleted()) {
+        	this.getOwnerArea().unregisterActor(this);
+        	this.dropLoot(new Coin(this.getOwnerArea(),this.getCurrentMainCellCoordinates()));
+
+        }
+       
+        if(isDead()) {
+        	this.deathAnimation.update(deltaTime);	
+		}
+	
+	super.update(deltaTime);
+	
+}
+	/*@Override
 	public void update(float deltaTime) {
 		
 		super.update(deltaTime);
 		
-		if(isDead) {
-			currentAnimation=vanish;
-			currentAnimation.update(deltaTime);
-			if(currentAnimation.isCompleted()) {
-				dropLoot();
+		if(isDead()) {
+			deathAnimation.update(deltaTime);
+			if(deathAnimation.isCompleted()) {
+				dropLoot(new Coin(getOwnerArea(),getCurrentMainCellCoordinates()));
 				getOwnerArea().unregisterActor(this);
 			}
 				
@@ -190,8 +261,12 @@ public class LogMonster extends ARPGMonster {
 		currentAnimation.update(deltaTime);
 	
 	
+	}*/
+	public void setState(State state,Animation animation) {
+		this.currentState = state; 
+		this.currentAnimation = animation;
+		
 	}
-	
 	
 	private void moveOrientate() {
 		if(RandomGenerator.getInstance().nextDouble()<=0.9f) {
@@ -205,7 +280,9 @@ public class LogMonster extends ARPGMonster {
 
 	@Override
 	public void draw(Canvas canvas) {
-		currentAnimation.draw(canvas);
+		if(isDead())
+			super.draw(canvas);
+		else currentAnimation.draw(canvas);
 		
 	}
 

@@ -13,7 +13,6 @@ import ch.epfl.cs107.play.game.areagame.actor.Orientation;
 import ch.epfl.cs107.play.game.areagame.actor.Sprite;
 import ch.epfl.cs107.play.game.areagame.handler.AreaInteractionVisitor;
 import ch.epfl.cs107.play.game.rpg.actor.RPGSprite;
-import ch.epfl.cs107.play.game.arpg.ARPGAttackType;
 import ch.epfl.cs107.play.game.arpg.area.ARPGArea;
 import ch.epfl.cs107.play.game.arpg.handler.ARPGInteractionVisitor;
 import ch.epfl.cs107.play.math.DiscreteCoordinates;
@@ -34,11 +33,11 @@ public class Bomb extends AreaEntity implements Interactor{
 	protected Animation idle;
 	protected Animation explosion;
 	protected Animation current;
-	final static ARPGAttackType attack = ARPGAttackType.FIRE;
+	final static ARPGMonster.ARPGAttackType attack = ARPGMonster.ARPGAttackType.FIRE;
 	boolean hurt =false;
 	
 	
-	public class ARPGBombHandler implements ARPGInteractionVisitor{
+	private class ARPGBombHandler implements ARPGInteractionVisitor{
 		
 		@Override
 		public void interactWith(ARPGPlayer player) {

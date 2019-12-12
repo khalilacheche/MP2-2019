@@ -6,7 +6,6 @@ import ch.epfl.cs107.play.game.areagame.actor.Interactable;
 import ch.epfl.cs107.play.game.areagame.actor.Orientation;
 import ch.epfl.cs107.play.game.areagame.actor.Sprite;
 import ch.epfl.cs107.play.game.areagame.handler.AreaInteractionVisitor;
-import ch.epfl.cs107.play.game.arpg.ARPGAttackType;
 import ch.epfl.cs107.play.game.arpg.handler.ARPGInteractionVisitor;
 import ch.epfl.cs107.play.game.rpg.actor.Projectile;
 import ch.epfl.cs107.play.math.DiscreteCoordinates;
@@ -15,10 +14,10 @@ import ch.epfl.cs107.play.window.Canvas;
 
 public class Arrow extends Projectile {
 	
-	ArrowHandler handler;
-	Animation idleAnimation;
-	ARPGAttackType attack= ARPGAttackType.PHYSICAL;
-	class ArrowHandler implements ARPGInteractionVisitor{
+	private ArrowHandler handler;
+	private Animation idleAnimation;
+	private ARPGMonster.ARPGAttackType attack= ARPGMonster.ARPGAttackType.PHYSICAL;
+	private class ArrowHandler implements ARPGInteractionVisitor{
 		@Override
 		public void interactWith(Grass grass) {
 			grass.cut();

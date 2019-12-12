@@ -10,7 +10,6 @@ import ch.epfl.cs107.play.game.areagame.actor.Interactable;
 import ch.epfl.cs107.play.game.areagame.actor.Interactor;
 import ch.epfl.cs107.play.game.areagame.actor.Orientation;
 import ch.epfl.cs107.play.game.areagame.actor.Sprite;
-import ch.epfl.cs107.play.game.arpg.ARPGAttackType;
 import ch.epfl.cs107.play.game.arpg.handler.ARPGInteractionVisitor;
 import ch.epfl.cs107.play.game.areagame.handler.AreaInteractionVisitor;
 import ch.epfl.cs107.play.math.DiscreteCoordinates;
@@ -20,16 +19,16 @@ import ch.epfl.cs107.play.window.Canvas;
 
 public class FireSpell extends AreaEntity implements Interactor {
 
-	protected static final int ANIMATTION_SPEED = 2;
-	protected static int MAX_LIFE_TIME=50;
-	protected static int MIN_LIFE_TIME=30;
-	protected static int PROPAGATION_TIME_FIRE=10;
+	private static final int ANIMATTION_SPEED = 2;
+	private static int MAX_LIFE_TIME=50;
+	private static int MIN_LIFE_TIME=30;
+	private static int PROPAGATION_TIME_FIRE=10;
 	private int propagationTime;
-	protected float force;
-	protected int lifeTime;
-	protected Animation idle;
-	protected FireHandler handler;
-	protected final static ARPGAttackType attack = ARPGAttackType.FIRE;
+	private float force;
+	private int lifeTime;
+	private Animation idle;
+	private FireHandler handler;
+	private final static ARPGMonster.ARPGAttackType attack = ARPGMonster.ARPGAttackType.FIRE;
 	
 	private boolean hasExecuted;
 	

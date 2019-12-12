@@ -1,7 +1,5 @@
 package ch.epfl.cs107.play.window;
 
-import com.sun.glass.events.KeyEvent;
-
 /**
  * Represents the keyboard.
  */
@@ -13,7 +11,7 @@ public interface Keyboard {
     int DOWN = 40;
     int LEFT = 37;
     int RIGHT = 39;
-    int SHIFT = KeyEvent.VK_SHIFT;
+    int SHIFT = 16;
     int A = 65;
     int B = 66;
     int C = 67;
