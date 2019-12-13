@@ -1,0 +1,18 @@
+<strings id="villager_en">
+    <string name="0">Our king is in danger, you have to save him!
+      Go to castle now!
+    </string>
+    <string name="1">You have to get a magic weapon!
+      Someone told me that there used to be a wizard living in that house a the other side of the river
+      If you can find an arrow to shoot that orb, you may bekldf
+    </string>
+    <string name="2">Cette pierre semble pouvoir se briser. </string>
+    <string name="3">Allez ! On utilise EclatRock !</string>
+    <string name="chest_open">You found a <strong>Bow</strong>!
+    You can shoot now enemies and distant objects with it
+    You can buy arrows from the village shop </string>
+    <string name="chest_closed">Hmm... This seems to be locked. I need to find a key to open it</string>
+    <string name="inspect_forcerock">Cette pierre semble pouvoir se déplacer. </string>
+    <string name="heal_text_1">Bonjour, bienvenu au centre Pokémon ! Nous allons soigner vos icmons, veuillez patientez un instant</string>
+    <string name="heal_text_2">Merci de votre patience, vos icmons ont retrouvé la forme ! A bientôt</string>
+</strings>

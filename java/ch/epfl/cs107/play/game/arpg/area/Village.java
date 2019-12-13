@@ -5,6 +5,7 @@ import ch.epfl.cs107.play.game.areagame.actor.Foreground;
 import ch.epfl.cs107.play.game.areagame.actor.Orientation;
 import ch.epfl.cs107.play.game.arpg.actor.CaveDoor;
 import ch.epfl.cs107.play.game.arpg.actor.Chest;
+import ch.epfl.cs107.play.game.arpg.actor.Villager;
 import ch.epfl.cs107.play.game.rpg.actor.Door;
 import ch.epfl.cs107.play.math.DiscreteCoordinates;
 import ch.epfl.cs107.play.signal.logic.Logic;
@@ -29,6 +30,8 @@ public class Village extends ARPGArea {
 		registerActor(new Chest (this, new DiscreteCoordinates(15,18)));
 		registerActor(new Background (this));
 		registerActor(new Foreground(this));
+		registerActor(new Villager(this,Orientation.LEFT,new DiscreteCoordinates(27,17),"2"));
+		//registerActor(new Villager(this,Orientation.LEFT,new DiscreteCoordinates(27,17),"2"));
 		
 	}
 

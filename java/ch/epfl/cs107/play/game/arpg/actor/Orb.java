@@ -30,12 +30,12 @@ public class Orb  extends AreaEntity implements Logic{
 		wasHit=false;
 		Sprite[] sprites = new Sprite[6];
 		for(int i=0;i<6;++i) {
-			sprites [i] = new RPGSprite("zelda/orb",1,1,this,new RegionOfInterest(32*i,0,32,32),new Vector(0,0.25f));
+			sprites [i] = new RPGSprite("zelda/orb",1,1,this,new RegionOfInterest(32*i,0,32,32),new Vector(0,0.5f));
 		}
 		idle= new Animation (ANIMATION_DURATION,sprites);
-		
+		sprites = new Sprite[6];
 		for(int i=0;i<6;++i) {
-			sprites [i] = new RPGSprite("zelda/orb",1,1,this,new RegionOfInterest(32*i,32,32,32),new Vector(0,0.25f));
+			sprites [i] = new RPGSprite("zelda/orb",1,1,this,new RegionOfInterest(32*i,32,32,32),new Vector(0,0.5f));
 		}
 		amorced= new Animation (ANIMATION_DURATION,sprites);
 	}
@@ -46,9 +46,9 @@ public class Orb  extends AreaEntity implements Logic{
 	
 	@Override
 	public void update(float deltaTime) {
-		currentAnimation = wasHit? amorced : idle;
-		currentAnimation.update(deltaTime);
 		super.update(deltaTime);
+		currentAnimation = wasHit? amorced: idle;
+		currentAnimation.update(deltaTime);
 	}
 
 	@Override

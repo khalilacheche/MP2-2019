@@ -10,6 +10,7 @@ import ch.epfl.cs107.play.game.arpg.actor.FireSpell;
 import ch.epfl.cs107.play.game.arpg.actor.FlameSkull;
 import ch.epfl.cs107.play.game.arpg.actor.LogMonster;
 import ch.epfl.cs107.play.game.arpg.actor.Rock;
+import ch.epfl.cs107.play.game.arpg.actor.Villager;
 import ch.epfl.cs107.play.game.rpg.actor.Door;
 import ch.epfl.cs107.play.math.DiscreteCoordinates;
 
@@ -35,6 +36,7 @@ public class Ferme extends ARPGArea{
 		registerActor(new FlameSkull(this,Orientation.DOWN,new DiscreteCoordinates(10,10)));
 		registerActor(new Rock(this,new DiscreteCoordinates(13,0)));
 		registerActor(new Rock(this,new DiscreteCoordinates(14,0)));
+		registerActor(new Villager(this,Orientation.LEFT,new DiscreteCoordinates(6,3),"1"));
 		
 		
 	}

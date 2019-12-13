@@ -64,8 +64,4 @@ public class Sprite extends ImageGraphics {
         setParent(parent);
     }
     
-    
-    public Sprite(String name, float width, float height) {
-        super(ResourcePath.getSprite(name), width, height, null, Vector.ZERO, 1.0f, 0);
-    }
 }

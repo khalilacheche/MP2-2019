@@ -20,13 +20,14 @@ import ch.epfl.cs107.play.game.rpg.actor.Player;
 import ch.epfl.cs107.play.game.rpg.actor.RPGSprite;
 import ch.epfl.cs107.play.math.DiscreteCoordinates;
 import ch.epfl.cs107.play.math.Vector;
+import ch.epfl.cs107.play.signal.Signal;
 import ch.epfl.cs107.play.signal.logic.Logic;
 import ch.epfl.cs107.play.window.Button;
 import ch.epfl.cs107.play.window.Canvas;
 import ch.epfl.cs107.play.window.Keyboard;
 
 
-public class ARPGPlayer extends Player{
+public class ARPGPlayer extends Player{/////Added impelement
 	
 	
 	private enum State{
@@ -51,6 +52,12 @@ public class ARPGPlayer extends Player{
 	private State currentState;
 	private boolean isInventoryShown;
 	
+
+	
+	
+	//////////////////
+	private boolean canMove;
+	//////////////////
 	private float health;
 	private final static float MAX_HEALTH=6;
 	
@@ -93,10 +100,25 @@ public class ARPGPlayer extends Player{
 			if(currentItem==ARPGItem.SWORD && wantsViewInteraction())
 				monster.receiveAttack(ARPGMonster.ARPGAttackType.PHYSICAL, 1);
 		}
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 		public void interactWith(Chest chest) {
-			chest.open();
+			canMove=chest.hasFinishedDialog();
+			if(currentItem==ARPGItem.CASTLEKEY) {
+				addItem(chest.takeContent());
+				inventory.removeItem(ARPGItem.CASTLEKEY);
+			}else{
+				
+			}//////////////////////////////////////////////////////////////////////
+			chest.showMessage();
 		}
-	
+		public void interactWith(Villager villager) {
+			canMove=villager.hasFinishedDialog();
+			if(getOwnerArea().getKeyboard().get(Keyboard.T).isReleased()) {
+				villager.startTalking();
+				canMove=false;
+			}
+		}
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////	
 	}
 	
 	
@@ -111,7 +133,7 @@ public class ARPGPlayer extends Player{
 				this , 16, 32, new Orientation[] {Orientation.DOWN ,
 				Orientation.RIGHT , Orientation.UP, Orientation.LEFT});
 		idleAnimations=RPGSprite.createAnimations(ANIMATION_DURATION/2, sprites);
-		
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////		
 		sprites = RPGSprite.extractSprites("zelda/player.staff_water",
 				4, 2, 2,
 				this , 32, 32,new Vector(-0.5f, 0) ,new Orientation[] {Orientation.DOWN ,
@@ -131,19 +153,25 @@ public class ARPGPlayer extends Player{
 				this , 32, 32, new Vector(-0.5f, 0),new Orientation[] {Orientation.DOWN ,
 				Orientation.UP , Orientation.RIGHT, Orientation.LEFT});
 		bowHitAnimations=RPGSprite.createAnimations(ANIMATION_DURATION/2, sprites,false);
-		
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////		
 		
 		inventory= new ARPGInventory(1000);
 		inventory.addMoney(10);
 		inventory.addItem(ARPGItem.ARROW,10);
 		inventory.addItem(ARPGItem.BOMB,3);
-		inventory.addItem(ARPGItem.BOW);
 		inventory.addItem(ARPGItem.STAFF);
 		inventory.addItem(ARPGItem.SWORD);
+		inventory.addItem(ARPGItem.BOW);
 		status=new ARPGPlayerStatusGUI();
 		status.setItem(ARPGItem.SWORD);
 		currentState = State.IDLE;
 		isInventoryShown=false;
+
+		
+		
+		///////////////////////////////////////////////////////////
+		canMove=true;
+		//////////////////////////////////////////////////////////
 	}
 	
 	
@@ -220,7 +248,7 @@ public class ARPGPlayer extends Player{
 	
 	
 	private void manageKeyboardInputs(Keyboard keyboard) {
-		if(currentState==State.IDLE) {
+		if(currentState==State.IDLE&&canMove) {/////////////////////////////////////////////
 			moveOrientate(keyboard.get(Keyboard.UP),Orientation.UP);
 			moveOrientate(keyboard.get(Keyboard.DOWN),Orientation.DOWN);
 			moveOrientate(keyboard.get(Keyboard.LEFT),Orientation.LEFT);
@@ -238,7 +266,8 @@ public class ARPGPlayer extends Player{
 			else
 				itemIndex--;
 		}
-		
+		if(keyboard.get(Keyboard.T).isReleased()||keyboard.get(Keyboard.ENTER).isReleased())
+			wantsViewInteraction=true;
 		Button keySpace = keyboard.get(Keyboard.SPACE) ;
 		if(keySpace.isReleased()) {
 			useItem();
@@ -399,6 +428,13 @@ public class ARPGPlayer extends Player{
 		status.draw(canvas);
 		
 	}
+	protected boolean addItem(ARPGItem item) {
+		return inventory.addItem(item);
+	}
+	
+	
+	
+
 
 
 }
