@@ -52,13 +52,13 @@ public class DarkLord extends ARPGMonster {
 		super(area, orientation, position, vulnerabilities,MAX_HEALTH);
 		
 		
-		Sprite[][] sprites = RPGSprite.extractSprites("zelda/darkLord", 3, 2, 2, this, 32, 32, new Orientation[] {Orientation.UP ,
+		Sprite[][] sprites = RPGSprite.extractSprites("zelda/darkLord", 3, 2, 2, this, 32, 32, new Vector(-0.5f, 0.5f),new Orientation[] {Orientation.UP ,
 				Orientation.LEFT , Orientation.DOWN, Orientation.RIGHT});
 		idleAnimations = RPGSprite.createAnimations(ANIMATION_DURATION, sprites);
 		
 		
 		
-		sprites = RPGSprite.extractSprites("zelda/darkLord.spell", 3, 2,2 , this, 32, 32, new Orientation[] {Orientation.UP ,
+		sprites = RPGSprite.extractSprites("zelda/darkLord.spell", 3, 2,2 , this, 32, 32, new Vector(-0.5f, 0.5f),new Orientation[] {Orientation.UP ,
 				Orientation.LEFT , Orientation.DOWN, Orientation.RIGHT});
 		attackAnimations = RPGSprite.createAnimations(ANIMATION_DURATION/2, sprites,false);
 		

@@ -8,6 +8,7 @@ import ch.epfl.cs107.play.game.areagame.actor.Sprite;
 import ch.epfl.cs107.play.game.areagame.handler.AreaInteractionVisitor;
 import ch.epfl.cs107.play.game.arpg.handler.ARPGInteractionVisitor;
 import ch.epfl.cs107.play.game.rpg.actor.Projectile;
+import ch.epfl.cs107.play.game.rpg.actor.RPGSprite;
 import ch.epfl.cs107.play.math.DiscreteCoordinates;
 import ch.epfl.cs107.play.math.RegionOfInterest;
 import ch.epfl.cs107.play.window.Canvas;
@@ -35,7 +36,7 @@ public class MagicWaterProjectile extends Projectile {
 		handler=new MagicWaterHandler();
 		Sprite[] sprites = new Sprite[4];
 		for(int i=0;i<4;++i) {
-			sprites[i]= new Sprite("zelda/magicWaterProjectile",1,1,this,new RegionOfInterest(32*i,0,32,32));
+			sprites[i]= new RPGSprite("zelda/magicWaterProjectile",1,1,this,new RegionOfInterest(32*i,0,32,32));
 		}
 		idleAnimation= new Animation(speed,sprites);	
 	}

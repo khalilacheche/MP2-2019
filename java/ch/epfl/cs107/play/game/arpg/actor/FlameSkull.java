@@ -14,6 +14,7 @@ import ch.epfl.cs107.play.game.rpg.FlyableEntity;
 import ch.epfl.cs107.play.game.rpg.actor.RPGSprite;
 import ch.epfl.cs107.play.math.DiscreteCoordinates;
 import ch.epfl.cs107.play.math.RandomGenerator;
+import ch.epfl.cs107.play.math.Vector;
 import ch.epfl.cs107.play.window.Canvas;
 
 public class FlameSkull extends ARPGMonster implements FlyableEntity {
@@ -72,7 +73,7 @@ public class FlameSkull extends ARPGMonster implements FlyableEntity {
 		super(area, orientation, position, vulnerabilities,MAX_HEALTH);
 		Sprite [][] sprites = RPGSprite.extractSprites("zelda/flameSkull",
 				3, 2, 2,
-				this , 32, 32, new Orientation[] {Orientation.UP ,
+				this , 32, 32,new Vector(-0.5f, -0.5f), new Orientation[] {Orientation.UP ,
 				Orientation.LEFT , Orientation.DOWN, Orientation.RIGHT});
 		idleAnimations=RPGSprite.createAnimations(ANIMATION_DURATION, sprites);
 		handler= new FlameSkullHandler();

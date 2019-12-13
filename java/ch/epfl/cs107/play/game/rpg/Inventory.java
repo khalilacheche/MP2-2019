@@ -1,11 +1,21 @@
 package ch.epfl.cs107.play.game.rpg;
 
 import java.util.Map;
+import java.awt.Color;
 import java.util.HashMap;
 
 import ch.epfl.cs107.play.game.rpg.actor.Player;
+import ch.epfl.cs107.play.math.RegionOfInterest;
+import ch.epfl.cs107.play.math.Vector;
+import ch.epfl.cs107.play.window.Canvas;
+import ch.epfl.cs107.play.game.actor.Graphics;
+import ch.epfl.cs107.play.game.actor.ImageGraphics;
+import ch.epfl.cs107.play.game.actor.TextGraphics;
+import ch.epfl.cs107.play.game.areagame.io.ResourcePath;
 
-public class Inventory {
+
+
+public class Inventory implements Graphics {
 	
 	
 	//TODO: Inventory.Holder /// move to ARPG.actor package
@@ -13,6 +23,12 @@ public class Inventory {
 	protected float weight;
 	protected Map<InventoryItem,Integer > items;
 	protected Player holder;
+	TextGraphics textInventory = new TextGraphics("Inventory",1,Color.BLACK);
+
+	
+	ImageGraphics inventoryBackground = new ImageGraphics(
+			ResourcePath.getSprite("zelda/inventory.background"),
+			1, 1);
 	
 	
     /** Adds one InventoryItem to the inventory
@@ -86,7 +102,23 @@ public class Inventory {
 		this.weight=0;
 		items= new HashMap<>();
 	}
-	
-	
-	
+
+	@Override
+	public void draw(Canvas canvas) {
+		float width = canvas.getScaledWidth();
+		float height = canvas.getScaledHeight();
+		Vector anchor = canvas.getTransform().getOrigin().sub(new
+		Vector(width/2, height/2));
+		inventoryBackground.setAnchor(anchor.add(new Vector(0, 1)));
+		inventoryBackground.setDepth(1003);
+		inventoryBackground.setHeight(height-1);
+		inventoryBackground.setWidth(width);
+		inventoryBackground.draw(canvas);
+		textInventory.setFontSize(width/9);
+		textInventory.setAnchor(anchor.add(new Vector(width/3.65f, 4*height/5)));
+		textInventory.setDepth(1004);
+		textInventory.draw(canvas);
+		
+		
+		}
 }

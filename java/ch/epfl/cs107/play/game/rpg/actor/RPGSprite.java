@@ -53,7 +53,7 @@ public class RPGSprite extends Sprite {
 	 */
 	public RPGSprite(String name, float width, float height, Positionable parent, RegionOfInterest roi) {
 		super(name, width, height, parent, roi);
-		this.depthCorrection = 100;
+		this.depthCorrection = 0;
 	}
 
 	/**

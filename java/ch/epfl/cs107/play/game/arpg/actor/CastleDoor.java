@@ -8,6 +8,7 @@ import ch.epfl.cs107.play.game.areagame.actor.Sprite;
 import ch.epfl.cs107.play.game.areagame.handler.AreaInteractionVisitor;
 import ch.epfl.cs107.play.game.arpg.handler.ARPGInteractionVisitor;
 import ch.epfl.cs107.play.game.rpg.actor.Door;
+import ch.epfl.cs107.play.game.rpg.actor.RPGSprite;
 import ch.epfl.cs107.play.math.DiscreteCoordinates;
 import ch.epfl.cs107.play.math.RegionOfInterest;
 import ch.epfl.cs107.play.signal.logic.Logic;
@@ -22,8 +23,8 @@ public class CastleDoor extends Door {
 		super(destination, otherSideCoordinates, signal, area, orientation, position);
 		this.currentCells.addAll(Arrays.asList(otherCells));
 		setSignal(Logic.FALSE);
-		open = new Sprite("zelda/castleDoor.open",2f,2f,this,new RegionOfInterest(0,0,32,32));
-		closed = new Sprite("zelda/castleDoor.close",2f,2f,this,new RegionOfInterest(0,0,32,32));
+		open = new RPGSprite("zelda/castleDoor.open",2f,2f,this,new RegionOfInterest(0,0,32,32));
+		closed = new RPGSprite("zelda/castleDoor.close",2f,2f,this,new RegionOfInterest(0,0,32,32));
 	}
 	
 	

@@ -16,6 +16,7 @@ import ch.epfl.cs107.play.game.rpg.actor.RPGSprite;
 import ch.epfl.cs107.play.math.DiscreteCoordinates;
 import ch.epfl.cs107.play.math.RandomGenerator;
 import ch.epfl.cs107.play.math.RegionOfInterest;
+import ch.epfl.cs107.play.math.Vector;
 import ch.epfl.cs107.play.window.Canvas;
 
 public class LogMonster extends ARPGMonster {
@@ -56,7 +57,6 @@ public class LogMonster extends ARPGMonster {
 				player.addHealth(-PLAYER_DAMAGE);
 			else {
 				currentState=State.ATTACKING;
-				System.out.println("assba");
 			}
 		}
 	}
@@ -70,7 +70,7 @@ public class LogMonster extends ARPGMonster {
 		idleAnimations= RPGSprite.createAnimations(ANIMATION_DURATION, 
 				RPGSprite.extractSprites("zelda/logMonster",
 				4, 2, 2,
-				this , 32, 32, new Orientation[] {Orientation.DOWN ,
+				this , 32, 32, new Vector(-0.5f, 0),new Orientation[] {Orientation.DOWN ,
 				Orientation.UP , Orientation.RIGHT, Orientation.LEFT})
 		);
 		
@@ -78,14 +78,14 @@ public class LogMonster extends ARPGMonster {
 		
 		Sprite[] sprites = new Sprite[4];
 		for(int i=0;i<4;++i) {
-			sprites[i]= new Sprite("zelda/logMonster.sleeping",2,2,this,new RegionOfInterest(0,32*i,32,32));
+			sprites[i]= new RPGSprite("zelda/logMonster.sleeping",2,2,this,new RegionOfInterest(0,32*i,32,32),new Vector(-0.5f, 0));
 		}
 		sleeping = new Animation(ANIMATION_DURATION, sprites);
 		
 		
 		sprites = new Sprite[3];
 		for(int i=0;i<3;++i) {
-			sprites[i]= new Sprite("zelda/logMonster.wakingUp",2,2,this,new RegionOfInterest(0,32*i,32,32));
+			sprites[i]= new RPGSprite("zelda/logMonster.wakingUp",2,2,this,new RegionOfInterest(0,32*i,32,32),new Vector(-0.5f,0));
 		}
 		wakingUp= new Animation(ANIMATION_DURATION, sprites,false);
 		
@@ -134,64 +134,63 @@ public class LogMonster extends ARPGMonster {
 	}
 	public void update(float deltaTime) {
 		
-		
-		switch(currentState) {
-			case IDLE : 
-				if(!this.isDisplacementOccurs() && inactionTime <=0) {
-					if(RandomGenerator.getInstance().nextDouble()<0.2) 
-						moveOrientate();
-					
-					else
-			             moveOrientate();
-					currentAnimation=idleAnimations[this.getOrientation().ordinal()];
-					if(RandomGenerator.getInstance().nextDouble()<PROBABILITY_OF_INACTIVE)
-						inactionTime=RandomGenerator.getInstance().nextInt(MAX_INACTION_TIME);
-                    
-			        
-				}
-				else {
+		if(!isDead())
+			switch(currentState) {
+				case IDLE : 
+					if(!this.isDisplacementOccurs() && inactionTime <=0) {
+						if(RandomGenerator.getInstance().nextDouble()<0.2) 
+							moveOrientate();
+						
+						else
+				             moveOrientate();
+						currentAnimation=idleAnimations[this.getOrientation().ordinal()];
+						if(RandomGenerator.getInstance().nextDouble()<PROBABILITY_OF_INACTIVE)
+							inactionTime=RandomGenerator.getInstance().nextInt(MAX_INACTION_TIME);
+	                    
+				        
+					}
+					else {
+						if(this.isDisplacementOccurs()) {
+				        	currentAnimation.update(deltaTime);
+				        }
+				        else  {
+				        	inactionTime-=deltaTime;
+				        	currentAnimation.reset();
+				        }
+					}
+				break ;
+				case ATTACKING : 
+					move(ANIMATION_DURATION); 
 					if(this.isDisplacementOccurs()) {
+			        	currentAnimation = idleAnimations[this.getOrientation().ordinal()]; 
 			        	currentAnimation.update(deltaTime);
 			        }
 			        else  {
-			        	inactionTime-=deltaTime;
-			        	System.out.println(inactionTime);
-			        	currentAnimation.reset();
+			        	if(!this.getOwnerArea().canEnterAreaCells(this, getFieldOfViewCells())) {
+			        		currentState=State.FALLINGASLEEP;
+			        	}
 			        }
+				break ; 
+				case FALLINGASLEEP: 
+					sleepTime = MIN_SLEEPING_DURATION+(MAX_SLEEPING_DURATION-MIN_SLEEPING_DURATION)*RandomGenerator.getInstance().nextDouble();
+					setState(State.SLEEPING,this.sleeping); 
+				break; 
+				case SLEEPING:
+					if(sleepTime >0) {
+						sleepTime -=deltaTime; 
+						this.currentAnimation.update(deltaTime);		
 				}
-			break ;
-			case ATTACKING : 
-				move(ANIMATION_DURATION); 
-				if(this.isDisplacementOccurs()) {
-		        	currentAnimation = idleAnimations[this.getOrientation().ordinal()]; 
-		        	currentAnimation.update(deltaTime);
-		        }
-		        else  {
-		        	if(!this.getOwnerArea().canEnterAreaCells(this, getFieldOfViewCells())) {
-		        		currentState=State.FALLINGASLEEP;
-		        	}
-		        }
-			break ; 
-			case FALLINGASLEEP: 
-				sleepTime = MIN_SLEEPING_DURATION+(MAX_SLEEPING_DURATION-MIN_SLEEPING_DURATION)*RandomGenerator.getInstance().nextDouble();
-				setState(State.SLEEPING,this.sleeping); 
-			break; 
-			case SLEEPING:
-				if(sleepTime >0) {
-					sleepTime -=deltaTime; 
-					this.currentAnimation.update(deltaTime);		
-			}
-
-				if(sleepTime<=0)
-					setState(State.WAKINGUP,this.wakingUp);
-			break;
-			case WAKINGUP:
-				this.currentAnimation.update(deltaTime);
-				if(this.currentAnimation.isCompleted()) {
-					setState(State.IDLE,idleAnimations[this.getOrientation().ordinal()]); 
-				}
-			break ; 
-			
+	
+					if(sleepTime<=0)
+						setState(State.WAKINGUP,this.wakingUp);
+				break;
+				case WAKINGUP:
+					this.currentAnimation.update(deltaTime);
+					if(this.currentAnimation.isCompleted()) {
+						setState(State.IDLE,idleAnimations[this.getOrientation().ordinal()]); 
+					}
+				break ; 
+				
 			}
 		if(deathAnimation.isCompleted()) {
         	this.getOwnerArea().unregisterActor(this);
@@ -203,65 +202,9 @@ public class LogMonster extends ARPGMonster {
         	this.deathAnimation.update(deltaTime);	
 		}
 	
-	super.update(deltaTime);
+        super.update(deltaTime);
 	
-}
-	/*@Override
-	public void update(float deltaTime) {
-		
-		super.update(deltaTime);
-		
-		if(isDead()) {
-			deathAnimation.update(deltaTime);
-			if(deathAnimation.isCompleted()) {
-				dropLoot(new Coin(getOwnerArea(),getCurrentMainCellCoordinates()));
-				getOwnerArea().unregisterActor(this);
-			}
-				
-			return;
-		}
-		
-		if(inactionTime<MAX_INACTION_TIME) {
-			++inactionTime;
-			currentAnimation.reset();
-			return;
-		}
-		
-		switch(currentState){
-			case SLEEPING:
-				currentAnimation=sleeping;
-				if(sleepTime>0) {
-					sleepTime-=deltaTime;
-				}else{
-					currentState=State.WAKINGUP;
-				}
-				break;
-			case WAKINGUP:
-				currentAnimation=wakingUp;
-				if(wakingUp.isCompleted())
-					currentState=State.IDLE;
-				break;
-			case FALLINGASLEEP:
-				sleepTime = MIN_SLEEPING_DURATION+(MAX_SLEEPING_DURATION-MIN_SLEEPING_DURATION)*RandomGenerator.getInstance().nextDouble();
-				currentState=State.SLEEPING;
-				break;
-			case ATTACKING:
-				move(ANIMATION_DURATION);
-				currentAnimation=idleAnimations[this.getOrientation().ordinal()];
-				if(!isDisplacementOccurs()|| isTargetReached()) {
-					currentState=State.FALLINGASLEEP;
-				}
-				break;
-			case IDLE:
-				moveOrientate();
-				currentAnimation=idleAnimations[this.getOrientation().ordinal()];
-				inactionTime= 20+RandomGenerator.getInstance().nextInt(MAX_INACTION_TIME);
-				break;
-		}
-		currentAnimation.update(deltaTime);
-	
-	
-	}*/
+	}
 	public void setState(State state,Animation animation) {
 		this.currentState = state; 
 		this.currentAnimation = animation;

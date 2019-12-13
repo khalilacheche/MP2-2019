@@ -8,6 +8,7 @@ import ch.epfl.cs107.play.game.areagame.actor.Sprite;
 import ch.epfl.cs107.play.game.areagame.handler.AreaInteractionVisitor;
 import ch.epfl.cs107.play.game.arpg.handler.ARPGInteractionVisitor;
 import ch.epfl.cs107.play.game.rpg.actor.Projectile;
+import ch.epfl.cs107.play.game.rpg.actor.RPGSprite;
 import ch.epfl.cs107.play.math.DiscreteCoordinates;
 import ch.epfl.cs107.play.math.RegionOfInterest;
 import ch.epfl.cs107.play.window.Canvas;
@@ -37,13 +38,17 @@ public class Arrow extends Projectile {
 		public void interactWith(FireSpell spell) {
 			spell.extenguish();
 		}
+		@Override
+		public void interactWith(Orb orb) {
+			orb.amorceSignal();
+		}
 	}
 
 	public Arrow(Area area, Orientation orientation, DiscreteCoordinates position, int maxDistance, int speed) {
 		super(area, orientation, position, maxDistance, speed);
 		handler=new ArrowHandler();
 		Sprite[] sprite = new Sprite[1];
-		sprite[0]= new Sprite("zelda/arrow",1,1,this,new RegionOfInterest(32*this.getOrientation().ordinal(),0,32,32));
+		sprite[0]= new RPGSprite("zelda/arrow",1,1,this,new RegionOfInterest(32*this.getOrientation().ordinal(),0,32,32));
 		idleAnimation= new Animation(speed,sprite);	
 	}
 	

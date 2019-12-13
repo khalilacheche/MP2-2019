@@ -2,13 +2,15 @@ package ch.epfl.cs107.play.game.arpg.area;
 
 import ch.epfl.cs107.play.game.areagame.actor.Background;
 import ch.epfl.cs107.play.game.areagame.actor.Orientation;
-import ch.epfl.cs107.play.game.arpg.actor.FlameSkull;
+import ch.epfl.cs107.play.game.arpg.actor.CaveFlameSkull;
 import ch.epfl.cs107.play.game.arpg.actor.LadderDoor;
 import ch.epfl.cs107.play.math.DiscreteCoordinates;
+import ch.epfl.cs107.play.signal.logic.And;
 import ch.epfl.cs107.play.signal.logic.Logic;
 
 public class Cave2 extends ARPGArea {
-
+	private And dropKeySignal;
+	private boolean hasDroppedKey;
 	@Override
 	public String getTitle() {
 		return "Zelda/Cave.2";
@@ -17,14 +19,29 @@ public class Cave2 extends ARPGArea {
 	@Override
 	protected void createArea() {
 		registerActor(new LadderDoor("Zelda/Cave.1",new DiscreteCoordinates(4,3),Logic.TRUE,this,Orientation.UP,new DiscreteCoordinates(7,2)));
-		registerActor(new FlameSkull(this,Orientation.LEFT,new DiscreteCoordinates(2,6),true));
-		registerActor(new FlameSkull(this,Orientation.RIGHT,new DiscreteCoordinates(6,6),true));
+		CaveFlameSkull skull1 =new CaveFlameSkull(this,Orientation.LEFT,new DiscreteCoordinates(2,6));
+		CaveFlameSkull skull2 =new CaveFlameSkull(this,Orientation.LEFT,new DiscreteCoordinates(6,6));
+		dropKeySignal = new And((Logic)skull1,(Logic)skull2);
+		registerActor(skull1);
+		registerActor(skull2);
+		hasDroppedKey=false;
 		registerActor(new Background (this));
 	}
+	
+	@Override
+	public void update(float deltaTime) {
+		if(dropKeySignal.isTrue() && !hasDroppedKey) {
+			//TODO: Drop ChestKey
+			System.out.println("ChestKey");
+			hasDroppedKey=true;
+		}
+		super.update(deltaTime);
+			
+	}
+	
 
 	@Override
 	public float getCameraScaleFactor() {
-		// TODO Auto-generated method stub
 		return 12;
 	}
 

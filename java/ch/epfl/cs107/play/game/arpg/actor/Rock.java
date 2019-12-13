@@ -8,8 +8,10 @@ import ch.epfl.cs107.play.game.areagame.actor.Orientation;
 import ch.epfl.cs107.play.game.areagame.actor.Sprite;
 import ch.epfl.cs107.play.game.areagame.handler.AreaInteractionVisitor;
 import ch.epfl.cs107.play.game.arpg.handler.ARPGInteractionVisitor;
+import ch.epfl.cs107.play.game.rpg.actor.RPGSprite;
 import ch.epfl.cs107.play.math.DiscreteCoordinates;
 import ch.epfl.cs107.play.math.RegionOfInterest;
+import ch.epfl.cs107.play.math.Vector;
 import ch.epfl.cs107.play.window.Canvas;
 
 public class Rock extends AreaEntity{
@@ -18,7 +20,7 @@ public class Rock extends AreaEntity{
 	
 	public Rock(Area area, DiscreteCoordinates position) {
 		super(area, Orientation.UP, position);
-		sprite =new Sprite("rock.1",1,1,this,new RegionOfInterest(0,0,32,32)); 
+		sprite =new RPGSprite("rock.1",1,1,this,new RegionOfInterest(0,0,32,32),new Vector(0, 0.25f)); 
 	}
 
 	@Override

@@ -8,7 +8,6 @@ import ch.epfl.cs107.play.game.areagame.actor.AreaEntity;
 import ch.epfl.cs107.play.game.areagame.actor.Orientation;
 import ch.epfl.cs107.play.game.areagame.actor.Sprite;
 import ch.epfl.cs107.play.game.areagame.handler.AreaInteractionVisitor;
-import ch.epfl.cs107.play.game.arpg.handler.ARPGInteractionVisitor;
 import ch.epfl.cs107.play.game.rpg.actor.RPGSprite;
 import ch.epfl.cs107.play.math.DiscreteCoordinates;
 import ch.epfl.cs107.play.math.RegionOfInterest;
@@ -16,24 +15,16 @@ import ch.epfl.cs107.play.math.Vector;
 import ch.epfl.cs107.play.signal.logic.Logic;
 import ch.epfl.cs107.play.window.Canvas;
 
-public class Chest extends AreaEntity {
+public class Bridge extends AreaEntity {
+	Sprite sprite;
+	Logic signal;
 	
-	private Sprite open;
-	private Sprite closed;
-	private Logic signal;
-
-	public Chest(Area area, DiscreteCoordinates position) {
+	public Bridge(Area area, DiscreteCoordinates position,Logic signal) {
 		super(area, Orientation.UP, position);
-		open = new RPGSprite("zelda/chest.open",1,1,this,new RegionOfInterest(0,0,16,16),new Vector(0, 0.5f));
-		closed = new RPGSprite("zelda/chest.closed",1,1,this,new RegionOfInterest(0,0,16,16),new Vector(0, 0.5f));
-		signal=Logic.FALSE;
+		sprite =  new RPGSprite("zelda/bridge",3.7f,3.5f,this,new RegionOfInterest(0,0,64,48),new Vector(-0.9f, -1f));
+		this.signal=signal;
 	}
 	
-	
-	public void open() {
-		signal=Logic.TRUE;
-	}
-
 	@Override
 	public List<DiscreteCoordinates> getCurrentCells() {
 		return Collections.singletonList(getCurrentMainCellCoordinates());
@@ -41,8 +32,7 @@ public class Chest extends AreaEntity {
 
 	@Override
 	public boolean takeCellSpace() {
-		// Chest takes space
-		return true;
+		return signal.isOff();
 	}
 
 	@Override
@@ -52,21 +42,18 @@ public class Chest extends AreaEntity {
 
 	@Override
 	public boolean isViewInteractable() {
-		return true;
+		return false;
 	}
-	
+
 	@Override
 	public void acceptInteraction(AreaInteractionVisitor v) {
-		((ARPGInteractionVisitor)v).interactWith(this);
 		
 	}
 
 	@Override
 	public void draw(Canvas canvas) {
 		if(signal.isOn())
-			open.draw(canvas);
-		else
-			closed.draw(canvas);
+			sprite.draw(canvas);
 		
 	}
 

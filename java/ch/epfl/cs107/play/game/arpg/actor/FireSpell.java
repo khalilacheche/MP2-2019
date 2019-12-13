@@ -11,6 +11,7 @@ import ch.epfl.cs107.play.game.areagame.actor.Interactor;
 import ch.epfl.cs107.play.game.areagame.actor.Orientation;
 import ch.epfl.cs107.play.game.areagame.actor.Sprite;
 import ch.epfl.cs107.play.game.arpg.handler.ARPGInteractionVisitor;
+import ch.epfl.cs107.play.game.rpg.actor.RPGSprite;
 import ch.epfl.cs107.play.game.areagame.handler.AreaInteractionVisitor;
 import ch.epfl.cs107.play.math.DiscreteCoordinates;
 import ch.epfl.cs107.play.math.RandomGenerator;
@@ -58,7 +59,7 @@ public class FireSpell extends AreaEntity implements Interactor {
 		
 		Sprite[] sprites = new Sprite[7];
 		for(int i=0;i<7;++i) {
-			sprites[i]= new Sprite("zelda/fire",1,1,this,new RegionOfInterest(i*16,0,16,16));
+			sprites[i]= new RPGSprite("zelda/fire",1,1,this,new RegionOfInterest(i*16,0,16,16));
 		}
 		idle = new Animation(ANIMATTION_SPEED, sprites);
 		

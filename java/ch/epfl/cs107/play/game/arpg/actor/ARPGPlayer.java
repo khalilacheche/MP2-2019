@@ -19,6 +19,7 @@ import ch.epfl.cs107.play.game.arpg.area.ARPGArea;
 import ch.epfl.cs107.play.game.rpg.actor.Player;
 import ch.epfl.cs107.play.game.rpg.actor.RPGSprite;
 import ch.epfl.cs107.play.math.DiscreteCoordinates;
+import ch.epfl.cs107.play.math.Vector;
 import ch.epfl.cs107.play.signal.logic.Logic;
 import ch.epfl.cs107.play.window.Button;
 import ch.epfl.cs107.play.window.Canvas;
@@ -48,6 +49,7 @@ public class ARPGPlayer extends Player{
 	private ARPGPlayerStatusGUI status;
 	private ARPGItem currentItem;
 	private State currentState;
+	private boolean isInventoryShown;
 	
 	private float health;
 	private final static float MAX_HEALTH=6;
@@ -88,7 +90,7 @@ public class ARPGPlayer extends Player{
 				grass.cut();
 		}
 		public void interactWith(ARPGMonster monster) {
-			if(currentItem==ARPGItem.SWORD)
+			if(currentItem==ARPGItem.SWORD && wantsViewInteraction())
 				monster.receiveAttack(ARPGMonster.ARPGAttackType.PHYSICAL, 1);
 		}
 		public void interactWith(Chest chest) {
@@ -112,21 +114,21 @@ public class ARPGPlayer extends Player{
 		
 		sprites = RPGSprite.extractSprites("zelda/player.staff_water",
 				4, 2, 2,
-				this , 32, 32, new Orientation[] {Orientation.DOWN ,
+				this , 32, 32,new Vector(-0.5f, 0) ,new Orientation[] {Orientation.DOWN ,
 				Orientation.UP , Orientation.RIGHT, Orientation.LEFT});
 		staffHitAnimations=RPGSprite.createAnimations(ANIMATION_DURATION/2, sprites,false);
 		
 		
 		sprites = RPGSprite.extractSprites("zelda/player.sword",
 				4, 2, 2,
-				this , 32, 32, new Orientation[] {Orientation.DOWN ,
+				this , 32, 32, new Vector(-0.5f, 0),new Orientation[] {Orientation.DOWN ,
 				Orientation.UP , Orientation.RIGHT, Orientation.LEFT});
 		swordHitAnimations=RPGSprite.createAnimations(ANIMATION_DURATION/2, sprites,false);
 		
 		
 		sprites = RPGSprite.extractSprites("zelda/player.bow",
 				4, 2, 2,
-				this , 32, 32, new Orientation[] {Orientation.DOWN ,
+				this , 32, 32, new Vector(-0.5f, 0),new Orientation[] {Orientation.DOWN ,
 				Orientation.UP , Orientation.RIGHT, Orientation.LEFT});
 		bowHitAnimations=RPGSprite.createAnimations(ANIMATION_DURATION/2, sprites,false);
 		
@@ -141,12 +143,14 @@ public class ARPGPlayer extends Player{
 		status=new ARPGPlayerStatusGUI();
 		status.setItem(ARPGItem.SWORD);
 		currentState = State.IDLE;
+		isInventoryShown=false;
 	}
 	
 	
 	@Override
 	public void update(float deltaTime) {
 		super.update(deltaTime);
+		//System.out.println(getCurrentMainCellCoordinates());
 		updateItem();
 		status.setHealth(health);
 		status.setMoney(inventory.getMoney());
@@ -240,6 +244,15 @@ public class ARPGPlayer extends Player{
 			useItem();
 		}
 		
+		Button keyO = keyboard.get(Keyboard.O);
+		if(keyO.isReleased()) {
+			showInventory(!isInventoryShown);
+		}
+		
+	}
+    private void showInventory(boolean bool) {
+		isInventoryShown = bool; 
+		
 	}
     /**
      * Max health getter
@@ -314,7 +327,7 @@ public class ARPGPlayer extends Player{
 		Bomb bomb =new Bomb(getOwnerArea(),getFieldOfViewCells().get(0));
 		return ((ARPGArea)getOwnerArea()).canEnterAreaCells(bomb,((Interactable)bomb).getCurrentCells())&&getOwnerArea().registerActor(bomb);
 	}
-	
+
 	private void updateItem() {
 		
 		//Update the currentItem field
@@ -322,6 +335,9 @@ public class ARPGPlayer extends Player{
 		
 		//Update the GUI
 		status.setItem(currentItem);
+		
+		//Update the inventory
+		inventory.setCurrentItem(currentItem); 
 	}
 
 	
@@ -375,6 +391,10 @@ public class ARPGPlayer extends Player{
 
 	@Override
 	public void draw(Canvas canvas) {
+		if(isInventoryShown) {
+			//System.out.println("show inventory");
+			this.inventory.draw(canvas);
+		}
 		currentAnimation.draw(canvas);
 		status.draw(canvas);
 		

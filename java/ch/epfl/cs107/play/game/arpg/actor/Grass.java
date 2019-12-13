@@ -10,6 +10,7 @@ import ch.epfl.cs107.play.game.areagame.actor.Orientation;
 import ch.epfl.cs107.play.game.areagame.actor.Sprite;
 import ch.epfl.cs107.play.game.areagame.handler.AreaInteractionVisitor;
 import ch.epfl.cs107.play.game.arpg.handler.ARPGInteractionVisitor;
+import ch.epfl.cs107.play.game.rpg.actor.RPGSprite;
 import ch.epfl.cs107.play.math.DiscreteCoordinates;
 import ch.epfl.cs107.play.math.RandomGenerator;
 import ch.epfl.cs107.play.math.RegionOfInterest;
@@ -33,12 +34,12 @@ public class Grass extends AreaEntity{
 		signal = Logic.FALSE;
 		
 		Sprite[] sprites = new Sprite[1];
-		sprites[0] = new Sprite("zelda/grass",1,1,this,new RegionOfInterest(0,0,16,16));
+		sprites[0] = new RPGSprite("zelda/grass",1,1,this,new RegionOfInterest(0,0,16,16));
 		idle = new Animation(5, sprites);
 		
 		sprites = new Sprite[4];
 		for(int i=0;i<4;++i) {
-			sprites[i]= new Sprite("zelda/grass.sliced",1,1,this,new RegionOfInterest(i*32,0,32,32));
+			sprites[i]= new RPGSprite("zelda/grass.sliced",1,1,this,new RegionOfInterest(i*32,0,32,32));
 		}
 		fadeout = new Animation(2, sprites,false);
 		current=idle;

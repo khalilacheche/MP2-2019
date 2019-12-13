@@ -37,8 +37,8 @@ public class ARPGPlayerStatusGUI implements Graphics {
 		Vector(width/2, height/2));
 		ImageGraphics coinDisplay = new ImageGraphics(
 				ResourcePath.getSprite("zelda/coinsDisplay"),
-				3f, 1.5f, new RegionOfInterest(0, 0, 64, 32),
-				anchor.add(new Vector(0, 0.5f)), 1, DEPTH);
+				3f, 1.25f, new RegionOfInterest(0, 0, 64, 32),
+				anchor.add(new Vector(0, 0.f)), 1, DEPTH);
 		
 		coinDisplay.draw(canvas);
 		ImageGraphics coins;
@@ -47,7 +47,7 @@ public class ARPGPlayerStatusGUI implements Graphics {
 			coins= new ImageGraphics(
 					ResourcePath.getSprite("zelda/digits"),
 					0.75f, 0.75f, digitsRoi[digit%10],
-					anchor.add(new Vector(1.1f+i*0.5f, 0.9f)), 1, DEPTH);
+					anchor.add(new Vector(1.1f+i*0.5f, 0.25f)), 1, DEPTH);
 			coins.draw(canvas);
 			digit=digit/10;
 		}

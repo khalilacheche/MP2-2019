@@ -9,6 +9,7 @@ import ch.epfl.cs107.play.game.areagame.actor.Interactor;
 import ch.epfl.cs107.play.game.areagame.actor.MovableAreaEntity;
 import ch.epfl.cs107.play.game.areagame.actor.Orientation;
 import ch.epfl.cs107.play.game.areagame.actor.Sprite;
+import ch.epfl.cs107.play.game.rpg.actor.RPGSprite;
 import ch.epfl.cs107.play.math.DiscreteCoordinates;
 import ch.epfl.cs107.play.math.RegionOfInterest;
 import ch.epfl.cs107.play.window.Canvas;
@@ -37,7 +38,7 @@ public abstract class ARPGMonster extends MovableAreaEntity implements Interacto
 		super(area, orientation, position);
 		Sprite[] sprites = new Sprite[7];
 		for(int i=0;i<7;++i) {
-			sprites[i]= new Sprite("zelda/vanish",1,1,this,new RegionOfInterest(i*32,0,32,32));
+			sprites[i]= new RPGSprite("zelda/vanish",1,1,this,new RegionOfInterest(i*32,0,32,32));
 		}
 		MAX_HEALTH = health = maxHealth;
 		

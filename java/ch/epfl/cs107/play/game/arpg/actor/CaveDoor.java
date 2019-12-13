@@ -6,6 +6,7 @@ import ch.epfl.cs107.play.game.areagame.actor.Sprite;
 import ch.epfl.cs107.play.game.areagame.handler.AreaInteractionVisitor;
 import ch.epfl.cs107.play.game.arpg.handler.ARPGInteractionVisitor;
 import ch.epfl.cs107.play.game.rpg.actor.Door;
+import ch.epfl.cs107.play.game.rpg.actor.RPGSprite;
 import ch.epfl.cs107.play.math.DiscreteCoordinates;
 import ch.epfl.cs107.play.math.RegionOfInterest;
 import ch.epfl.cs107.play.signal.logic.Logic;
@@ -18,8 +19,8 @@ public class CaveDoor extends Door {
 	public CaveDoor(String destination, DiscreteCoordinates otherSideCoordinates, Logic signal, Area area,
 			Orientation orientation, DiscreteCoordinates position) {
 		super(destination, otherSideCoordinates, signal, area, orientation, position);
-		closed = new Sprite("zelda/cave.close",1,1,this,new RegionOfInterest(0,0,16,16));
-		open = new Sprite("zelda/cave.open",1,1,this,new RegionOfInterest(0,0,16,16));
+		closed = new RPGSprite("zelda/cave.close",1,1,this,new RegionOfInterest(0,0,16,16));
+		open = new RPGSprite("zelda/cave.open",1,1,this,new RegionOfInterest(0,0,16,16));
 	}
 	
 	@Override
