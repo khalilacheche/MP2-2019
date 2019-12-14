@@ -71,6 +71,8 @@ public class DarkLord extends ARPGMonster {
 		state=DarkLordState.IDLE;
 		
 		this.healthBar.setAnchor(new Vector(-1.f,2.5f));
+
+		
 	}
 	@Override
 	public List<DiscreteCoordinates> getFieldOfViewCells() {
@@ -206,6 +208,7 @@ public class DarkLord extends ARPGMonster {
 			this.currentAnimation.draw(canvas);
 		
 		healthBar.draw(canvas);
+
 		
 	}
 	

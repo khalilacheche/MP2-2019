@@ -8,10 +8,13 @@ import ch.epfl.cs107.play.game.arpg.actor.Bomb;
 import ch.epfl.cs107.play.game.arpg.actor.CastleDoor;
 import ch.epfl.cs107.play.game.arpg.actor.CaveDoor;
 import ch.epfl.cs107.play.game.arpg.actor.Chest;
+import ch.epfl.cs107.play.game.arpg.actor.DialogTrigger;
 import ch.epfl.cs107.play.game.arpg.actor.FireSpell;
 import ch.epfl.cs107.play.game.arpg.actor.Grass;
 import ch.epfl.cs107.play.game.arpg.actor.Orb;
 import ch.epfl.cs107.play.game.arpg.actor.Rock;
+import ch.epfl.cs107.play.game.arpg.actor.ShopMan;
+import ch.epfl.cs107.play.game.arpg.actor.Villager;
 import ch.epfl.cs107.play.game.rpg.handler.RPGInteractionVisitor;
 
 public interface ARPGInteractionVisitor extends RPGInteractionVisitor {
@@ -108,7 +111,7 @@ public interface ARPGInteractionVisitor extends RPGInteractionVisitor {
      * @param chest (Chest), not null
      */
 	default void interactWith(Chest chest) {
-	}
+	}	
 	/**
      * Simulate and interaction between ARPG Interactor and a Chest
      * @param chest (Chest), not null
@@ -116,4 +119,23 @@ public interface ARPGInteractionVisitor extends RPGInteractionVisitor {
 	default void interactWith(Orb orb) {
 	}
 	
+	/**
+     * Simulate and interaction between ARPG Interactor and a Chest
+     * @param chest (Chest), not null
+     */
+	default void interactWith(Villager villager) {
+	
+	}
+	/**
+     * Simulate and interaction between ARPG Interactor and a Chest
+     * @param chest (Chest), not null
+     */
+	default void interactWith(DialogTrigger trigger) {
+		
+	}
+
+
+	default void interactWith(ShopMan shop) {
+		
+	}
 }

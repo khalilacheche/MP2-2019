@@ -356,7 +356,7 @@ public abstract class Area implements Playable {
      * Suspend method: Can be overridden, called before resume other
      */
     public void suspend(){
-
+        // Does nothing by default
     }
 
 

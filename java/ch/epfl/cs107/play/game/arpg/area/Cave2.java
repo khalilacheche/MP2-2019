@@ -3,6 +3,7 @@ package ch.epfl.cs107.play.game.arpg.area;
 import ch.epfl.cs107.play.game.areagame.actor.Background;
 import ch.epfl.cs107.play.game.areagame.actor.Orientation;
 import ch.epfl.cs107.play.game.arpg.actor.CaveFlameSkull;
+import ch.epfl.cs107.play.game.arpg.actor.ChestKey;
 import ch.epfl.cs107.play.game.arpg.actor.LadderDoor;
 import ch.epfl.cs107.play.math.DiscreteCoordinates;
 import ch.epfl.cs107.play.signal.logic.And;
@@ -19,8 +20,8 @@ public class Cave2 extends ARPGArea {
 	@Override
 	protected void createArea() {
 		registerActor(new LadderDoor("Zelda/Cave.1",new DiscreteCoordinates(4,3),Logic.TRUE,this,Orientation.UP,new DiscreteCoordinates(7,2)));
-		CaveFlameSkull skull1 =new CaveFlameSkull(this,Orientation.LEFT,new DiscreteCoordinates(2,6));
-		CaveFlameSkull skull2 =new CaveFlameSkull(this,Orientation.LEFT,new DiscreteCoordinates(6,6));
+		CaveFlameSkull skull1 =new CaveFlameSkull(this,Orientation.LEFT,new DiscreteCoordinates(2,7));
+		CaveFlameSkull skull2 =new CaveFlameSkull(this,Orientation.LEFT,new DiscreteCoordinates(13,7));
 		dropKeySignal = new And((Logic)skull1,(Logic)skull2);
 		registerActor(skull1);
 		registerActor(skull2);
@@ -32,7 +33,7 @@ public class Cave2 extends ARPGArea {
 	public void update(float deltaTime) {
 		if(dropKeySignal.isTrue() && !hasDroppedKey) {
 			//TODO: Drop ChestKey
-			System.out.println("ChestKey");
+			registerActor(new ChestKey(this,new DiscreteCoordinates(7,7)));
 			hasDroppedKey=true;
 		}
 		super.update(deltaTime);

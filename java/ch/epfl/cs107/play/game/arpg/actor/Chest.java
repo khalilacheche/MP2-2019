@@ -8,6 +8,7 @@ import ch.epfl.cs107.play.game.areagame.actor.AreaEntity;
 import ch.epfl.cs107.play.game.areagame.actor.Orientation;
 import ch.epfl.cs107.play.game.areagame.actor.Sprite;
 import ch.epfl.cs107.play.game.areagame.handler.AreaInteractionVisitor;
+import ch.epfl.cs107.play.game.arpg.ARPGItem;
 import ch.epfl.cs107.play.game.arpg.handler.ARPGInteractionVisitor;
 import ch.epfl.cs107.play.game.rpg.actor.RPGSprite;
 import ch.epfl.cs107.play.math.DiscreteCoordinates;
@@ -21,6 +22,7 @@ public class Chest extends AreaEntity {
 	private Sprite open;
 	private Sprite closed;
 	private Logic signal;
+	private ARPGItem content= ARPGItem.BOW;
 
 	public Chest(Area area, DiscreteCoordinates position) {
 		super(area, Orientation.UP, position);
@@ -29,10 +31,11 @@ public class Chest extends AreaEntity {
 		signal=Logic.FALSE;
 	}
 	
-	
-	public void open() {
+	protected ARPGItem takeContent() {
 		signal=Logic.TRUE;
+		return content;
 	}
+	
 
 	@Override
 	public List<DiscreteCoordinates> getCurrentCells() {
@@ -52,13 +55,11 @@ public class Chest extends AreaEntity {
 
 	@Override
 	public boolean isViewInteractable() {
-		return true;
+		return signal.isOff();
 	}
-	
 	@Override
 	public void acceptInteraction(AreaInteractionVisitor v) {
 		((ARPGInteractionVisitor)v).interactWith(this);
-		
 	}
 
 	@Override

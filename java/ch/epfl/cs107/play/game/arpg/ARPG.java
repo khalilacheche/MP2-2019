@@ -14,7 +14,6 @@ import ch.epfl.cs107.play.game.arpg.area.Village;
 import ch.epfl.cs107.play.game.rpg.RPG;
 import ch.epfl.cs107.play.io.FileSystem;
 import ch.epfl.cs107.play.math.DiscreteCoordinates;
-import ch.epfl.cs107.play.window.Keyboard;
 import ch.epfl.cs107.play.window.Window;
 
 public class ARPG extends RPG {
@@ -29,7 +28,7 @@ public class ARPG extends RPG {
 		super.addArea(new Cave1());
 		super.addArea(new Cave2());
 		super.addArea(new RouteTemple());
-		super.addArea(new Temple());
+		super.addArea(new Temple()); 
 	}
 	@Override
 	public String getTitle() {
@@ -40,15 +39,14 @@ public class ARPG extends RPG {
 	public boolean begin (Window window, FileSystem fileSystem) {
 		if(super.begin(window, fileSystem)) {
 			createAreas();
-			setCurrentArea("Zelda/Route",true);
-			initPlayer(new ARPGPlayer(getCurrentArea(), Orientation.RIGHT, new DiscreteCoordinates(2,3)));
+			setCurrentArea("Zelda/Ferme",true);
+			initPlayer(new ARPGPlayer(getCurrentArea(), Orientation.RIGHT, new DiscreteCoordinates(6,10)));
 			
 			return true;
 		}
 		
 		return false;
 	}
-	
 	
 	@Override
 	public void update(float deltaTime) {
@@ -66,5 +64,6 @@ public class ARPG extends RPG {
 	    public void end() {
 		 System.exit(0);
 	    }
+	
 
 }

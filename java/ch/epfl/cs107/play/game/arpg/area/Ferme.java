@@ -3,13 +3,9 @@ package ch.epfl.cs107.play.game.arpg.area;
 import ch.epfl.cs107.play.game.areagame.actor.Background;
 import ch.epfl.cs107.play.game.areagame.actor.Foreground;
 import ch.epfl.cs107.play.game.areagame.actor.Orientation;
-import ch.epfl.cs107.play.game.arpg.actor.Arrow;
 import ch.epfl.cs107.play.game.arpg.actor.CastleKey;
-import ch.epfl.cs107.play.game.arpg.actor.DarkLord;
-import ch.epfl.cs107.play.game.arpg.actor.FireSpell;
-import ch.epfl.cs107.play.game.arpg.actor.FlameSkull;
-import ch.epfl.cs107.play.game.arpg.actor.LogMonster;
 import ch.epfl.cs107.play.game.arpg.actor.Rock;
+import ch.epfl.cs107.play.game.arpg.actor.Villager;
 import ch.epfl.cs107.play.game.rpg.actor.Door;
 import ch.epfl.cs107.play.math.DiscreteCoordinates;
 
@@ -29,12 +25,12 @@ public class Ferme extends ARPGArea{
 		for(int i=0;i<doors.length;++i) {
 			registerActor(doors[i]);
 		}
-		registerActor(new CastleKey(this,new DiscreteCoordinates(6,6)));
+		//registerActor(new CastleKey(this,new DiscreteCoordinates(6,6)));
 		registerActor(new Background (this));
 		registerActor(new Foreground(this));
-		registerActor(new FlameSkull(this,Orientation.DOWN,new DiscreteCoordinates(10,10)));
 		registerActor(new Rock(this,new DiscreteCoordinates(13,0)));
 		registerActor(new Rock(this,new DiscreteCoordinates(14,0)));
+		registerActor(new Villager(this,Orientation.UP,new DiscreteCoordinates(6,9),"1",false));
 		
 		
 	}
