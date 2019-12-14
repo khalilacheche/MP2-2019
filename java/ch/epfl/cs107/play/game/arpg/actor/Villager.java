@@ -1,6 +1,7 @@
 package ch.epfl.cs107.play.game.arpg.actor;
 
 import java.awt.Color;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -156,8 +157,13 @@ private class VillagerHandler implements ARPGInteractionVisitor{
 	}
 	@Override
 	public List<DiscreteCoordinates> getFieldOfViewCells() {
-		// TODO Auto-generated method stub
-		return getCurrentMainCellCoordinates().getNeighbours();
+		List<DiscreteCoordinates> list = new ArrayList<>();
+		list.add(getCurrentMainCellCoordinates().right()) ;
+		list.add(getCurrentMainCellCoordinates().left());
+		list.add(getCurrentMainCellCoordinates().up()) ;
+		list.add(getCurrentMainCellCoordinates().down());
+		return list; 
+		
 	}
 	@Override
 	public boolean wantsCellInteraction() {

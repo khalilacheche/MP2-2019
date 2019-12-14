@@ -510,7 +510,7 @@ public class ARPGPlayer extends Player implements Inventory.Holder{
 
 	@Override
 	public List<DiscreteCoordinates> getFieldOfViewCells() {
-		return 	getCurrentMainCellCoordinates().getNeighbours();
+		return 	Collections.singletonList(getCurrentMainCellCoordinates().jump(getOrientation().toVector()));
 	}
 
 	@Override
