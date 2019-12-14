@@ -12,7 +12,6 @@ import ch.epfl.cs107.play.game.areagame.actor.Sprite;
 import ch.epfl.cs107.play.game.areagame.handler.AreaInteractionVisitor;
 import ch.epfl.cs107.play.game.arpg.handler.ARPGInteractionVisitor;
 import ch.epfl.cs107.play.game.rpg.actor.Door;
-import ch.epfl.cs107.play.game.arpg.ARPGInventory;
 import ch.epfl.cs107.play.game.arpg.ARPGItem;
 import ch.epfl.cs107.play.game.arpg.ARPGPlayerStatusGUI;
 import ch.epfl.cs107.play.game.arpg.area.ARPGArea;
@@ -24,9 +23,10 @@ import ch.epfl.cs107.play.signal.logic.Logic;
 import ch.epfl.cs107.play.window.Button;
 import ch.epfl.cs107.play.window.Canvas;
 import ch.epfl.cs107.play.window.Keyboard;
+import ch.epfl.cs107.play.game.rpg.Inventory;
+import ch.epfl.cs107.play.game.rpg.InventoryItem;
 
-
-public class ARPGPlayer extends Player{
+public class ARPGPlayer extends Player implements Inventory.Holder{
 	
 	
 	private enum State{
@@ -52,8 +52,10 @@ public class ARPGPlayer extends Player{
 	private boolean isInventoryShown;
 	
 	private float health;
+	private boolean isInShop;
 	private final static float MAX_HEALTH=6;
-	
+	private boolean wantsToBuy;
+	private boolean wantsToSell;
 	
 	private class ARPGPlayerHandler implements ARPGInteractionVisitor{
 		
@@ -96,10 +98,12 @@ public class ARPGPlayer extends Player{
 		public void interactWith(Chest chest) {
 			chest.open();
 		}
+		
+		
 	
 	}
-	
-	
+
+
 
 	public ARPGPlayer(Area area, Orientation orientation, DiscreteCoordinates coordinates) {
 		super(area, orientation, coordinates);
@@ -133,7 +137,7 @@ public class ARPGPlayer extends Player{
 		bowHitAnimations=RPGSprite.createAnimations(ANIMATION_DURATION/2, sprites,false);
 		
 		
-		inventory= new ARPGInventory(1000);
+		inventory= new ARPGInventory(1000,this);
 		inventory.addMoney(10);
 		inventory.addItem(ARPGItem.ARROW,10);
 		inventory.addItem(ARPGItem.BOMB,3);
@@ -144,12 +148,17 @@ public class ARPGPlayer extends Player{
 		status.setItem(ARPGItem.SWORD);
 		currentState = State.IDLE;
 		isInventoryShown=false;
+		isInShop=false; 
+		wantsToBuy=false;
+		wantsToSell=false; 
 	}
 	
 	
 	@Override
 	public void update(float deltaTime) {
 		super.update(deltaTime);
+		wantsToBuy=false; 
+		wantsToSell=false; 
 		//System.out.println(getCurrentMainCellCoordinates());
 		updateItem();
 		status.setHealth(health);
@@ -220,6 +229,7 @@ public class ARPGPlayer extends Player{
 	
 	
 	private void manageKeyboardInputs(Keyboard keyboard) {
+		wantsToBuy=false; 
 		if(currentState==State.IDLE) {
 			moveOrientate(keyboard.get(Keyboard.UP),Orientation.UP);
 			moveOrientate(keyboard.get(Keyboard.DOWN),Orientation.DOWN);
@@ -249,10 +259,40 @@ public class ARPGPlayer extends Player{
 			showInventory(!isInventoryShown);
 		}
 		
-	}
-    private void showInventory(boolean bool) {
-		isInventoryShown = bool; 
+		Button keyE = keyboard.get(Keyboard.E);
+		if(keyE.isReleased()) {
+			isInShop = true; 
+		}
 		
+		Button keyESC = keyboard.get(Keyboard.ESC);
+		if(keyESC.isReleased()) {
+			isInShop = false; 
+		}
+		if(isInShop) {
+				Button keyB = keyboard.get(Keyboard.B);
+				if(keyB.isReleased()) {
+					wantsToBuy = true; 
+				}
+				
+				Button keyS = keyboard.get(Keyboard.S);
+				if(keyS.isReleased()) {
+					wantsToSell = true; 
+					
+				}
+		}
+		
+		
+	}
+	@Override
+    public void showInventory(boolean bool) {
+		isInventoryShown = bool; 
+	//	isInShop = inShop;
+		
+	}
+	
+	
+	public boolean getIsInShop() {
+		return isInShop; 
 	}
     /**
      * Max health getter
@@ -400,5 +440,45 @@ public class ARPGPlayer extends Player{
 		
 	}
 
+
+	@Override
+	public String getName() {
+		// TODO Auto-generated method stub
+		return "ARPGPlayer";
+	}
+
+
+	@Override
+	public boolean sell (InventoryItem item) {
+		if(!inventory.contains(item))
+			return false ; 
+		else {
+		    inventory.removeItem(item);
+		    inventory.addMoney(item.getPrice());
+		    return true;
+		}
+	}
+	
+	@Override 
+	public boolean  buy(InventoryItem item) {
+		if(inventory.getMoney()<item.getPrice()) {
+			return false ; 
+		}
+		else {
+			inventory.addItem(item); 
+			inventory.addMoney(-item.getPrice());
+			return true; 
+		}
+	}
+	public boolean getWantsToBuy() {
+		return wantsToBuy;
+	}
+	
+	public boolean getWantsToSell() {
+		return wantsToSell;
+	}
+	public ARPGItem getCurrentItem() {
+		return currentItem; 
+	}
 
 }
