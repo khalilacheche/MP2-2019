@@ -138,16 +138,10 @@ public class LogMonster extends ARPGMonster {
 			switch(currentState) {
 				case IDLE : 
 					if(!this.isDisplacementOccurs() && inactionTime <=0) {
-						if(RandomGenerator.getInstance().nextDouble()<0.2) 
-							moveOrientate();
-						
-						else
-				             moveOrientate();
+				        moveOrientate();
 						currentAnimation=idleAnimations[this.getOrientation().ordinal()];
 						if(RandomGenerator.getInstance().nextDouble()<PROBABILITY_OF_INACTIVE)
 							inactionTime=RandomGenerator.getInstance().nextInt(MAX_INACTION_TIME);
-	                    
-				        
 					}
 					else {
 						if(this.isDisplacementOccurs()) {

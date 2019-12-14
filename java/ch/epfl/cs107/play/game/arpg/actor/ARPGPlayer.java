@@ -12,6 +12,7 @@ import ch.epfl.cs107.play.game.areagame.actor.Sprite;
 import ch.epfl.cs107.play.game.areagame.handler.AreaInteractionVisitor;
 import ch.epfl.cs107.play.game.arpg.handler.ARPGInteractionVisitor;
 import ch.epfl.cs107.play.game.rpg.InventoryItem;
+import ch.epfl.cs107.play.game.rpg.actor.Dialog;
 import ch.epfl.cs107.play.game.rpg.actor.Door;
 import ch.epfl.cs107.play.game.arpg.actor.ARPGInventory;
 import ch.epfl.cs107.play.game.arpg.ARPGItem;
@@ -19,9 +20,9 @@ import ch.epfl.cs107.play.game.arpg.ARPGPlayerStatusGUI;
 import ch.epfl.cs107.play.game.arpg.area.ARPGArea;
 import ch.epfl.cs107.play.game.rpg.actor.Player;
 import ch.epfl.cs107.play.game.rpg.actor.RPGSprite;
+import ch.epfl.cs107.play.io.XMLTexts;
 import ch.epfl.cs107.play.math.DiscreteCoordinates;
 import ch.epfl.cs107.play.math.Vector;
-import ch.epfl.cs107.play.signal.Signal;
 import ch.epfl.cs107.play.signal.logic.Logic;
 import ch.epfl.cs107.play.window.Button;
 import ch.epfl.cs107.play.window.Canvas;
@@ -57,14 +58,22 @@ public class ARPGPlayer extends Player implements Inventory.Holder{/////Added im
 	
 	
 	//////////////////
-	private boolean canMove;
+	private Dialog dialog;
+	private boolean isTalking;
+	private enum InteractionType{
+		SWORD,
+		IDLE,
+		USEKEY,
+		TALK;
+	}
+	private InteractionType currentInteraction;
 	//////////////////
 	private float health;
 	private final static float MAX_HEALTH=6;
 
 
 	private boolean isInShop;
-	
+	private boolean canMove;	
 	private boolean wantsToBuy;
 	private boolean wantsToSell;
 	
@@ -77,9 +86,15 @@ public class ARPGPlayer extends Player implements Inventory.Holder{/////Added im
 			if(entity instanceof Coin)
 				inventory.addMoney(50);
 			if(entity instanceof CastleKey) {
-				inventory.addItem(((CastleKey)entity).item);
+				inventory.addItem(((CastleKey)entity).getItem());
+				startDialog("found_castle_key");
+			}
+			if(entity instanceof ChestKey) {
+				inventory.addItem(((ChestKey)entity).getItem());
+				startDialog("found_chest_key");
 			}
 			if(entity instanceof Staff) {
+				startDialog("found_staff");
 				inventory.addItem(((Staff)entity).item);
 			}
 			getOwnerArea().unregisterActor(entity);
@@ -88,47 +103,81 @@ public class ARPGPlayer extends Player implements Inventory.Holder{/////Added im
 
 		
 		public void interactWith(CastleDoor door) {
-			if(currentItem==ARPGItem.CASTLEKEY && wantsViewInteraction()) {
-				door.setSignal(Logic.TRUE);
-			}else if(door.isOpen()){
-				setIsPassingADoor(door);
-				door.setSignal(Logic.FALSE);
+			if(currentInteraction == InteractionType.USEKEY) {
+				if(currentItem==ARPGItem.CASTLEKEY) {
+					door.setSignal(Logic.TRUE);
+				}else if (currentItem==ARPGItem.CHESTKEY) {
+					startDialog("wrong_key");
+				}
+			}else if(currentInteraction == InteractionType.SWORD) {
+				startDialog("find_key");				
+			}else {
+				if(door.isOpen()){
+					setIsPassingADoor(door);
+					door.setSignal(Logic.FALSE);
+					}
 			}
 		}
 		
 		public void interactWith(Door door) {
-			setIsPassingADoor(door);
+			if(currentInteraction == InteractionType.IDLE)
+				setIsPassingADoor(door);
 		}
 		public void interactWith(CaveDoor door) {
-			setIsPassingADoor(door);
+			if(currentInteraction == InteractionType.IDLE)
+				setIsPassingADoor(door);
 		}
 		public void interactWith(Grass grass) {
-			if(currentItem==ARPGItem.SWORD)
+			if(currentInteraction==InteractionType.SWORD)
 				grass.cut();
+			//if(currentItem==ARPGItem.SWORD)
 		}
 		public void interactWith(ARPGMonster monster) {
-			if(currentItem==ARPGItem.SWORD && wantsViewInteraction())
+			if(currentInteraction == InteractionType.SWORD)
 				monster.receiveAttack(ARPGMonster.ARPGAttackType.PHYSICAL, 1);
+			//if(currentItem==ARPGItem.SWORD && wantsViewInteraction())
 		}
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 		public void interactWith(Chest chest) {
-			canMove=chest.hasFinishedDialog();
-			if(currentItem==ARPGItem.CASTLEKEY) {
-				addItem(chest.takeContent());
-				inventory.removeItem(ARPGItem.CASTLEKEY);
-			}else{
+			if(currentInteraction == InteractionType.USEKEY) {
+				if(currentItem==ARPGItem.CHESTKEY) {
+					startDialog("found_bow");
+					addItem(chest.takeContent());
+					inventory.removeItem(ARPGItem.CHESTKEY);
+				}else{
+					startDialog("wrong_key");					
+				}
 				
-			}//////////////////////////////////////////////////////////////////////
-			chest.showMessage();
+			}else
+				startDialog("find_key");
 		}
 		public void interactWith(Villager villager) {
-			canMove=villager.hasFinishedDialog();
-			if(getOwnerArea().getKeyboard().get(Keyboard.T).isReleased()) {
-				villager.startTalking();
-				canMove=false;
+			if(currentInteraction == InteractionType.TALK) {
+				if(!isTalking)
+					startDialog(villager.getKey());
+				
+			}else if ( currentInteraction == InteractionType.SWORD) {
+				if(!isTalking)
+					startDialog("ouch");
+			
+			}else if (currentInteraction == InteractionType.USEKEY) {
+				if(!isTalking)
+					startDialog(currentItem==ARPGItem.CASTLEKEY? "found_castle_key":"found_chest_key");
 			}
+		}	
+		
+		@Override
+		public void interactWith(DialogTrigger trigger) {
+			startDialog(trigger.getDialogKey());
+			getOwnerArea().unregisterActor(trigger);
 		}
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////	
+		@Override
+		public void interactWith(ShopMan shop) {
+			if(currentInteraction==InteractionType.TALK) {
+				isInShop=true;
+			}
+			
+				
+		}
 	}
 	
 	
@@ -143,7 +192,6 @@ public class ARPGPlayer extends Player implements Inventory.Holder{/////Added im
 				this , 16, 32, new Orientation[] {Orientation.DOWN ,
 				Orientation.RIGHT , Orientation.UP, Orientation.LEFT});
 		idleAnimations=RPGSprite.createAnimations(ANIMATION_DURATION/2, sprites);
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////		
 		sprites = RPGSprite.extractSprites("zelda/player.staff_water",
 				4, 2, 2,
 				this , 32, 32,new Vector(-0.5f, 0) ,new Orientation[] {Orientation.DOWN ,
@@ -163,27 +211,25 @@ public class ARPGPlayer extends Player implements Inventory.Holder{/////Added im
 				this , 32, 32, new Vector(-0.5f, 0),new Orientation[] {Orientation.DOWN ,
 				Orientation.UP , Orientation.RIGHT, Orientation.LEFT});
 		bowHitAnimations=RPGSprite.createAnimations(ANIMATION_DURATION/2, sprites,false);
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////		
 		
 		inventory= new ARPGInventory(1000,this);
 		inventory.addMoney(10);
-		//inventory.addItem(ARPGItem.ARROW,10);
-		//inventory.addItem(ARPGItem.BOMB,3);
+		inventory.addItem(ARPGItem.ARROW,10);
+		inventory.addItem(ARPGItem.BOMB,3);
 		//inventory.addItem(ARPGItem.STAFF);
 		inventory.addItem(ARPGItem.SWORD);
-		//inventory.addItem(ARPGItem.BOW);
+		inventory.addItem(ARPGItem.BOW);
 		status=new ARPGPlayerStatusGUI();
 		status.setItem(ARPGItem.SWORD);
 		currentState = State.IDLE;
 		isInventoryShown=false;
 		isInShop=false; 
 		wantsToBuy=false;
-		wantsToSell=false; 
-		
-		
-		///////////////////////////////////////////////////////////
+		wantsToSell=false;		
 		canMove=true;
-		//////////////////////////////////////////////////////////
+		///////////////////////////
+		dialog = new Dialog(XMLTexts.getText("1"),"zelda/dialog",getOwnerArea());
+		isTalking=false;
 	}
 	
 	
@@ -192,15 +238,22 @@ public class ARPGPlayer extends Player implements Inventory.Holder{/////Added im
 		super.update(deltaTime);
 		wantsToBuy=false; 
 		wantsToSell=false; 
-		//System.out.println(getCurrentMainCellCoordinates());
+		
+		////////////////////////////////////////////////
+		canMove=canMove&&!isInShop&&!isTalking;
+		
+		
+		
+		////////////////////////////
+		System.out.println(getCurrentMainCellCoordinates());
 		updateItem();
 		status.setHealth(health);
 		status.setMoney(inventory.getMoney());
 		
-		manageKeyboardInputs(getOwnerArea().getKeyboard());
 		
 		switch(currentState) {
 		case IDLE:
+			currentInteraction = InteractionType.IDLE;
 			currentAnimation=idleAnimations[this.getOrientation().ordinal()];
 			if(isDisplacementOccurs()) {
 				currentAnimation.update(deltaTime);
@@ -210,6 +263,7 @@ public class ARPGPlayer extends Player implements Inventory.Holder{/////Added im
 			}
 			break;
 		case SwordAttack:
+			
 			currentAnimation=swordHitAnimations[this.getOrientation().ordinal()];
 			if(currentAnimation.isCompleted()) {
 				wantsViewInteraction=true;
@@ -239,6 +293,9 @@ public class ARPGPlayer extends Player implements Inventory.Holder{/////Added im
 		}
 		if(currentState!=State.IDLE)
 			currentAnimation.update(deltaTime);
+
+		////////MUSTE BE CALLED AFTER SWITCH
+		manageKeyboardInputs(getOwnerArea().getKeyboard());
 		
 		
 
@@ -280,8 +337,10 @@ public class ARPGPlayer extends Player implements Inventory.Holder{/////Added im
 			else
 				itemIndex--;
 		}
-		if(keyboard.get(Keyboard.T).isReleased()||keyboard.get(Keyboard.ENTER).isReleased())
+		if(keyboard.get(Keyboard.T).isReleased()) {
 			wantsViewInteraction=true;
+			currentInteraction = InteractionType.TALK;
+		}
 		Button keySpace = keyboard.get(Keyboard.SPACE) ;
 		if(keySpace.isReleased()) {
 			useItem();
@@ -291,27 +350,35 @@ public class ARPGPlayer extends Player implements Inventory.Holder{/////Added im
 			showInventory(!isInventoryShown);
 		}
 		
-		Button keyE = keyboard.get(Keyboard.E);
-		if(keyE.isReleased()) {
-			isInShop = true; 
-		}
 		
 		Button keyESC = keyboard.get(Keyboard.ESC);
-		if(keyESC.isReleased()) {
-			isInShop = false; 
-		}
 		if(isInShop) {
-				Button keyB = keyboard.get(Keyboard.B);
-				if(keyB.isReleased()) {
-					wantsToBuy = true; 
-				}
+			if(keyESC.isReleased()) {
+				isInShop = false;
+				canMove=true;
+			}
+			Button keyB = keyboard.get(Keyboard.B);
+			if(keyB.isReleased()) {
+				wantsToBuy = true; 
+			}
+			
+			Button keyS = keyboard.get(Keyboard.S);
+			if(keyS.isReleased()) {
+				wantsToSell = true; 
 				
-				Button keyS = keyboard.get(Keyboard.S);
-				if(keyS.isReleased()) {
-					wantsToSell = true; 
-					
-				}
+			}
 		}
+		////////////////////////
+		if(isTalking) {
+			if(keyboard.get(Keyboard.ENTER).isReleased()) {
+				if(dialog.push()) {
+					isTalking=false;
+					canMove=true;
+				}
+			}
+			
+		}
+			
 		
 		
 	}
@@ -357,11 +424,14 @@ public class ARPGPlayer extends Player implements Inventory.Holder{/////Added im
 			}
 			break;
 		case SWORD:
+			currentInteraction = InteractionType.SWORD;
 			currentState=State.SwordAttack;
+			wantsViewInteraction=true;
 			break;
 		case CASTLEKEY:
+		case CHESTKEY:
 			wantsViewInteraction=true;
-			System.out.println("Hmmm.. this must open a door..");
+			currentInteraction = InteractionType.USEKEY;
 			break;
 		case BOW:
 			currentState=State.BowAttack;
@@ -470,6 +540,8 @@ public class ARPGPlayer extends Player implements Inventory.Holder{/////Added im
 		}
 		currentAnimation.draw(canvas);
 		status.draw(canvas);
+		if(isTalking)
+			dialog.draw(canvas);
 		
 	}
 	protected boolean addItem(ARPGItem item) {
@@ -515,6 +587,15 @@ public class ARPGPlayer extends Player implements Inventory.Holder{/////Added im
 	public ARPGItem getCurrentItem() {
 		return currentItem; 
 	}
+	
+	
+	////////////////////////////////////////////////////////////
+	private void startDialog(String key) {
+		canMove=false;
+		isTalking=true;
+		dialog.resetDialog(XMLTexts.getText(key));
+	}
+	////////////////////////////////////////////////////////////
 	
 	
 

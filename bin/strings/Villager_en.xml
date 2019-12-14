@@ -6,15 +6,20 @@
       Someone told me that there used to be a wizard living in that house a the other side of the river
       If you can find an arrow to shoot that orb, you may bekldf
     </string>
-    <string name="2">Cette pierre semble pouvoir se briser. </string>
-    <string name="3">Allez ! On utilise EclatRock !</string>
-    <string name="chest_open">You found a <strong>Bow</strong>!
+    <string name="cave">Hmm....Something seems strange with this part of the wall...</string>
+    <string name="ouch">Ouch! That hurts!</string>
+    <string name="river">Hmm....There seems to be a house over the river</string>
+    <string name ="orb">This orb seems magic! I wonder what would happen if I shoot it with an arrow</string>
+    <string name="found_bow">You found a <strong>Bow</strong>!
     You can shoot now enemies and distant objects with it
     You can buy arrows from the village shop </string>
-    <string name="chest_closed">Hmm... This seems to be locked. I need to find a key to open it</string>
-    <string name="inspect_forcerock">Cette pierre semble pouvoir se déplacer. </string>
-    <string name="heal_text_1">Bonjour, bienvenu au centre Pokémon ! Nous allons soigner vos icmons, veuillez patientez un instant</string>
-    <string name="heal_text_2">Merci de votre patience, vos icmons ont retrouvé la forme ! A bientôt</string>
-    <string name="sell_text_1">Bonjour, que puis-je faire pour vous ? Cliquez sur E pour shopper</string>
-    
+    <string name="found_staff">You found a <strong>staff</strong>!
+    This magic wand can spell infinitely many water spells that can hurt enemies vulnerable to magic from a distance!
+    </string>
+    <string name="find_key">Hmm... This seems to be locked. I need to find a key to open it</string>
+    <string name="wrong_key">Hmm... This doesn't seem to be the right key</string>
+    <string name="found_castle_key">You found a <strong>Castle Key</strong>, you can now open the castle door!</string>
+    <string name="found_chest_key">You found a <strong>Chest Key</strong>, you can now open the chest!</string>
+    <string name="sell_text_1">Hello! What can I do for you?
+      Press E to start shopping</string>
 </strings>

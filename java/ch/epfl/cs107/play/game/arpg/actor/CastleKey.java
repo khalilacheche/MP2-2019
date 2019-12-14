@@ -11,12 +11,12 @@ import ch.epfl.cs107.play.math.RegionOfInterest;
 import ch.epfl.cs107.play.window.Canvas;
 
 public class CastleKey extends ARPGCollectableAreaEntity {
-	ARPGItem item=ARPGItem.CASTLEKEY;
-	Sprite key;
+	private Sprite key;
+	private ARPGItem type= ARPGItem.CASTLEKEY;
 	
 	public CastleKey(Area area, DiscreteCoordinates position) {
 		super(area, position);
-		key = new RPGSprite("zelda/key",1,1,this,new RegionOfInterest(0,0,16,16));
+		key = new RPGSprite("zelda/goldKey",1,1,this,new RegionOfInterest(0,0,16,16));
 	}
 	
 	@Override
@@ -27,6 +27,9 @@ public class CastleKey extends ARPGCollectableAreaEntity {
 	@Override
 	public void acceptInteraction(AreaInteractionVisitor v) {
 			((ARPGInteractionVisitor)v).interactWith(this);
+	}
+	protected ARPGItem getItem() {
+		return type;
 	}
 	
 

@@ -28,7 +28,7 @@ public class ARPG extends RPG {
 		super.addArea(new Cave1());
 		super.addArea(new Cave2());
 		super.addArea(new RouteTemple());
-		super.addArea(new Temple());
+		super.addArea(new Temple()); 
 	}
 	@Override
 	public String getTitle() {
@@ -39,8 +39,8 @@ public class ARPG extends RPG {
 	public boolean begin (Window window, FileSystem fileSystem) {
 		if(super.begin(window, fileSystem)) {
 			createAreas();
-			setCurrentArea("Zelda/Route",true);
-			initPlayer(new ARPGPlayer(getCurrentArea(), Orientation.RIGHT, new DiscreteCoordinates(2,3)));
+			setCurrentArea("Zelda/Ferme",true);
+			initPlayer(new ARPGPlayer(getCurrentArea(), Orientation.RIGHT, new DiscreteCoordinates(6,10)));
 			
 			return true;
 		}

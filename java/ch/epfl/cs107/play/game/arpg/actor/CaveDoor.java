@@ -45,7 +45,7 @@ public class CaveDoor extends Door {
 	}
 	@Override
 	public boolean isCellInteractable() {
-		return true;
+		return isOpen();
 	}
     @Override
     public void acceptInteraction(AreaInteractionVisitor v) {

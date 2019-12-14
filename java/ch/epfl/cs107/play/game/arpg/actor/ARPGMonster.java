@@ -22,6 +22,7 @@ public abstract class ARPGMonster extends MovableAreaEntity implements Interacto
 	}
 	protected final float MAX_HEALTH;
 	protected Animation deathAnimation;
+	protected Animation hurt;
 	protected float health;
 	List<ARPGAttackType> vulnerabilities;
 	

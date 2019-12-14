@@ -2,8 +2,8 @@ package ch.epfl.cs107.play.game.arpg.area;
 
 import ch.epfl.cs107.play.game.areagame.actor.Background;
 import ch.epfl.cs107.play.game.areagame.actor.Orientation;
-import ch.epfl.cs107.play.game.arpg.actor.CastleKey;
 import ch.epfl.cs107.play.game.arpg.actor.CaveFlameSkull;
+import ch.epfl.cs107.play.game.arpg.actor.ChestKey;
 import ch.epfl.cs107.play.game.arpg.actor.LadderDoor;
 import ch.epfl.cs107.play.math.DiscreteCoordinates;
 import ch.epfl.cs107.play.signal.logic.And;
@@ -33,8 +33,7 @@ public class Cave2 extends ARPGArea {
 	public void update(float deltaTime) {
 		if(dropKeySignal.isTrue() && !hasDroppedKey) {
 			//TODO: Drop ChestKey
-			registerActor(new CastleKey(this,new DiscreteCoordinates(7,7)));
-			System.out.println("ChestKey");
+			registerActor(new ChestKey(this,new DiscreteCoordinates(7,7)));
 			hasDroppedKey=true;
 		}
 		super.update(deltaTime);

@@ -8,35 +8,43 @@ import ch.epfl.cs107.play.game.areagame.actor.Animation;
 import ch.epfl.cs107.play.game.areagame.actor.MovableAreaEntity;
 import ch.epfl.cs107.play.game.areagame.actor.Orientation;
 import ch.epfl.cs107.play.game.arpg.handler.ARPGInteractionVisitor;
-import ch.epfl.cs107.play.game.rpg.actor.Dialog;
 import ch.epfl.cs107.play.game.rpg.actor.RPGSprite;
 import ch.epfl.cs107.play.game.areagame.handler.AreaInteractionVisitor;
 import ch.epfl.cs107.play.math.DiscreteCoordinates;
+import ch.epfl.cs107.play.math.RandomGenerator;
 import ch.epfl.cs107.play.window.Canvas;
-import ch.epfl.cs107.play.window.Keyboard;
-import ch.epfl.cs107.play.io.XMLTexts;
-
 public class Villager extends MovableAreaEntity{
 
 	private Animation[] idleAnimations;
 	private Animation currentAnimation;
 	private final static int ANIMATION_DURATION=4;
-	private boolean isTalking;
-	private Dialog dialog;
+	private static final int MAX_INACTION_TIME = 24;
+	private static final double PROBABILITY_OF_INACTIVE = 0.1;
 	private String key;
+	private int inactionTime;
+	private boolean canMove;
 	
+	public Villager(Area area, Orientation orientation, DiscreteCoordinates position,String key,boolean canMove) {
+		super(area, orientation, position);
+		idleAnimations = RPGSprite.createAnimations(ANIMATION_DURATION, 
+				RPGSprite.extractSprites("zelda/character",
+				4, 1, 2,
+				this , 16, 32,new Orientation[] {Orientation.UP ,
+				Orientation.RIGHT , Orientation.DOWN, Orientation.LEFT})
+		);
+		this.key=key;
+		this.canMove=canMove;
+	}
 	public Villager(Area area, Orientation orientation, DiscreteCoordinates position,String key) {
 		super(area, orientation, position);
 		idleAnimations = RPGSprite.createAnimations(ANIMATION_DURATION, 
 				RPGSprite.extractSprites("zelda/character",
 				4, 1, 2,
-				this , 16, 32,new Orientation[] {Orientation.DOWN ,
-				Orientation.UP , Orientation.RIGHT, Orientation.LEFT})
+				this , 16, 32,new Orientation[] {Orientation.UP ,
+				Orientation.RIGHT , Orientation.DOWN, Orientation.LEFT})
 		);
-		isTalking = false;
-		dialog= new Dialog(XMLTexts.getText(key),"zelda/dialog",getOwnerArea());
 		this.key=key;
-		//phrases = Arrays.asList(dialogs);
+		this.canMove=true;
 	}
 	
 	
@@ -68,30 +76,43 @@ public class Villager extends MovableAreaEntity{
 	}
 	@Override
 	public void update(float deltaTime) {
+		if(canMove) {
+			
+			if(!this.isDisplacementOccurs() && inactionTime <=0) {
+				moveOrientate();
+				if(RandomGenerator.getInstance().nextDouble()<PROBABILITY_OF_INACTIVE)
+					inactionTime=RandomGenerator.getInstance().nextInt(MAX_INACTION_TIME);
+			}
+			else {
+				if(this.isDisplacementOccurs()) {
+					currentAnimation.update(deltaTime);
+				}
+				else  {
+					inactionTime-=deltaTime;
+					currentAnimation.reset();
+				}
+			}
+		}
 		currentAnimation = idleAnimations[getOrientation().ordinal()];	
-		moveDialog();
 		super.update(deltaTime);
 		
 		
 	}
 	
-	
-	private void moveDialog() {
-		if(getOwnerArea().getKeyboard().get(Keyboard.ENTER).isReleased()) {
-			if(dialog.push()) {
-				isTalking=false;
-			}
+	protected String getKey() {
+		return key;
+	}
+	private void moveOrientate() {
+		if(RandomGenerator.getInstance().nextDouble()<=0.9f) {
+			move(ANIMATION_DURATION*4);
 		}
+		else {
+			this.orientate( Orientation.fromInt(RandomGenerator.getInstance().nextInt(4)));
+		}		
 	}
-	protected boolean hasFinishedDialog() {
-		return !isTalking;
-	}
-	
 
 	@Override
 	public void draw(Canvas canvas) {
-		if(isTalking)
-			dialog.draw(canvas);
 		currentAnimation.draw(canvas);
 	}
 
@@ -100,11 +121,5 @@ public class Villager extends MovableAreaEntity{
 		return Collections.singletonList(getCurrentMainCellCoordinates());
 	}
 
-	protected void startTalking() {
-		if(!isTalking) {
-			isTalking=true;
-			dialog.resetDialog(XMLTexts.getText(key));
-		}
-	}
 
 }
