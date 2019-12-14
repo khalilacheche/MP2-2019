@@ -25,7 +25,7 @@ public class Ferme extends ARPGArea{
 		for(int i=0;i<doors.length;++i) {
 			registerActor(doors[i]);
 		}
-		registerActor(new CastleKey(this,new DiscreteCoordinates(6,6)));
+		//registerActor(new CastleKey(this,new DiscreteCoordinates(6,6)));
 		registerActor(new Background (this));
 		registerActor(new Foreground(this));
 		registerActor(new Rock(this,new DiscreteCoordinates(13,0)));

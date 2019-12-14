@@ -48,10 +48,22 @@ public class ARPG extends RPG {
 		return false;
 	}
 	
-	
 	@Override
 	public void update(float deltaTime) {
+	     if(((ARPGPlayer)(this.getPlayer())).responded&&((ARPGPlayer)(this.getPlayer())).wantsRestart) 
+			this.begin(this.getWindow(), this.getFileSystem()); 
+		else if(((ARPGPlayer)(this.getPlayer())).responded&&!((ARPGPlayer)(this.getPlayer())).wantsRestart)
+			this.end();
+			
+		
+	     
 		super.update(deltaTime);
 	}
+	
+	 @Override
+	    public void end() {
+		 System.exit(0);
+	    }
+	
 
 }

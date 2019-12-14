@@ -96,6 +96,8 @@ public class LogMonster extends ARPGMonster {
 		currentState=State.IDLE;
 		sleepTime=MIN_SLEEPING_DURATION;
 		currentAnimation=idleAnimations[this.getOrientation().ordinal()];
+	 	this.healthBar.setAnchor(new Vector(-1.f*this.health/MAX_HEALTH,1.5f));
+
 
 	}
 
@@ -220,6 +222,9 @@ public class LogMonster extends ARPGMonster {
 		if(isDead())
 			super.draw(canvas);
 		else currentAnimation.draw(canvas);
+		
+		healthBar.draw(canvas);
+
 		
 	}
 

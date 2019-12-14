@@ -17,6 +17,7 @@ import ch.epfl.cs107.play.game.rpg.actor.Door;
 import ch.epfl.cs107.play.game.arpg.actor.ARPGInventory;
 import ch.epfl.cs107.play.game.arpg.ARPGItem;
 import ch.epfl.cs107.play.game.arpg.ARPGPlayerStatusGUI;
+import ch.epfl.cs107.play.game.arpg.DeathScreenGUI;
 import ch.epfl.cs107.play.game.arpg.area.ARPGArea;
 import ch.epfl.cs107.play.game.rpg.actor.Player;
 import ch.epfl.cs107.play.game.rpg.actor.RPGSprite;
@@ -53,7 +54,10 @@ public class ARPGPlayer extends Player implements Inventory.Holder{
 	private ARPGItem currentItem;
 	private State currentState;
 	private boolean isInventoryShown;
-	
+	private DeathScreenGUI deathScreen= new DeathScreenGUI(); 
+	public boolean wantsRestart=false; 
+	public boolean responded=false;
+
 
 	
 	
@@ -215,11 +219,11 @@ public class ARPGPlayer extends Player implements Inventory.Holder{
 		
 		inventory= new ARPGInventory(1000,this);
 		inventory.addMoney(10);
-		inventory.addItem(ARPGItem.ARROW,10);
-		inventory.addItem(ARPGItem.BOMB,3);
+		//inventory.addItem(ARPGItem.ARROW,10);
+		//inventory.addItem(ARPGItem.BOMB,3);
 		//inventory.addItem(ARPGItem.STAFF);
 		inventory.addItem(ARPGItem.SWORD);
-		inventory.addItem(ARPGItem.BOW);
+		//inventory.addItem(ARPGItem.BOW);
 		status=new ARPGPlayerStatusGUI();
 		status.setItem(ARPGItem.SWORD);
 		currentState = State.IDLE;
@@ -299,7 +303,16 @@ public class ARPGPlayer extends Player implements Inventory.Holder{
 		////////MUSTE BE CALLED AFTER SWITCH
 		manageKeyboardInputs(getOwnerArea().getKeyboard());
 		
-		
+		if(isDead()) {
+			if(this.getOwnerArea().getKeyboard().get(Keyboard.R).isReleased()) {
+                wantsRestart=true; 
+                responded=true; 
+			}
+			if(this.getOwnerArea().getKeyboard().get(Keyboard.N).isReleased()) {
+				wantsRestart=false; 
+				responded=true; 
+			}
+		}
 
 		
 	}
@@ -450,11 +463,12 @@ public class ARPGPlayer extends Player implements Inventory.Holder{
 	}
 	
 	
+
     /**
      * Instanciates Arrow in the field view 
      */
 	protected boolean throwArrow() {
-		Arrow arrow =new Arrow(getOwnerArea(),getOrientation(),getFieldOfViewCells().get(0));
+		Arrow arrow =new Arrow(getOwnerArea(),getOrientation(),getCurrentMainCellCoordinates().jump(getOrientation().toVector()));
 		return ((ARPGArea)getOwnerArea()).canEnterAreaCells(arrow,((Interactable)arrow).getCurrentCells())&&getOwnerArea().registerActor(arrow);
 	}
 	
@@ -462,7 +476,7 @@ public class ARPGPlayer extends Player implements Inventory.Holder{
      * Instanciates MagicWaterProjectile in the field view 
      */
 	protected boolean castWaterSpell() {
-		MagicWaterProjectile water =new MagicWaterProjectile(getOwnerArea(),getOrientation(),getFieldOfViewCells().get(0));
+		MagicWaterProjectile water =new MagicWaterProjectile(getOwnerArea(),getOrientation(),getCurrentMainCellCoordinates().jump(getOrientation().toVector()));
 		return ((ARPGArea)getOwnerArea()).canEnterAreaCells(water,((Interactable)water).getCurrentCells())&&getOwnerArea().registerActor(water);
 	}
 	
@@ -471,7 +485,7 @@ public class ARPGPlayer extends Player implements Inventory.Holder{
      * Instanciates Bomb in the field view 
      */
 	private boolean placeBomb() {
-		Bomb bomb =new Bomb(getOwnerArea(),getFieldOfViewCells().get(0));
+		Bomb bomb =new Bomb(getOwnerArea(),getCurrentMainCellCoordinates().jump(getOrientation().toVector()));
 		return ((ARPGArea)getOwnerArea()).canEnterAreaCells(bomb,((Interactable)bomb).getCurrentCells())&&getOwnerArea().registerActor(bomb);
 	}
 
@@ -496,8 +510,7 @@ public class ARPGPlayer extends Player implements Inventory.Holder{
 
 	@Override
 	public List<DiscreteCoordinates> getFieldOfViewCells() {
-		return Collections.singletonList
-				(getCurrentMainCellCoordinates().jump(getOrientation().toVector()));
+		return 	getCurrentMainCellCoordinates().getNeighbours();
 	}
 
 	@Override
@@ -542,6 +555,8 @@ public class ARPGPlayer extends Player implements Inventory.Holder{
 			//System.out.println("show inventory");
 			this.inventory.draw(canvas);
 		}
+		if(isDead())
+			this.deathScreen.draw(canvas);
 		currentAnimation.draw(canvas);
 		status.draw(canvas);
 		if(isTalking)
@@ -600,7 +615,9 @@ public class ARPGPlayer extends Player implements Inventory.Holder{
 		dialog.resetDialog(XMLTexts.getText(key));
 	}
 	////////////////////////////////////////////////////////////
-	
+	public boolean  isDead() {
+		return health<=0; 
+	}
 	
 
 
