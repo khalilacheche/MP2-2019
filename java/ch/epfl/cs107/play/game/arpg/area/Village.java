@@ -33,9 +33,9 @@ public class Village extends ARPGArea {
 		registerActor(new Chest (this, new DiscreteCoordinates(15,18)));
 		registerActor(new Background (this));
 		registerActor(new Foreground(this));
-		registerActor(new Villager(this,Orientation.LEFT,new DiscreteCoordinates(27,10),"idle1"));
-		registerActor(new Villager(this,Orientation.LEFT,new DiscreteCoordinates(17,6),"idle2"));
-		registerActor(new Villager(this,Orientation.LEFT,new DiscreteCoordinates(7,15),"idle3"));
+		registerActor(new Villager(this,Orientation.LEFT,new DiscreteCoordinates(27,10),"idle_1"));
+		registerActor(new Villager(this,Orientation.LEFT,new DiscreteCoordinates(17,6),"idle_2"));
+		registerActor(new Villager(this,Orientation.LEFT,new DiscreteCoordinates(7,15),"idle_3"));
 		registerActor(new DialogTrigger(this,new DiscreteCoordinates(25,17),"cave"));
 		
 	}

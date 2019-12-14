@@ -29,7 +29,7 @@ import ch.epfl.cs107.play.window.Canvas;
 import ch.epfl.cs107.play.window.Keyboard;
 import ch.epfl.cs107.play.game.rpg.Inventory;;
 
-public class ARPGPlayer extends Player implements Inventory.Holder{/////Added impelement
+public class ARPGPlayer extends Player implements Inventory.Holder{
 	
 	
 	private enum State{
@@ -60,6 +60,10 @@ public class ARPGPlayer extends Player implements Inventory.Holder{/////Added im
 	//////////////////
 	private Dialog dialog;
 	private boolean isTalking;
+	
+	
+	
+	
 	private enum InteractionType{
 		SWORD,
 		IDLE,
@@ -80,7 +84,7 @@ public class ARPGPlayer extends Player implements Inventory.Holder{/////Added im
 	
 	private class ARPGPlayerHandler implements ARPGInteractionVisitor{
 		
-		public void interactWith(CollectableAreaEntity entity) {//TODO: change instanceof
+		public void interactWith(CollectableAreaEntity entity) {
 			if(entity instanceof Heart)
 				addHealth(1);
 			if(entity instanceof Coin)
@@ -98,7 +102,7 @@ public class ARPGPlayer extends Player implements Inventory.Holder{/////Added im
 				inventory.addItem(((Staff)entity).item);
 			}
 			getOwnerArea().unregisterActor(entity);
-				
+			//wantsViewInteraction=false;
 		}
 
 		
@@ -130,12 +134,10 @@ public class ARPGPlayer extends Player implements Inventory.Holder{/////Added im
 		public void interactWith(Grass grass) {
 			if(currentInteraction==InteractionType.SWORD)
 				grass.cut();
-			//if(currentItem==ARPGItem.SWORD)
 		}
 		public void interactWith(ARPGMonster monster) {
 			if(currentInteraction == InteractionType.SWORD)
 				monster.receiveAttack(ARPGMonster.ARPGAttackType.PHYSICAL, 1);
-			//if(currentItem==ARPGItem.SWORD && wantsViewInteraction())
 		}
 		public void interactWith(Chest chest) {
 			if(currentInteraction == InteractionType.USEKEY) {
@@ -175,8 +177,7 @@ public class ARPGPlayer extends Player implements Inventory.Holder{/////Added im
 			if(currentInteraction==InteractionType.TALK) {
 				isInShop=true;
 			}
-			
-				
+			wantsViewInteraction=false;	
 		}
 	}
 	
@@ -238,6 +239,7 @@ public class ARPGPlayer extends Player implements Inventory.Holder{/////Added im
 		super.update(deltaTime);
 		wantsToBuy=false; 
 		wantsToSell=false; 
+		resetViewInteraction();
 		
 		////////////////////////////////////////////////
 		canMove=canMove&&!isInShop&&!isTalking;
@@ -245,7 +247,7 @@ public class ARPGPlayer extends Player implements Inventory.Holder{/////Added im
 		
 		
 		////////////////////////////
-		System.out.println(getCurrentMainCellCoordinates());
+		//System.out.println(getCurrentMainCellCoordinates());
 		updateItem();
 		status.setHealth(health);
 		status.setMoney(inventory.getMoney());
@@ -315,6 +317,9 @@ public class ARPGPlayer extends Player implements Inventory.Holder{/////Added im
 			}			
 		}
 	}
+	private void resetViewInteraction() {
+		wantsViewInteraction=false;
+	}
 	
 	
 	
@@ -327,7 +332,6 @@ public class ARPGPlayer extends Player implements Inventory.Holder{/////Added im
 			
 		}
 		
-		wantsViewInteraction=false;//Rappel a zero TODO: impelemnt it better
 		
 		
 		Button keyTab = keyboard.get(Keyboard.TAB) ;

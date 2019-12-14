@@ -9,6 +9,7 @@ import ch.epfl.cs107.play.game.arpg.handler.ARPGInteractionVisitor;
 import ch.epfl.cs107.play.game.rpg.actor.RPGSprite;
 import ch.epfl.cs107.play.math.DiscreteCoordinates;
 import ch.epfl.cs107.play.math.RegionOfInterest;
+import ch.epfl.cs107.play.math.Vector;
 import ch.epfl.cs107.play.window.Canvas;
 
 public class Staff extends ARPGCollectableAreaEntity {
@@ -19,7 +20,7 @@ public class Staff extends ARPGCollectableAreaEntity {
 		super(area, position);
 		Sprite[] sprites = new Sprite[8];
 		for(int i=0;i<8;++i) {
-			sprites[i]= new RPGSprite("zelda/staff",1,1,this,new RegionOfInterest(i*32,0,32,32));
+			sprites[i]= new RPGSprite("zelda/staff",1.75f,1.75f,this,new RegionOfInterest(i*32,0,32,32),new Vector(-0.35f,0f));
 		}
 		animation = new Animation(3, sprites,true);
 	}

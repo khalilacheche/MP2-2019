@@ -14,7 +14,6 @@ import ch.epfl.cs107.play.math.DiscreteCoordinates;
 import ch.epfl.cs107.play.math.RandomGenerator;
 import ch.epfl.cs107.play.window.Canvas;
 public class Villager extends MovableAreaEntity{
-
 	private Animation[] idleAnimations;
 	private Animation currentAnimation;
 	private final static int ANIMATION_DURATION=4;
@@ -24,6 +23,11 @@ public class Villager extends MovableAreaEntity{
 	private int inactionTime;
 	private boolean canMove;
 	
+	
+	/** Adds one InventoryItem to the inventory
+	 * @param: item (InventoryItem): The item to add
+	 * @return: success (boolean): Returns true if the element was successfully added to the inventory  
+	 */
 	public Villager(Area area, Orientation orientation, DiscreteCoordinates position,String key,boolean canMove) {
 		super(area, orientation, position);
 		idleAnimations = RPGSprite.createAnimations(ANIMATION_DURATION, 
@@ -53,7 +57,7 @@ public class Villager extends MovableAreaEntity{
 	@Override
 	public boolean takeCellSpace() {
 		// TODO Auto-generated method stub
-		return true;
+		return false;
 	}
 
 	@Override

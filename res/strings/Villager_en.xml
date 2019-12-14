@@ -16,7 +16,7 @@
     <string name="river">Hmm....There seems to be a house over the river</string>
     <string name ="orb">This orb seems magic! I wonder what would happen if I shoot it with an arrow</string>
     <string name="found_bow">You found a <strong>Bow</strong>!
-    You can shoot now enemies and distant objects with it
+    You can now shoot enemies and distant objects with it
     You can buy arrows from the village shop </string>
     <string name="found_staff">You found a <strong>staff</strong>!
     This magic wand can spell infinitely many water spells that can hurt enemies vulnerable to magic from a distance!
