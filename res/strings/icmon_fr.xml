@@ -8,7 +8,7 @@
     <string name="heal_text_2">Merci de votre patience, vos icmons ont retrouvé la forme ! A bientôt</string>
     <string name="you_get">Vous avez obtenu : </string>
     <string name="dad_recommendation">Papa ne voudrait pas que j'utilise ça ici...</string>
-    <string name="sell_text_1">Bonjour, que puis-je faire pour vous</string>
+    <string name="sell_text_1">Bonjour, que puis-je faire pour vous? cliquez sur E pour ouvrir le shop</string>
     <string name="sell_text_2">Merci et à bientôt</string>
     <string name="available_money">Argent disponible : </string>
     <string name="inspect_signalrock">Cette pierre semble reliée à un signal, peut-être qu'en trouvant comment l'activer on peut la passer</string>

@@ -11,8 +11,9 @@ import ch.epfl.cs107.play.game.areagame.actor.Orientation;
 import ch.epfl.cs107.play.game.areagame.actor.Sprite;
 import ch.epfl.cs107.play.game.areagame.handler.AreaInteractionVisitor;
 import ch.epfl.cs107.play.game.arpg.handler.ARPGInteractionVisitor;
+import ch.epfl.cs107.play.game.rpg.InventoryItem;
 import ch.epfl.cs107.play.game.rpg.actor.Door;
-import ch.epfl.cs107.play.game.arpg.ARPGInventory;
+import ch.epfl.cs107.play.game.arpg.actor.ARPGInventory;
 import ch.epfl.cs107.play.game.arpg.ARPGItem;
 import ch.epfl.cs107.play.game.arpg.ARPGPlayerStatusGUI;
 import ch.epfl.cs107.play.game.arpg.area.ARPGArea;
@@ -25,9 +26,9 @@ import ch.epfl.cs107.play.signal.logic.Logic;
 import ch.epfl.cs107.play.window.Button;
 import ch.epfl.cs107.play.window.Canvas;
 import ch.epfl.cs107.play.window.Keyboard;
+import ch.epfl.cs107.play.game.rpg.Inventory;;
 
-
-public class ARPGPlayer extends Player{/////Added impelement
+public class ARPGPlayer extends Player implements Inventory.Holder{/////Added impelement
 	
 	
 	private enum State{
@@ -60,6 +61,12 @@ public class ARPGPlayer extends Player{/////Added impelement
 	//////////////////
 	private float health;
 	private final static float MAX_HEALTH=6;
+
+
+	private boolean isInShop;
+	
+	private boolean wantsToBuy;
+	private boolean wantsToSell;
 	
 	
 	private class ARPGPlayerHandler implements ARPGInteractionVisitor{
@@ -71,6 +78,9 @@ public class ARPGPlayer extends Player{/////Added impelement
 				inventory.addMoney(50);
 			if(entity instanceof CastleKey) {
 				inventory.addItem(((CastleKey)entity).item);
+			}
+			if(entity instanceof Staff) {
+				inventory.addItem(((Staff)entity).item);
 			}
 			getOwnerArea().unregisterActor(entity);
 				
@@ -155,18 +165,20 @@ public class ARPGPlayer extends Player{/////Added impelement
 		bowHitAnimations=RPGSprite.createAnimations(ANIMATION_DURATION/2, sprites,false);
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////		
 		
-		inventory= new ARPGInventory(1000);
+		inventory= new ARPGInventory(1000,this);
 		inventory.addMoney(10);
-		inventory.addItem(ARPGItem.ARROW,10);
-		inventory.addItem(ARPGItem.BOMB,3);
-		inventory.addItem(ARPGItem.STAFF);
+		//inventory.addItem(ARPGItem.ARROW,10);
+		//inventory.addItem(ARPGItem.BOMB,3);
+		//inventory.addItem(ARPGItem.STAFF);
 		inventory.addItem(ARPGItem.SWORD);
-		inventory.addItem(ARPGItem.BOW);
+		//inventory.addItem(ARPGItem.BOW);
 		status=new ARPGPlayerStatusGUI();
 		status.setItem(ARPGItem.SWORD);
 		currentState = State.IDLE;
 		isInventoryShown=false;
-
+		isInShop=false; 
+		wantsToBuy=false;
+		wantsToSell=false; 
 		
 		
 		///////////////////////////////////////////////////////////
@@ -178,6 +190,8 @@ public class ARPGPlayer extends Player{/////Added impelement
 	@Override
 	public void update(float deltaTime) {
 		super.update(deltaTime);
+		wantsToBuy=false; 
+		wantsToSell=false; 
 		//System.out.println(getCurrentMainCellCoordinates());
 		updateItem();
 		status.setHealth(health);
@@ -272,16 +286,46 @@ public class ARPGPlayer extends Player{/////Added impelement
 		if(keySpace.isReleased()) {
 			useItem();
 		}
-		
 		Button keyO = keyboard.get(Keyboard.O);
 		if(keyO.isReleased()) {
 			showInventory(!isInventoryShown);
 		}
 		
-	}
-    private void showInventory(boolean bool) {
-		isInventoryShown = bool; 
+		Button keyE = keyboard.get(Keyboard.E);
+		if(keyE.isReleased()) {
+			isInShop = true; 
+		}
 		
+		Button keyESC = keyboard.get(Keyboard.ESC);
+		if(keyESC.isReleased()) {
+			isInShop = false; 
+		}
+		if(isInShop) {
+				Button keyB = keyboard.get(Keyboard.B);
+				if(keyB.isReleased()) {
+					wantsToBuy = true; 
+				}
+				
+				Button keyS = keyboard.get(Keyboard.S);
+				if(keyS.isReleased()) {
+					wantsToSell = true; 
+					
+				}
+		}
+		
+		
+	}
+	
+	@Override
+    public void showInventory(boolean bool) {
+		isInventoryShown = bool; 
+	//	isInShop = inShop;
+		
+	}
+	
+	
+	public boolean getIsInShop() {
+		return isInShop; 
 	}
     /**
      * Max health getter
@@ -432,6 +476,45 @@ public class ARPGPlayer extends Player{/////Added impelement
 		return inventory.addItem(item);
 	}
 	
+	@Override
+	public String getName() {
+		// TODO Auto-generated method stub
+		return "ARPGPlayer";
+	}
+
+
+	@Override
+	public boolean sell (InventoryItem item) {
+		if(!inventory.contains(item))
+			return false ; 
+		else {
+		    inventory.removeItem(item);
+		    inventory.addMoney(item.getPrice());
+		    return true;
+		}
+	}
+	
+	@Override 
+	public boolean  buy(InventoryItem item) {
+		if(inventory.getMoney()<item.getPrice()) {
+			return false ; 
+		}
+		else {
+			inventory.addItem(item); 
+			inventory.addMoney(-item.getPrice());
+			return true; 
+		}
+	}
+	public boolean getWantsToBuy() {
+		return wantsToBuy;
+	}
+	
+	public boolean getWantsToSell() {
+		return wantsToSell;
+	}
+	public ARPGItem getCurrentItem() {
+		return currentItem; 
+	}
 	
 	
 

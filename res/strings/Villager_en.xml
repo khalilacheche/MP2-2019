@@ -15,4 +15,6 @@
     <string name="inspect_forcerock">Cette pierre semble pouvoir se déplacer. </string>
     <string name="heal_text_1">Bonjour, bienvenu au centre Pokémon ! Nous allons soigner vos icmons, veuillez patientez un instant</string>
     <string name="heal_text_2">Merci de votre patience, vos icmons ont retrouvé la forme ! A bientôt</string>
+    <string name="sell_text_1">Bonjour, que puis-je faire pour vous ? Cliquez sur E pour shopper</string>
+    
 </strings>
