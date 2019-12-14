@@ -27,7 +27,7 @@ public class Arrow extends Projectile {
 		@Override
 		public void interactWith(ARPGMonster monster) {
 			finishRun();
-			monster.receiveAttack(attack, 0.5f);
+			monster.receiveAttack(attack, 0.1f);
 		}
 		@Override
 		public void interactWith(Bomb bomb) {

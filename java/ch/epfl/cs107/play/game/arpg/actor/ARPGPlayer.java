@@ -14,6 +14,7 @@ import ch.epfl.cs107.play.game.arpg.handler.ARPGInteractionVisitor;
 import ch.epfl.cs107.play.game.rpg.actor.Door;
 import ch.epfl.cs107.play.game.arpg.ARPGItem;
 import ch.epfl.cs107.play.game.arpg.ARPGPlayerStatusGUI;
+import ch.epfl.cs107.play.game.arpg.DeathScreenGUI;
 import ch.epfl.cs107.play.game.arpg.area.ARPGArea;
 import ch.epfl.cs107.play.game.rpg.actor.Player;
 import ch.epfl.cs107.play.game.rpg.actor.RPGSprite;
@@ -50,12 +51,18 @@ public class ARPGPlayer extends Player implements Inventory.Holder{
 	private ARPGItem currentItem;
 	private State currentState;
 	private boolean isInventoryShown;
+	private DeathScreenGUI deathScreen= new DeathScreenGUI(); 
+	public boolean wantsRestart=false; 
+	
+
 	
 	private float health;
 	private boolean isInShop;
 	private final static float MAX_HEALTH=6;
 	private boolean wantsToBuy;
 	private boolean wantsToSell;
+	public boolean responded=false;
+	
 	
 	private class ARPGPlayerHandler implements ARPGInteractionVisitor{
 		
@@ -141,9 +148,15 @@ public class ARPGPlayer extends Player implements Inventory.Holder{
 		inventory.addMoney(10);
 		inventory.addItem(ARPGItem.ARROW,10);
 		inventory.addItem(ARPGItem.BOMB,3);
+<<<<<<< Updated upstream
 		inventory.addItem(ARPGItem.BOW);
 		inventory.addItem(ARPGItem.STAFF);
 		inventory.addItem(ARPGItem.SWORD);
+=======
+		inventory.addItem(ARPGItem.STAFF);
+		inventory.addItem(ARPGItem.SWORD);
+		inventory.addItem(ARPGItem.BOW);
+>>>>>>> Stashed changes
 		status=new ARPGPlayerStatusGUI();
 		status.setItem(ARPGItem.SWORD);
 		currentState = State.IDLE;
@@ -157,6 +170,7 @@ public class ARPGPlayer extends Player implements Inventory.Holder{
 	@Override
 	public void update(float deltaTime) {
 		super.update(deltaTime);
+	
 		wantsToBuy=false; 
 		wantsToSell=false; 
 		//System.out.println(getCurrentMainCellCoordinates());
@@ -208,8 +222,16 @@ public class ARPGPlayer extends Player implements Inventory.Holder{
 			currentAnimation.update(deltaTime);
 		
 		
-
-		
+		if(isDead()) {
+			if(this.getOwnerArea().getKeyboard().get(Keyboard.R).isReleased()) {
+                wantsRestart=true; 
+                responded=true; 
+			}
+			if(this.getOwnerArea().getKeyboard().get(Keyboard.N).isReleased()) {
+				wantsRestart=false; 
+				responded=true; 
+			}
+		}
 	}
 	
 	
@@ -435,6 +457,8 @@ public class ARPGPlayer extends Player implements Inventory.Holder{
 			//System.out.println("show inventory");
 			this.inventory.draw(canvas);
 		}
+		if(isDead())
+			this.deathScreen.draw(canvas);
 		currentAnimation.draw(canvas);
 		status.draw(canvas);
 		
@@ -480,5 +504,22 @@ public class ARPGPlayer extends Player implements Inventory.Holder{
 	public ARPGItem getCurrentItem() {
 		return currentItem; 
 	}
+<<<<<<< Updated upstream
+=======
+	
+	
+	public boolean  isDead() {
+		return health<=0; 
+	}
+
+
+	
+	
+			
+	
+	
+
+
+>>>>>>> Stashed changes
 
 }

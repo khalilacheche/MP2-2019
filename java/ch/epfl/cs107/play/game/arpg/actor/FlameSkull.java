@@ -78,6 +78,8 @@ public class FlameSkull extends ARPGMonster implements FlyableEntity {
 		idleAnimations=RPGSprite.createAnimations(ANIMATION_DURATION, sprites);
 		handler= new FlameSkullHandler();
 		health=1;
+	 	this.healthBar.setAnchor(new Vector(-1.f*this.health/MAX_HEALTH,1.5f));
+
 		
 		lifeTime =MIN_LIFE_TIME+RandomGenerator.getInstance().nextFloat()*(MAX_LIFE_TIME-MIN_LIFE_TIME);
 		this.isImmortal=isImmortal;
@@ -173,6 +175,8 @@ public class FlameSkull extends ARPGMonster implements FlyableEntity {
 			super.draw(canvas);
 		else
 			currentAnimation.draw(canvas);
+		
+		healthBar.draw(canvas);
 	}
 
 

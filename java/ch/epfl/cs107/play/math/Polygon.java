@@ -33,6 +33,8 @@ public final class Polygon extends Shape {
 	public Polygon(Vector... points) {
 		this(Arrays.asList(points));
 	}
+	
+	
 
 	/**
 	 * Creates a new polygon.
@@ -238,5 +240,8 @@ public final class Polygon extends Shape {
 		path.closePath();
 		return path;
     }
+    
+    
+    
     
 }

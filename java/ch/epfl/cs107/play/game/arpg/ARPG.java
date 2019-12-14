@@ -14,6 +14,7 @@ import ch.epfl.cs107.play.game.arpg.area.Village;
 import ch.epfl.cs107.play.game.rpg.RPG;
 import ch.epfl.cs107.play.io.FileSystem;
 import ch.epfl.cs107.play.math.DiscreteCoordinates;
+import ch.epfl.cs107.play.window.Keyboard;
 import ch.epfl.cs107.play.window.Window;
 
 public class ARPG extends RPG {
@@ -51,7 +52,19 @@ public class ARPG extends RPG {
 	
 	@Override
 	public void update(float deltaTime) {
+	     if(((ARPGPlayer)(this.getPlayer())).responded&&((ARPGPlayer)(this.getPlayer())).wantsRestart) 
+			this.begin(this.getWindow(), this.getFileSystem()); 
+		else if(((ARPGPlayer)(this.getPlayer())).responded&&!((ARPGPlayer)(this.getPlayer())).wantsRestart)
+			this.end();
+			
+		
+	     
 		super.update(deltaTime);
 	}
+	
+	 @Override
+	    public void end() {
+		 System.exit(0);
+	    }
 
 }

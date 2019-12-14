@@ -3,15 +3,18 @@ package ch.epfl.cs107.play.game.arpg.actor;
 import java.util.Collections;
 import java.util.List;
 
+import ch.epfl.cs107.play.game.actor.ImageGraphics;
 import ch.epfl.cs107.play.game.areagame.Area;
 import ch.epfl.cs107.play.game.areagame.actor.Animation;
 import ch.epfl.cs107.play.game.areagame.actor.Interactor;
 import ch.epfl.cs107.play.game.areagame.actor.MovableAreaEntity;
 import ch.epfl.cs107.play.game.areagame.actor.Orientation;
 import ch.epfl.cs107.play.game.areagame.actor.Sprite;
+import ch.epfl.cs107.play.game.areagame.io.ResourcePath;
 import ch.epfl.cs107.play.game.rpg.actor.RPGSprite;
 import ch.epfl.cs107.play.math.DiscreteCoordinates;
 import ch.epfl.cs107.play.math.RegionOfInterest;
+import ch.epfl.cs107.play.math.Vector;
 import ch.epfl.cs107.play.window.Canvas;
 
 public abstract class ARPGMonster extends MovableAreaEntity implements Interactor{
@@ -24,6 +27,9 @@ public abstract class ARPGMonster extends MovableAreaEntity implements Interacto
 	protected Animation deathAnimation;
 	protected float health;
 	List<ARPGAttackType> vulnerabilities;
+	protected ImageGraphics healthBar; 
+	List<Vector> points;
+	
 	
 	
     /**
@@ -44,6 +50,18 @@ public abstract class ARPGMonster extends MovableAreaEntity implements Interacto
 		
 		deathAnimation = new Animation(2,sprites,false);
 		vulnerabilities = vuln;
+//	//	float  i =1.5f;
+//		points = new ArrayList<>();
+//		points.add(new Vector(-1.25f,1.5f));
+//		points.add(new Vector(-1.25f,1.75f));
+//		points.add(new Vector(2.25f,1.75f));
+//		points.add(new Vector(2.25f,1.5f));
+//		healthBar=new ShapeGraphics(new Polygon(points),Color.green,Color.black, 0.05f,1f,1002f);
+//		healthBar.setParent(this);
+//		this.healthBar.setRelativeTransform(Transform.I);
+		healthBar = new ImageGraphics(ResourcePath.getSprite("zelda/monsterHealth"),3.f,0.5f,new RegionOfInterest(2,4,150,36));
+		healthBar.setParent(this);
+		//this.healthBar.setAnchor(new Vector(-1.f,1.5f));
 	}
 	
 	protected void dropLoot(ARPGCollectableAreaEntity item) {
@@ -98,9 +116,12 @@ public abstract class ARPGMonster extends MovableAreaEntity implements Interacto
      * @param: damage (float): The damage amount
      */
 	protected void receiveAttack(ARPGAttackType attack, float damage) {
+		
 		if(vulnerabilities.contains(attack)) {
 			addHealth(-damage);
-			
+	 	healthBar.setWidth(this.health*3/MAX_HEALTH);
+	 	this.healthBar.setAnchor(new Vector(-1.f*this.health/MAX_HEALTH,healthBar.getAnchor().y));
+	 	
 		}
 	}
 	@Override
