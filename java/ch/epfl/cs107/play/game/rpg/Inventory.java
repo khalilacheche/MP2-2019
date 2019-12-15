@@ -3,7 +3,6 @@ package ch.epfl.cs107.play.game.rpg;
 import java.util.HashMap;
 import java.util.Map;
 
-import ch.epfl.cs107.play.game.Updatable;
 import ch.epfl.cs107.play.game.actor.Graphics;
 import ch.epfl.cs107.play.window.Canvas;
 

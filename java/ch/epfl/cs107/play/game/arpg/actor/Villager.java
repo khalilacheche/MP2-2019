@@ -32,15 +32,13 @@ public class Villager extends MovableAreaEntity implements Interactor{
 	
 	private boolean drawTip;
 
-private class VillagerHandler implements ARPGInteractionVisitor{
+	private class VillagerHandler implements ARPGInteractionVisitor{
 
 		@Override
 		public void interactWith(ARPGPlayer player) {
-			
-			drawTip=true; 
-				
-			}
+			drawTip=true; 		
 		}
+	}
 
 	
 	
@@ -64,19 +62,7 @@ private class VillagerHandler implements ARPGInteractionVisitor{
 		handler=new VillagerHandler(); 
 	}
 	public Villager(Area area, Orientation orientation, DiscreteCoordinates position,String key) {
-		super(area, orientation, position);
-		idleAnimations = RPGSprite.createAnimations(ANIMATION_DURATION, 
-				RPGSprite.extractSprites("zelda/character",
-				4, 1, 2,
-				this , 16, 32,new Orientation[] {Orientation.UP ,
-				Orientation.RIGHT , Orientation.DOWN, Orientation.LEFT})
-		);
-		this.key=key;
-		this.canMove=true;
-		text=new TextGraphics("press T to talk",0.5f,Color.black);
-		text.setParent(this);
-		drawTip=false; 
-		handler=new VillagerHandler(); 
+		this(area,orientation,position,key,true);
 	}
 	
 	

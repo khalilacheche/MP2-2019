@@ -21,7 +21,6 @@ import ch.epfl.cs107.play.io.XMLTexts;
 import ch.epfl.cs107.play.math.DiscreteCoordinates;
 import ch.epfl.cs107.play.math.RegionOfInterest;
 import ch.epfl.cs107.play.math.Vector;
-import ch.epfl.cs107.play.window.Button;
 import ch.epfl.cs107.play.window.Canvas;
 import ch.epfl.cs107.play.window.Keyboard;
 
@@ -131,18 +130,17 @@ public class ShopMan extends AreaEntity implements Interactor, Inventory.Holder 
 
     @Override
     public void update(float deltaTime) {
-        updateItem();
-        Keyboard keyboard = this.getOwnerArea().getKeyboard();
-        Button keyA = keyboard.get(Keyboard.A);
-        if (keyA.isReleased()) {
-            if ((keyboard.get(Keyboard.SHIFT)).isDown() == true)
-                itemIndex++;
-            else
-                itemIndex--;
-        }
-        showDialog = false;
-
-        super.update(deltaTime);
+	    updateItem();
+	    Keyboard keyboard = this.getOwnerArea().getKeyboard();
+	    if (keyboard.get(Keyboard.A).isReleased()) {
+	        if ((keyboard.get(Keyboard.SHIFT)).isDown() == true)
+	            itemIndex++;
+	        else
+	            itemIndex--;
+	    }
+	    showDialog = false;
+	
+	    super.update(deltaTime);
     }
 
     @Override
@@ -192,6 +190,7 @@ public class ShopMan extends AreaEntity implements Interactor, Inventory.Holder 
             } else {
                 showInventory(false);
                 player.showInventory(false);
+                showDialog=true;
             }
 
         }

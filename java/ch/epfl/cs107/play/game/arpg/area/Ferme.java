@@ -30,7 +30,7 @@ public class Ferme extends ARPGArea{
 		registerActor(new Foreground(this));
 		registerActor(new Rock(this,new DiscreteCoordinates(13,0)));
 		registerActor(new Rock(this,new DiscreteCoordinates(14,0)));
-		registerActor(new Villager(this,Orientation.UP,new DiscreteCoordinates(6,9),"1",false));
+		registerActor(new Villager(this,Orientation.UP,new DiscreteCoordinates(6,9),"initial",false));
 		
 		
 	}

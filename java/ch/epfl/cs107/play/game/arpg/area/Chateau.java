@@ -3,6 +3,7 @@ package ch.epfl.cs107.play.game.arpg.area;
 import ch.epfl.cs107.play.game.areagame.actor.Background;
 import ch.epfl.cs107.play.game.areagame.actor.Foreground;
 import ch.epfl.cs107.play.game.areagame.actor.Orientation;
+import ch.epfl.cs107.play.game.arpg.actor.King;
 import ch.epfl.cs107.play.game.rpg.actor.Door;
 import ch.epfl.cs107.play.math.DiscreteCoordinates;
 import ch.epfl.cs107.play.signal.logic.Logic;
@@ -21,6 +22,7 @@ public class Chateau extends ARPGArea {
 		registerActor(doors[0]);
 		registerActor(new Background (this)); 
 		registerActor(new Foreground(this));
+		registerActor(new King(this, new DiscreteCoordinates(7,12)));
 		
 	}
 

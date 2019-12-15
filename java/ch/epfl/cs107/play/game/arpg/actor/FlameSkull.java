@@ -24,7 +24,7 @@ public class FlameSkull extends ARPGMonster implements FlyableEntity {
 			ARPGAttackType.MAGIC,ARPGAttackType.PHYSICAL));
 	private final int ANIMATION_DURATION=8;
 	private final static float MAX_HEALTH=1;
-	private final static float DAMAGE=1;
+	private final static float DAMAGE=0.1f;
 	private FlameSkullHandler handler;
 	private Animation currentAnimation;
 	private Animation[] idleAnimations;

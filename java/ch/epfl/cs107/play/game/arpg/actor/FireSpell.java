@@ -36,7 +36,7 @@ public class FireSpell extends AreaEntity implements Interactor {
 	class FireHandler implements ARPGInteractionVisitor {
 		@Override
 		public void interactWith(ARPGPlayer player) {
-			player.addHealth(-force);
+			player.addHealth(-force/10);
 		}
 		@Override
 		public void interactWith(ARPGMonster monster) {

@@ -41,7 +41,7 @@ public class LogMonster extends ARPGMonster {
 	private static final int FACING_CELLS=8;
 	private final static int MAX_INACTION_TIME=24;
 	private static final double PROBABILITY_OF_INACTIVE = 0.1;
-	private static float PLAYER_DAMAGE=2;
+	private static float PLAYER_DAMAGE=0.5f;
 	private static float MAX_HEALTH=1;
 	private static float MIN_SLEEPING_DURATION=4;
 	private static float MAX_SLEEPING_DURATION=7;

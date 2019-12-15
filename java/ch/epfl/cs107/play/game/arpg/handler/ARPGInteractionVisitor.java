@@ -11,6 +11,7 @@ import ch.epfl.cs107.play.game.arpg.actor.Chest;
 import ch.epfl.cs107.play.game.arpg.actor.DialogTrigger;
 import ch.epfl.cs107.play.game.arpg.actor.FireSpell;
 import ch.epfl.cs107.play.game.arpg.actor.Grass;
+import ch.epfl.cs107.play.game.arpg.actor.King;
 import ch.epfl.cs107.play.game.arpg.actor.Orb;
 import ch.epfl.cs107.play.game.arpg.actor.Rock;
 import ch.epfl.cs107.play.game.arpg.actor.ShopMan;
@@ -136,6 +137,11 @@ public interface ARPGInteractionVisitor extends RPGInteractionVisitor {
 
 
 	default void interactWith(ShopMan shop) {
+		
+	}
+
+
+	default void interactWith(King king) {
 		
 	}
 }

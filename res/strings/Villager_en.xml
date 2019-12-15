@@ -1,10 +1,10 @@
 <strings id="villager_en">
-    <string name="0">Our king is in danger, you have to save him!
-      Go to castle now!
-    </string>
-    <string name="1">You have to get a magic weapon!
-      Someone told me that there used to be a wizard living in that house a the other side of the river
-      If you can find an arrow to shoot that orb, you may bekldf
+  <string name = "empty"></string>
+    <string name="initial">Our king is in grave danger!
+      Some Evil creature took him as hostage in the castle.
+      You are the only one who can save him!
+      You have to find a way to defeat the monster
+      the fate of our kingdom is in your hands!
     </string>
     <string name ="idle_1">What a beautiful day!</string>
     <string name ="idle_2">I am so worried about our king, I haven't seen him for a while</string>
@@ -26,5 +26,7 @@
     <string name="found_castle_key">You found a <strong>Castle Key</strong>, you can now open the castle door!</string>
     <string name="found_chest_key">You found a <strong>Chest Key</strong>, you can now open the chest!</string>
     <string name="sell_text_1">Hello! What can I do for you?
-      Press E to start shopping</string>
+      Press T to start shopping</string>
+    <string name="won">Thank you so much for saving me from that evil creature!
+    I will offer you the hand of my daughter Zelda as a reward!</string>
 </strings>

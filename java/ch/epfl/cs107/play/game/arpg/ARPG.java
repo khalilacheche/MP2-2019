@@ -40,7 +40,7 @@ public class ARPG extends RPG {
 		if(super.begin(window, fileSystem)) {
 			createAreas();
 			setCurrentArea("Zelda/Ferme",true);
-			initPlayer(new ARPGPlayer(getCurrentArea(), Orientation.RIGHT, new DiscreteCoordinates(6,10)));
+			initPlayer(new ARPGPlayer(getCurrentArea(), Orientation.DOWN, new DiscreteCoordinates(6,10)));
 			
 			return true;
 		}
