@@ -174,10 +174,10 @@ public class FlameSkull extends ARPGMonster implements FlyableEntity {
 	public void draw(Canvas canvas) {
 		if(isDead())
 			super.draw(canvas);
-		else
-			currentAnimation.draw(canvas);
-		
-		healthBar.draw(canvas);
+		else {
+			this.currentAnimation.draw(canvas);
+		    healthBar.draw(canvas);
+		}
 
 	}
 

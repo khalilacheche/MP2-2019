@@ -151,6 +151,8 @@ public class ARPGInventory extends Inventory{
 	public ARPGItem getItem(int index) {
 		Set<InventoryItem> inventoryItems = items.keySet();
 		Object[] intd = inventoryItems.toArray();
+		 if(intd.length==0)
+			 return null;
 		return (ARPGItem)intd[index%intd.length];
 	}
 	

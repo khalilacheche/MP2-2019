@@ -119,9 +119,10 @@ public abstract class ARPGMonster extends MovableAreaEntity implements Interacto
 		
 		if(vulnerabilities.contains(attack)) {
 			addHealth(-damage);
+		if(!isDead()) {
 	 	healthBar.setWidth(this.health*3/MAX_HEALTH);
 	 	this.healthBar.setAnchor(new Vector(-1.f*this.health/MAX_HEALTH,healthBar.getAnchor().y));
-	 	
+		}
 		}
 	}
 	@Override

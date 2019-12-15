@@ -18,6 +18,7 @@ import ch.epfl.cs107.play.game.arpg.actor.ARPGInventory;
 import ch.epfl.cs107.play.game.arpg.ARPGItem;
 import ch.epfl.cs107.play.game.arpg.ARPGPlayerStatusGUI;
 import ch.epfl.cs107.play.game.arpg.DeathScreenGUI;
+import ch.epfl.cs107.play.game.arpg.WinScreenGUI;
 import ch.epfl.cs107.play.game.arpg.area.ARPGArea;
 import ch.epfl.cs107.play.game.rpg.actor.Player;
 import ch.epfl.cs107.play.game.rpg.actor.RPGSprite;
@@ -57,6 +58,7 @@ public class ARPGPlayer extends Player implements Inventory.Holder{
 	
 	private ARPGPlayerStatusGUI status;
 	private DeathScreenGUI deathScreen; 
+	private WinScreenGUI winScreen;
 	private ARPGInventory inventory;
 	private ARPGPlayerHandler handler;
 	
@@ -233,13 +235,15 @@ public class ARPGPlayer extends Player implements Inventory.Holder{
 		bowHitAnimations=RPGSprite.createAnimations(ANIMATION_DURATION/2, sprites,false);
 		
 		inventory= new ARPGInventory(1000,this);
-		inventory.addMoney(10);
+		inventory.addMoney(1000);
 		//inventory.addItem(ARPGItem.ARROW,10);
 		//inventory.addItem(ARPGItem.BOMB,3);
 		//inventory.addItem(ARPGItem.STAFF);
 		//inventory.addItem(ARPGItem.BOW);
+		inventory.addItem(ARPGItem.CASTLEKEY);
 		inventory.addItem(ARPGItem.SWORD);
 		deathScreen= new DeathScreenGUI();
+		winScreen=new WinScreenGUI();
 		status=new ARPGPlayerStatusGUI();
 		status.setItem(ARPGItem.SWORD);
 		currentAnimation=idleAnimations[getOrientation().ordinal()];
@@ -292,6 +296,9 @@ public class ARPGPlayer extends Player implements Inventory.Holder{
 		status.draw(canvas);
 		if(isTalking)
 			dialog.draw(canvas);
+		if(hasWon()) {
+			winScreen.draw(canvas);
+		}
 		
 	}
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////	
@@ -393,6 +400,8 @@ public class ARPGPlayer extends Player implements Inventory.Holder{
 
 	@Override
 	public boolean sell (InventoryItem item) {
+		if(((ARPGItem)item)==ARPGItem.SWORD)
+			return false; 
 		if(!inventory.contains(item))
 			return false ; 
 		else {
@@ -404,6 +413,8 @@ public class ARPGPlayer extends Player implements Inventory.Holder{
 	
 	@Override 
 	public boolean  buy(InventoryItem item) {
+		if(item==null)
+			return false; 
 		if(inventory.getMoney()<item.getPrice()) {
 			return false ; 
 		}
@@ -569,7 +580,14 @@ public class ARPGPlayer extends Player implements Inventory.Holder{
 				}
 			}
 		}
-		if(isDead()) {
+		
+		restartGameHandler(); 
+		
+				
+	}
+	
+	private void restartGameHandler() {
+		if(isDead()|| hasWon()) {
 			if(this.getOwnerArea().getKeyboard().get(Keyboard.R).isReleased()) {
                 wantsRestart=true; 
                 responded=true; 
@@ -579,7 +597,6 @@ public class ARPGPlayer extends Player implements Inventory.Holder{
 				responded=true; 
 			}
 		}
-				
 	}
 	
 	@Override

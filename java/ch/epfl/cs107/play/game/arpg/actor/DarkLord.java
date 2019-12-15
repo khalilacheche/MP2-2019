@@ -204,10 +204,10 @@ public class DarkLord extends ARPGMonster {
 		if(isDead()) {
 			super.draw(canvas);
 		}
-		else
+		else {
 			this.currentAnimation.draw(canvas);
-		
-		healthBar.draw(canvas);
+		    healthBar.draw(canvas);
+		}
 
 		
 	}

@@ -182,8 +182,8 @@ public class ShopMan extends AreaEntity implements Interactor, Inventory.Holder 
 
                 }
                 if (player.getWantsToSell()) {
-                    if (buy(player.getCurrentItem()))
-                        player.sell(player.getCurrentItem());
+                    if (player.sell(player.getCurrentItem()))
+                          buy(player.getCurrentItem());
 
                 }
 

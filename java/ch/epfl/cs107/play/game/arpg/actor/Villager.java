@@ -146,7 +146,7 @@ public class Villager extends MovableAreaEntity implements Interactor{
 		List<DiscreteCoordinates> list = new ArrayList<>();
 		list.add(getCurrentMainCellCoordinates().right()) ;
 		list.add(getCurrentMainCellCoordinates().left());
-		list.add(getCurrentMainCellCoordinates().up()) ;
+		list.add(getCurrentMainCellCoordinates().up());
 		list.add(getCurrentMainCellCoordinates().down());
 		return list; 
 		
