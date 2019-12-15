@@ -50,18 +50,8 @@ public abstract class ARPGMonster extends MovableAreaEntity implements Interacto
 		
 		deathAnimation = new Animation(2,sprites,false);
 		vulnerabilities = vuln;
-//	//	float  i =1.5f;
-//		points = new ArrayList<>();
-//		points.add(new Vector(-1.25f,1.5f));
-//		points.add(new Vector(-1.25f,1.75f));
-//		points.add(new Vector(2.25f,1.75f));
-//		points.add(new Vector(2.25f,1.5f));
-//		healthBar=new ShapeGraphics(new Polygon(points),Color.green,Color.black, 0.05f,1f,1002f);
-//		healthBar.setParent(this);
-//		this.healthBar.setRelativeTransform(Transform.I);
 		healthBar = new ImageGraphics(ResourcePath.getSprite("zelda/monsterHealth"),3.f,0.5f,new RegionOfInterest(2,4,150,36));
 		healthBar.setParent(this);
-		//this.healthBar.setAnchor(new Vector(-1.f,1.5f));
 	}
 	
 	protected void dropLoot(ARPGCollectableAreaEntity item) {
@@ -72,38 +62,6 @@ public abstract class ARPGMonster extends MovableAreaEntity implements Interacto
 		return health<=0;
 	}
 	
-    /**
-     * Get this monster's current occupying cells coordinates
-     * @return Returns by default the main cell occupied by monster
-     */
-	@Override
-	public List<DiscreteCoordinates> getCurrentCells() {
-		return Collections.singletonList(getCurrentMainCellCoordinates());
-	}
-    /**
-     * Get this monster's current field of view cells coordinates
-     * @return Returns by default the cell facing the monster's orientation
-     */
-	@Override
-	public List<DiscreteCoordinates> getFieldOfViewCells() {
-		return Collections.singletonList
-				(getCurrentMainCellCoordinates().jump(getOrientation().toVector()));
-	}
-	
-	@Override
-	public boolean takeCellSpace() {
-		return !isDead();
-	}	
-	
-	@Override
-	public boolean isCellInteractable() {
-		return true;
-	}
-
-	@Override
-	public boolean isViewInteractable() {
-		return true;
-	}
     /** Add the health amount to the monster
      * @param: amount (float): The damage amount: Can be postive for adding health, negative for removing
      */
@@ -119,10 +77,10 @@ public abstract class ARPGMonster extends MovableAreaEntity implements Interacto
 		
 		if(vulnerabilities.contains(attack)) {
 			addHealth(-damage);
-		if(!isDead()) {
-	 	healthBar.setWidth(this.health*3/MAX_HEALTH);
-	 	this.healthBar.setAnchor(new Vector(-1.f*this.health/MAX_HEALTH,healthBar.getAnchor().y));
-		}
+			if(!isDead()) {
+				healthBar.setWidth(this.health*3/MAX_HEALTH);
+		 		this.healthBar.setAnchor(new Vector(-1.f*this.health/MAX_HEALTH,healthBar.getAnchor().y));
+			}
 		}
 	}
 	@Override
@@ -133,4 +91,36 @@ public abstract class ARPGMonster extends MovableAreaEntity implements Interacto
 	
 	
 
+	/**
+	 * Get this monster's current occupying cells coordinates
+	 * @return Returns by default the main cell occupied by monster
+	 */
+	@Override
+	public List<DiscreteCoordinates> getCurrentCells() {
+		return Collections.singletonList(getCurrentMainCellCoordinates());
+	}
+	/**
+	 * Get this monster's current field of view cells coordinates
+	 * @return Returns by default the cell facing the monster's orientation
+	 */
+	@Override
+	public List<DiscreteCoordinates> getFieldOfViewCells() {
+		return Collections.singletonList
+				(getCurrentMainCellCoordinates().jump(getOrientation().toVector()));
+	}
+	
+	@Override
+	public boolean takeCellSpace() {
+		return !isDead();
+	}	
+	
+	@Override
+	public boolean isCellInteractable() {
+		return true;
+	}
+	
+	@Override
+	public boolean isViewInteractable() {
+		return true;
+	}
 }

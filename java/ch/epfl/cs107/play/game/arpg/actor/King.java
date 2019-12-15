@@ -28,7 +28,7 @@ public class King extends AreaEntity implements Interactor,Logic{
 	private TextGraphics text;
 	
 	private class KingHandler implements ARPGInteractionVisitor {
-		@Override
+		@Override 
 		public void interactWith(ARPGPlayer player) {
 			showTip=true;
 			if(player.isTalking()&&!hasTalked)

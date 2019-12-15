@@ -45,7 +45,6 @@ public class Bomb extends AreaEntity implements Interactor{
 			if(!hurt) {
 				player.addHealth(-1f);
 				hurt=true;
-				System.out.println("ouch");
 				
 			}
 		}

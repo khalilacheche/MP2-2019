@@ -23,7 +23,6 @@ public class MagicWaterProjectile extends Projectile {
 		public void interactWith(ARPGMonster monster) {
 			finishRun();
 			monster.receiveAttack(attack, 0.5f);
-				System.out.println(monster +" "+monster.health);
 		}
 		@Override
 		public void interactWith(FireSpell spell) {

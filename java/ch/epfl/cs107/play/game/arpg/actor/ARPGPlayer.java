@@ -150,8 +150,8 @@ public class ARPGPlayer extends Player implements Inventory.Holder{
 		
 		@Override
 		public void interactWith(Chest chest) {
-			if(currentInteraction == InteractionType.USEKEY) {
-				if(currentItem==ARPGItem.CHESTKEY) {
+			if(currentInteraction == InteractionType.USEKEY) { //If the player is using key on the chest
+				if(currentItem==ARPGItem.CHESTKEY) {//If he's using the chest key, we open the chest, take what's inside and remove the key from player 
 					startDialog("found_bow");
 					addItem(chest.takeContent());
 					inventory.removeItem(ARPGItem.CHESTKEY);
@@ -233,29 +233,38 @@ public class ARPGPlayer extends Player implements Inventory.Holder{
 				this , 32, 32, new Vector(-0.5f, 0),new Orientation[] {Orientation.DOWN ,
 				Orientation.UP , Orientation.RIGHT, Orientation.LEFT});
 		bowHitAnimations=RPGSprite.createAnimations(ANIMATION_DURATION/2, sprites,false);
+
+		dialog = new Dialog(XMLTexts.getText("empty"),"zelda/dialog",getOwnerArea());
+		currentAnimation=idleAnimations[getOrientation().ordinal()];
 		
 		inventory= new ARPGInventory(1000,this);
-		inventory.addMoney(1000);
+
+		inventory.addItem(ARPGItem.CASTLEKEY);
+		inventory.addItem(ARPGItem.CHESTKEY);
+		inventory.addItem(ARPGItem.BOMB,3);
 		//inventory.addItem(ARPGItem.ARROW,10);
-		//inventory.addItem(ARPGItem.BOMB,3);
 		//inventory.addItem(ARPGItem.STAFF);
 		//inventory.addItem(ARPGItem.BOW);
-		inventory.addItem(ARPGItem.CASTLEKEY);
+		
+		
+		
+		inventory.addMoney(10);
 		inventory.addItem(ARPGItem.SWORD);
+		
 		deathScreen= new DeathScreenGUI();
-		winScreen=new WinScreenGUI();
 		status=new ARPGPlayerStatusGUI();
 		status.setItem(ARPGItem.SWORD);
-		currentAnimation=idleAnimations[getOrientation().ordinal()];
+		winScreen=new WinScreenGUI();
+		
 		currentState = State.IDLE;
+		
 		isInventoryShown=false;
+		signal = Logic.FALSE;
 		wantsToSell=false;		
 		wantsToBuy=false;
 		isTalking=false;
 		isInShop=false; 
 		canMove=true;
-		signal = Logic.FALSE;
-		dialog = new Dialog(XMLTexts.getText("empty"),"zelda/dialog",getOwnerArea());
 	}
 	
 	
@@ -267,15 +276,24 @@ public class ARPGPlayer extends Player implements Inventory.Holder{
 		super.update(deltaTime);
 		wantsToBuy=false; 
 		wantsToSell=false; 
+		
+		
+		//The player wantsViewInteraction only for a frame(when we press a button corresponding to interaction),
+		//so we have to pulldown the wantsViewInteraction field
 		resetViewInteraction();
+		
+		//the player cant't move if he's in a dialog or is shopping 
 		canMove=canMove&&!isInShop&&!isTalking;
 		
-		//System.out.println(getCurrentMainCellCoordinates());
 		updateItem();
+		
+		//Update the fields for inventory
 		status.setHealth(health);
 		status.setMoney(inventory.getMoney());
 		
 		currentAnimation.update(deltaTime);
+		
+		
 		handlePlayerState(deltaTime);
 		
 
@@ -285,6 +303,7 @@ public class ARPGPlayer extends Player implements Inventory.Holder{
 
 		
 	}
+	
 	@Override
 	public void draw(Canvas canvas) {
 		if(isInventoryShown) {
@@ -307,41 +326,72 @@ public class ARPGPlayer extends Player implements Inventory.Holder{
 	
     /**
      * Max health getter
-     * @return (List of DiscreteCoordinates). The Player's Maximum Health
+     * @return (float). The Player's Maximum Health
      */
 	public static float getMaxHealth() {
 		return MAX_HEALTH;
 	}
 	
+    /**
+     * hasWon getter
+     * @return (boolean) returns true if the player has finished the game
+     */
 	protected boolean hasWon() {
 		return signal.isOn();
 	}
 	
+	/**
+     * isInshop getter
+     * @return (boolean) returns true if the player is shopping
+     */
 	public boolean getIsInShop() {
 		return isInShop; 
 	}
 	
+	/**
+     * player name getter
+     * @return (String) returns the name of the inventory holder
+     */
 	@Override
 	public String getName() {
 		return "ARPGPlayer";
 	}
 	
+	/**
+     * wantsToBuy getter
+     * @return (boolean) returns true if the player wants to buy something from the shop
+     */
 	public boolean getWantsToBuy() {
 		return wantsToBuy;
 	}
 	
+	/**
+     * wantsToSell getter
+     * @return (boolean) returns true if the player wants to sell something to the shop
+     */
 	public boolean getWantsToSell() {
 		return wantsToSell;
 	}
 	
+	/**
+     * currentItem getter
+     * @return (ARPGItem) returns the current item the player is holding
+     */
 	public ARPGItem getCurrentItem() {
 		return currentItem; 
 	}
 	
+	/**
+     * isTalking getter
+     * @return (boolean) returns true if the player is having a dialog
+     */
 	protected boolean isTalking() {
 		return isTalking;
 	}
-	
+	/**
+     * isDead getter
+     * @return (boolean) returns true if the player is dead
+     */
 	public boolean  isDead() {
 		return health<=0; 
 	}
@@ -361,7 +411,9 @@ public class ARPGPlayer extends Player implements Inventory.Holder{
 			health=0;
 	}
 
-
+	/** Use the currentItem
+     * 
+     */
 	private void useItem() {
 		switch(currentItem) {
 		case BOMB:
@@ -391,13 +443,19 @@ public class ARPGPlayer extends Player implements Inventory.Holder{
 		
 	}
 	
+	/** Adds an item to the inventory
+     * @param: item (ARPGItem): the item to add
+     */
 	protected boolean addItem(ARPGItem item) {
 		return inventory.addItem(item);
 	}
 	
 
 
-
+	/** If possible, removes item from inventory and add money equivalent to the price
+     * @param: item (InventoryItem): The item to sell
+     * @return (boolean) returns true if the transaction was successful
+     */
 	@Override
 	public boolean sell (InventoryItem item) {
 		if(((ARPGItem)item)==ARPGItem.SWORD)
@@ -410,7 +468,10 @@ public class ARPGPlayer extends Player implements Inventory.Holder{
 		    return true;
 		}
 	}
-	
+	/** If possible, add item to inventory and removes money equivalent to the price
+     * @param: item (InventoryItem): The item to buy
+     * @return (boolean) returns true if the transaction was successful
+     */
 	@Override 
 	public boolean  buy(InventoryItem item) {
 		if(item==null)
@@ -424,7 +485,9 @@ public class ARPGPlayer extends Player implements Inventory.Holder{
 			return true; 
 		}
 	}
-
+	/** Starts dialog
+     * @param: key (String): The key to extract the string from XMLFile
+     */
 	
 	protected void startDialog(String key) {
 		canMove=false;
@@ -435,30 +498,38 @@ public class ARPGPlayer extends Player implements Inventory.Holder{
 	
 
     /**
-     * Instanciates Arrow in the field view 
+     * Instanciates Arrow in the field of view 
      */
 	protected boolean throwArrow() {
 		Arrow arrow =new Arrow(getOwnerArea(),getOrientation(),getCurrentMainCellCoordinates().jump(getOrientation().toVector()));
+		//If the arrow can enter the area at those coordinates, we register it in the currentArea 
+		//(because of the conditional AND, that executes the other half of the operand only if the fist operand is true)
 		return ((ARPGArea)getOwnerArea()).canEnterAreaCells(arrow,((Interactable)arrow).getCurrentCells())&&getOwnerArea().registerActor(arrow);
 	}
 	
 	/**
-     * Instanciates MagicWaterProjectile in the field view 
+     * Instanciates MagicWaterProjectile in the field of view 
      */
 	protected boolean castWaterSpell() {
 		MagicWaterProjectile water =new MagicWaterProjectile(getOwnerArea(),getOrientation(),getCurrentMainCellCoordinates().jump(getOrientation().toVector()));
+		//If the water projectile can enter the area at those coordinates, we register it in the currentArea 
+		//(because of the conditional AND, that executes the other half of the operand only if the fist operand is true)
 		return ((ARPGArea)getOwnerArea()).canEnterAreaCells(water,((Interactable)water).getCurrentCells())&&getOwnerArea().registerActor(water);
 	}
 	
 	
 	/**
-     * Instanciates Bomb in the field view 
+     * Instanciates Bomb in the field of view 
      */
 	private boolean placeBomb() {
 		Bomb bomb =new Bomb(getOwnerArea(),getCurrentMainCellCoordinates().jump(getOrientation().toVector()));
+		//If the bomb can enter the area at those coordinates, we register it in the currentArea 
+		//(because of the conditional AND, that executes the other half of the operand only if the fist operand is true)
 		return ((ARPGArea)getOwnerArea()).canEnterAreaCells(bomb,((Interactable)bomb).getCurrentCells())&&getOwnerArea().registerActor(bomb);
 	}
-
+	
+	/** Updates the inventory according to itemIndex and updates the shown item in the GUI
+     */
 	private void updateItem() {
 		
 		//Update the currentItem field
@@ -471,6 +542,8 @@ public class ARPGPlayer extends Player implements Inventory.Holder{
 		inventory.setCurrentItem(currentItem); 
 	}
 	
+	/** Handles the current state the player is in : IDLE,SwordAttack,BowAttack,StaffAttack;
+     */
 	private void handlePlayerState(float deltaTime) {
 		switch(currentState) {
 		case IDLE:
@@ -514,7 +587,12 @@ public class ARPGPlayer extends Player implements Inventory.Holder{
 		}
 	}
 	
-	
+	/** Moves and orientates the player
+	 * If he's in the direction given as a paramter, the player moves,
+	 * otherwise we orientate him to that direction
+     * @param: button (Button): The keyboard button correspoinding to movement
+     * @param: orientation (Orientation): The orientation corresponding to movement
+     */
 	
 	private void moveOrientate(Button button, Orientation orientation) {
 		if(button.isDown()) {
@@ -526,6 +604,9 @@ public class ARPGPlayer extends Player implements Inventory.Holder{
 		}
 	}
 	
+	/** Resets the wantsViewInteraction field
+	 * If he's in the direction given as a paramter, the player moves,
+     */
 	private void resetViewInteraction() {
 		wantsViewInteraction=false;
 	}
@@ -533,60 +614,62 @@ public class ARPGPlayer extends Player implements Inventory.Holder{
 	
 	
 	private void manageKeyboardInputs(Keyboard keyboard) {
-		if(currentState==State.IDLE&&canMove) {
+		
+		
+		if(currentState==State.IDLE&&canMove) {///If the player can move, and he's in the idle state,
+											   ///We move the player accorind to the uer's input
 			moveOrientate(keyboard.get(Keyboard.UP),Orientation.UP);
 			moveOrientate(keyboard.get(Keyboard.DOWN),Orientation.DOWN);
 			moveOrientate(keyboard.get(Keyboard.LEFT),Orientation.LEFT);
 			moveOrientate(keyboard.get(Keyboard.RIGHT),Orientation.RIGHT);
 		}
 		
+		//Changing the item when Tab button is pressed
 		if(keyboard.get(Keyboard.TAB).isReleased()) {
-			if((keyboard.get(Keyboard.SHIFT)).isDown()==true)
-				itemIndex++;
-			else
+			if((keyboard.get(Keyboard.SHIFT)).isDown()==true) //If we are holding the shift key, we go to the previous item
 				itemIndex--;
+			else
+				itemIndex++;
 		}
-		if(keyboard.get(Keyboard.T).isReleased()) {
+		
+		if(keyboard.get(Keyboard.T).isReleased()) {//When the user presses T, the player is set to have a TALK interaction
 			wantsViewInteraction=true;
 			currentInteraction = InteractionType.TALK;
 		}
-		if(keyboard.get(Keyboard.SPACE).isReleased()) {
+		
+		
+		if(keyboard.get(Keyboard.SPACE).isReleased()) {//When the user presses SPACE, the player uses the current item he's holding
 			useItem();
 		}
-		if(keyboard.get(Keyboard.I).isReleased()) {
+		if(keyboard.get(Keyboard.I).isReleased()) {//The I button shows the player's inventory in fullscreen
 			showInventory(!isInventoryShown);
 		}
 		
 		
-		if(isInShop) {
-			if(keyboard.get(Keyboard.ESC).isReleased()) {
+		if(isInShop) {//While shopping
+			if(keyboard.get(Keyboard.ESC).isReleased()) {//If the user presses the escape key, we leave the shop
 				isInShop = false;
 				canMove=true;
 			}
-			if(keyboard.get(Keyboard.B).isReleased()) {
+			if(keyboard.get(Keyboard.B).isReleased()) {//If the user presses B, we try to buy the selected item
 				wantsToBuy = true; 
 			}
 			
-			if(keyboard.get(Keyboard.S).isReleased()) {
+			if(keyboard.get(Keyboard.S).isReleased()) {//If the uses presses S, we try to sell the selected item
 				wantsToSell = true; 
 				
 			}
 		}
-		if(isTalking) {
+		if(isTalking) { //When we are talking, if the user presses enter, we want to move the dialog
 			if(keyboard.get(Keyboard.ENTER).isReleased()) {
-				if(dialog.push()) {
+				if(dialog.push()) { //If dialog is over, player can move again, and we hide the dialog
 					isTalking=false;
 					canMove=true;
 				}
 			}
 		}
 		
-		restartGameHandler(); 
-		
-				
-	}
-	
-	private void restartGameHandler() {
+		///////////////// Reset Game Handler /////////////////
 		if(isDead()|| hasWon()) {
 			if(this.getOwnerArea().getKeyboard().get(Keyboard.R).isReleased()) {
                 wantsRestart=true; 
@@ -597,7 +680,12 @@ public class ARPGPlayer extends Player implements Inventory.Holder{
 				responded=true; 
 			}
 		}
+		
+				
 	}
+	/**	isInventoryShown setter
+	 * @param bool (boolean) the value to set to 
+	 */
 	
 	@Override
     public void showInventory(boolean bool) {
