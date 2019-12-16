@@ -560,7 +560,6 @@ public class ARPGPlayer extends Player implements Inventory.Holder{
 			
 			currentAnimation=swordHitAnimations[this.getOrientation().ordinal()];
 			if(currentAnimation.isCompleted()) {
-				wantsViewInteraction=true;
 				currentAnimation.reset();
 				currentState=State.IDLE;
 			}

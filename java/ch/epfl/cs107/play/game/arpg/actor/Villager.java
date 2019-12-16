@@ -23,10 +23,11 @@ public class Villager extends MovableAreaEntity implements Interactor{
 	private Animation currentAnimation;
 	private final static int ANIMATION_DURATION=4;
 	private static final int MAX_INACTION_TIME = 24;
-	private static final double PROBABILITY_OF_INACTIVE = 0.1;
+	private static final double PROBABILITY_OF_INACTIVE = 0.2;
 	private String key;
 	private int inactionTime;
 	private boolean canMove;
+	private boolean isMobile;
 	private TextGraphics  text; 
 	protected VillagerHandler handler;
 	
@@ -36,7 +37,32 @@ public class Villager extends MovableAreaEntity implements Interactor{
 
 		@Override
 		public void interactWith(ARPGPlayer player) {
-			drawTip=true; 		
+			if(player.getPosition().y>getPosition().y) {
+				if(player.getOrientation()==Orientation.DOWN)
+					drawTip=true;
+				else drawTip = false;
+			}else if(player.getPosition().y==getPosition().y) {
+				if(player.getPosition().x>getPosition().x) {
+					if(player.getOrientation()==Orientation.LEFT)
+						drawTip=true;
+					else drawTip=false;
+				}else if(player.getPosition().x<getPosition().x){
+					if(player.getOrientation()==Orientation.RIGHT)
+						drawTip=true;
+				}else {
+					drawTip=false;
+				}
+			}else if(player.getOrientation()==Orientation.UP){
+				drawTip=true;
+			}else {
+				drawTip=false;
+			}
+			
+			if(player.isTalking()) {
+				canMove=false;
+				orientate(player.getOrientation().opposite());
+			}
+			else canMove=true;
 		}
 	}
 
@@ -46,7 +72,7 @@ public class Villager extends MovableAreaEntity implements Interactor{
 	 * @param: item (InventoryItem): The item to add
 	 * @return: success (boolean): Returns true if the element was successfully added to the inventory  
 	 */
-	public Villager(Area area, Orientation orientation, DiscreteCoordinates position,String key,boolean canMove) {
+	public Villager(Area area, Orientation orientation, DiscreteCoordinates position,String key,boolean mobile) {
 		super(area, orientation, position);
 		idleAnimations = RPGSprite.createAnimations(ANIMATION_DURATION, 
 				RPGSprite.extractSprites("zelda/character",
@@ -55,7 +81,8 @@ public class Villager extends MovableAreaEntity implements Interactor{
 				Orientation.RIGHT , Orientation.DOWN, Orientation.LEFT})
 		);
 		this.key=key;
-		this.canMove=canMove;
+		this.isMobile=mobile;
+		canMove=true;
 		text=new TextGraphics("press T to talk",0.5f,Color.black);
 		text.setParent(this);
 		drawTip=false; 
@@ -95,12 +122,12 @@ public class Villager extends MovableAreaEntity implements Interactor{
 	@Override
 	public void update(float deltaTime) {
 		drawTip=false; 
-		if(canMove) {
+		if(canMove&&isMobile) {
 			
 			if(!this.isDisplacementOccurs() && inactionTime <=0) {
 				moveOrientate();
 				if(RandomGenerator.getInstance().nextDouble()<PROBABILITY_OF_INACTIVE)
-					inactionTime=RandomGenerator.getInstance().nextInt(MAX_INACTION_TIME);
+					inactionTime=3+RandomGenerator.getInstance().nextInt(MAX_INACTION_TIME);
 			}
 			else {
 				if(this.isDisplacementOccurs()) {
