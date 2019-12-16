@@ -37,6 +37,7 @@ public class Villager extends MovableAreaEntity implements Interactor{
 
 		@Override
 		public void interactWith(ARPGPlayer player) {
+			canMove=false;
 			if(player.getPosition().y>getPosition().y) {
 				if(player.getOrientation()==Orientation.DOWN)
 					drawTip=true;
@@ -58,11 +59,9 @@ public class Villager extends MovableAreaEntity implements Interactor{
 				drawTip=false;
 			}
 			
-			if(player.isTalking()) {
-				canMove=false;
+			if(player.isTalking())
 				orientate(player.getOrientation().opposite());
-			}
-			else canMove=true;
+			
 		}
 	}
 
@@ -141,6 +140,7 @@ public class Villager extends MovableAreaEntity implements Interactor{
 		}
 		currentAnimation = idleAnimations[getOrientation().ordinal()];	
 		super.update(deltaTime);
+		canMove=true;
 		
 		
 	}
