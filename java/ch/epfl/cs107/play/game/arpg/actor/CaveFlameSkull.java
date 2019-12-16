@@ -22,7 +22,7 @@ public class CaveFlameSkull extends FlameSkull implements Logic {
 	@Override
 	public float getIntensity() {
 		// TODO Auto-generated method stub
-		return 0;
+		return isDead()?1:0;
 	}
 
 }

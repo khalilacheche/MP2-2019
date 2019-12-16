@@ -24,11 +24,4 @@ public final class And extends LogicGate {
     public float getIntensity() {
         return Math.min(signal1.getIntensity(), signal2.getIntensity());
     }
-    /**
-     * Returns boolean value of the And Operation on Logic signals
-     * @return (boolean)
-     */
-    public boolean isTrue() {
-    	return signal1.isOn() && signal2.isOn();
-    }
 }

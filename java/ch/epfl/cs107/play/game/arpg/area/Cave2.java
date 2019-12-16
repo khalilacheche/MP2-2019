@@ -31,7 +31,7 @@ public class Cave2 extends ARPGArea {
 	
 	@Override
 	public void update(float deltaTime) {
-		if(dropKeySignal.isTrue() && !hasDroppedKey) {
+		if(dropKeySignal.isOn() && !hasDroppedKey) {
 			//TODO: Drop ChestKey
 			registerActor(new ChestKey(this,new DiscreteCoordinates(7,7)));
 			hasDroppedKey=true;
