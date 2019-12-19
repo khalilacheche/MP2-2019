@@ -20,8 +20,8 @@ import ch.epfl.cs107.play.window.Canvas;
  *
  */
 public class CastleDoor extends Door {
-	Sprite open;
-	Sprite closed;
+	private Sprite open;
+	private Sprite closed;
 
 	
 	public CastleDoor(String destination, DiscreteCoordinates otherSideCoordinates, Logic signal, Area area,

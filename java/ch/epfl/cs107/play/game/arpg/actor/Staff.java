@@ -17,8 +17,8 @@ import ch.epfl.cs107.play.window.Canvas;
  *
  */
 public class Staff extends ARPGCollectableAreaEntity {
-	ARPGItem item=ARPGItem.STAFF;
-	Animation animation;
+	protected ARPGItem item=ARPGItem.STAFF;
+	private Animation animation;
 	
 	/**
 	 * @param area
