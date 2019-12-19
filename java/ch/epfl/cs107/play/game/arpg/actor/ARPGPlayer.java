@@ -5,21 +5,20 @@ import java.util.List;
 
 import ch.epfl.cs107.play.game.areagame.Area;
 import ch.epfl.cs107.play.game.areagame.actor.Animation;
-import ch.epfl.cs107.play.game.areagame.actor.CollectableAreaEntity;
 import ch.epfl.cs107.play.game.areagame.actor.Interactable;
 import ch.epfl.cs107.play.game.areagame.actor.Orientation;
 import ch.epfl.cs107.play.game.areagame.actor.Sprite;
 import ch.epfl.cs107.play.game.areagame.handler.AreaInteractionVisitor;
-import ch.epfl.cs107.play.game.arpg.handler.ARPGInteractionVisitor;
-import ch.epfl.cs107.play.game.rpg.InventoryItem;
-import ch.epfl.cs107.play.game.rpg.actor.Dialog;
-import ch.epfl.cs107.play.game.rpg.actor.Door;
-import ch.epfl.cs107.play.game.arpg.actor.ARPGInventory;
 import ch.epfl.cs107.play.game.arpg.ARPGItem;
 import ch.epfl.cs107.play.game.arpg.ARPGPlayerStatusGUI;
 import ch.epfl.cs107.play.game.arpg.DeathScreenGUI;
 import ch.epfl.cs107.play.game.arpg.WinScreenGUI;
 import ch.epfl.cs107.play.game.arpg.area.ARPGArea;
+import ch.epfl.cs107.play.game.arpg.handler.ARPGInteractionVisitor;
+import ch.epfl.cs107.play.game.rpg.Inventory;
+import ch.epfl.cs107.play.game.rpg.InventoryItem;
+import ch.epfl.cs107.play.game.rpg.actor.Dialog;
+import ch.epfl.cs107.play.game.rpg.actor.Door;
 import ch.epfl.cs107.play.game.rpg.actor.Player;
 import ch.epfl.cs107.play.game.rpg.actor.RPGSprite;
 import ch.epfl.cs107.play.io.XMLTexts;
@@ -28,18 +27,25 @@ import ch.epfl.cs107.play.math.Vector;
 import ch.epfl.cs107.play.signal.logic.Logic;
 import ch.epfl.cs107.play.window.Button;
 import ch.epfl.cs107.play.window.Canvas;
-import ch.epfl.cs107.play.window.Keyboard;
-import ch.epfl.cs107.play.game.rpg.Inventory;;
+import ch.epfl.cs107.play.window.Keyboard;;
 
 public class ARPGPlayer extends Player implements Inventory.Holder{
 	
 	
+	/**
+	 * ARPGPlayer interaction types
+	 *
+	 */
 	private enum InteractionType{
 		SWORD,
 		IDLE,
 		USEKEY,
 		TALK;
 	}
+	/**
+	 * ARPGPlayer states
+	 *
+	 */
 	private enum State{
 		IDLE,
 		SwordAttack,
@@ -80,13 +86,13 @@ public class ARPGPlayer extends Player implements Inventory.Holder{
 	private int itemIndex=0;
 	private float health;
 	
-	public boolean wantsRestart=false; 
-	public boolean responded=false;
+	private boolean wantsRestart;
+	private boolean responded;
 	
 	private class ARPGPlayerHandler implements ARPGInteractionVisitor{
 
 		@Override
-		public void interactWith(CollectableAreaEntity entity) {
+		public void interactWith(ARPGCollectableAreaEntity entity) {
 			if(entity instanceof Heart)
 				addHealth(1);
 			if(entity instanceof Coin)
@@ -103,7 +109,8 @@ public class ARPGPlayer extends Player implements Inventory.Holder{
 				startDialog("found_staff");
 				inventory.addItem(((Staff)entity).item);
 			}
-			getOwnerArea().unregisterActor(entity);
+		
+			entity.collect();
 		}
 
 		@Override
@@ -143,9 +150,9 @@ public class ARPGPlayer extends Player implements Inventory.Holder{
 		}
 		
 		@Override
-		public void interactWith(ARPGMonster monster) {
+		public void interactWith(Monster monster) {
 			if(currentInteraction == InteractionType.SWORD)
-				monster.receiveAttack(ARPGMonster.ARPGAttackType.PHYSICAL, 1);
+				monster.receiveAttack(Monster.AttackType.PHYSICAL, 1);
 		}
 		
 		@Override
@@ -265,6 +272,8 @@ public class ARPGPlayer extends Player implements Inventory.Holder{
 		isTalking=false;
 		isInShop=false; 
 		canMove=true;
+		wantsRestart=false; 
+		responded=false;
 	}
 	
 	
@@ -460,7 +469,7 @@ public class ARPGPlayer extends Player implements Inventory.Holder{
 	public boolean sell (InventoryItem item) {
 		if(((ARPGItem)item)==ARPGItem.SWORD)
 			return false; 
-		if(!inventory.contains(item))
+		if(!possess(item))
 			return false ; 
 		else {
 		    inventory.removeItem(item);
@@ -671,12 +680,12 @@ public class ARPGPlayer extends Player implements Inventory.Holder{
 		///////////////// Reset Game Handler /////////////////
 		if(isDead()|| hasWon()) {
 			if(this.getOwnerArea().getKeyboard().get(Keyboard.R).isReleased()) {
-                wantsRestart=true; 
-                responded=true; 
+                setWantsRestart(true); 
+                setResponded(true); 
 			}
 			if(this.getOwnerArea().getKeyboard().get(Keyboard.N).isReleased()) {
-				wantsRestart=false; 
-				responded=true; 
+				setWantsRestart(false); 
+				setResponded(true); 
 			}
 		}
 		
@@ -741,6 +750,55 @@ public class ARPGPlayer extends Player implements Inventory.Holder{
 		((ARPGInteractionVisitor)v).interactWith(this);
 	}
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+
+
+	/**
+	 * @return getWantsRestart
+	 */
+	public boolean getWantsRestart() {
+		return wantsRestart;
+	}
+
+
+
+
+	/**set wantsRestart
+	 * @param wantsRestart
+	 */
+	private void setWantsRestart(boolean wantsRestart) {
+		this.wantsRestart = wantsRestart;
+	}
+
+
+
+
+	/**
+	 * @return responded
+	 */
+	public boolean getResponded() {
+		return responded;
+	}
+
+
+
+
+	/**setResponded
+	 * @param responded
+	 */
+	private void setResponded(boolean responded) {
+		this.responded = responded;
+	}
+
+
+
+
+	@Override
+	public boolean possess(InventoryItem item) {
+		// TODO Auto-generated method stub
+		return inventory.contains(item);
+	}
 
 
 	

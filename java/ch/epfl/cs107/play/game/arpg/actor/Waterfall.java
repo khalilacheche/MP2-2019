@@ -35,27 +35,21 @@ public class Waterfall extends AreaEntity implements FlyableEntity{
 	}
 	@Override
 	public List<DiscreteCoordinates> getCurrentCells() {
-		// TODO Auto-generated method stub
 		return Collections.singletonList(getCurrentMainCellCoordinates());
 	}
 	@Override
 	public boolean takeCellSpace() {
-		// TODO Auto-generated method stub
 		return false;
 	}
 	@Override
 	public boolean isCellInteractable() {
-		// TODO Auto-generated method stub
 		return false;
 	}
 	@Override
 	public boolean isViewInteractable() {
-		// TODO Auto-generated method stub
 		return false;
 	}
 	@Override
 	public void acceptInteraction(AreaInteractionVisitor v) {
-		// TODO Auto-generated method stub
-		
 	}
 }

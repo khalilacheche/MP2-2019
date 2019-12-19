@@ -14,10 +14,16 @@ import ch.epfl.cs107.play.math.RegionOfInterest;
 import ch.epfl.cs107.play.signal.logic.Logic;
 import ch.epfl.cs107.play.window.Canvas;
 
+
+/**
+ * CastleDoor
+ *
+ */
 public class CastleDoor extends Door {
 	Sprite open;
 	Sprite closed;
 
+	
 	public CastleDoor(String destination, DiscreteCoordinates otherSideCoordinates, Logic signal, Area area,
 			Orientation orientation, DiscreteCoordinates position, DiscreteCoordinates... otherCells) {
 		super(destination, otherSideCoordinates, signal, area, orientation, position);
@@ -49,7 +55,7 @@ public class CastleDoor extends Door {
 	@Override
 	public void draw(Canvas canvas) {
 		super.draw(canvas);
-		if(isOpen()) {
+		if(isOpen()) {   // draw door in its current state 
 			open.draw(canvas);
 		}else {
 			closed.draw(canvas);

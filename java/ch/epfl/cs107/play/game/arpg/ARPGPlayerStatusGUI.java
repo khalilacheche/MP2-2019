@@ -9,8 +9,13 @@ import ch.epfl.cs107.play.window.Canvas;
 import ch.epfl.cs107.play.game.arpg.ARPGItem;
 import ch.epfl.cs107.play.game.arpg.actor.ARPGPlayer;;
 
+/**
+ * PlayerStatusGUI draw
+ *
+ */
 public class ARPGPlayerStatusGUI implements Graphics {
 
+	
 	
 	int money;
 	float health;
@@ -21,6 +26,7 @@ public class ARPGPlayerStatusGUI implements Graphics {
 	
 	private static final float DEPTH = 1001;
 
+	
 	@Override
 	public void draw(Canvas canvas) {
 
@@ -30,6 +36,9 @@ public class ARPGPlayerStatusGUI implements Graphics {
 	}
 	
 	
+	/** Draw Coin digits
+	 * @param canvas
+	 */
 	void drawCoinDisplay(Canvas canvas) {
 		float width = canvas.getScaledWidth();
 		float height = canvas.getScaledHeight();
@@ -54,6 +63,9 @@ public class ARPGPlayerStatusGUI implements Graphics {
 	}
 	
 	
+	/**Draw Gear 
+	 * @param canvas
+	 */
 	void drawGearDisplay(Canvas canvas) {
 		float width = canvas.getScaledWidth();
 		float height = canvas.getScaledHeight();
@@ -83,6 +95,9 @@ public class ARPGPlayerStatusGUI implements Graphics {
 		gear.draw(canvas);
 		
 	}
+	/**Draw Health Hearts
+	 * @param canvas
+	 */
 	void drawHealthBar(Canvas canvas) {
 		float width = canvas.getScaledWidth();
 		float height = canvas.getScaledHeight();
@@ -118,18 +133,30 @@ public class ARPGPlayerStatusGUI implements Graphics {
 		
 	}
 	
+	/**set the item to display
+	 * @param item
+	 */
 	public void setItem(ARPGItem item) {
 		this.item = item;
 	}
+	/**set the health to draw
+	 * @param health
+	 */
 	public void setHealth(float health) {
 		this.health=health;
 	}
+	/**set Money to draw
+	 * @param money
+	 */
 	public void setMoney(int money) {
 		this.money=money;
 	}
 	
+	/**Constructor of ARPGPlayerStatusGUI  get the digits position from the sprite
+	 * 
+	 */
 	public ARPGPlayerStatusGUI(){
-		digitsRoi = new RegionOfInterest[10];
+		digitsRoi = new RegionOfInterest[10]; // store digits regionOfinterest
 		int index=1;
 		digitsRoi[0]= new RegionOfInterest(16, 32, 16, 16);
 		for(int y =0;y<3;++y) {

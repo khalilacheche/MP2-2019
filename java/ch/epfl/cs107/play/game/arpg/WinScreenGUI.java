@@ -6,6 +6,10 @@ import ch.epfl.cs107.play.game.areagame.io.ResourcePath;
 import ch.epfl.cs107.play.math.Vector;
 import ch.epfl.cs107.play.window.Canvas;
 
+/**
+ * Draw WinScreenGUI when playerHasWon 
+ *
+ */
 public class WinScreenGUI implements Graphics {
 	 ImageGraphics gameOver = new ImageGraphics(ResourcePath.getSprite("zelda/winScreen"),
  			1, 1) ; 

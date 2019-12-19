@@ -30,4 +30,6 @@ public class Coin extends ARPGCollectableAreaEntity {
 	public void draw(Canvas canvas) {
 		animation.draw(canvas);
 	}
+
+	
 }

@@ -7,6 +7,10 @@ import ch.epfl.cs107.play.game.areagame.io.ResourcePath;
 import ch.epfl.cs107.play.math.Vector;
 import ch.epfl.cs107.play.window.Canvas;
 
+/**
+ * Draw this GUI when player hasDied
+ *
+ */
 public class DeathScreenGUI implements Graphics {
      ImageGraphics gameOver = new ImageGraphics(ResourcePath.getSprite("zelda/deathScreen"),
     			1, 1) ; 

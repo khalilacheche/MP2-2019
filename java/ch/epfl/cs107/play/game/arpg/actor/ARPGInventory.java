@@ -14,6 +14,10 @@ import ch.epfl.cs107.play.math.RegionOfInterest;
 import ch.epfl.cs107.play.math.Vector;
 import ch.epfl.cs107.play.window.Canvas;
 
+/**
+ * ARPGInventory
+ *   Note : the inventories are drawn based on screen dimensions
+ */
 public class ARPGInventory extends Inventory{
 	
 	private final int MAX_COINS=999;
@@ -52,6 +56,9 @@ public class ARPGInventory extends Inventory{
 		 
 	}
 	
+	/**
+	 * setCurrentItem in the inventory
+	 */
 	protected void setCurrentItem(ARPGItem item) {
 		this.item=item; 
 	}
@@ -158,23 +165,29 @@ public class ARPGInventory extends Inventory{
 	
 	@Override 
 	public void draw(Canvas canvas) {
-		//System.out.println(holder.getName());
 		switch(holder.getName()) {
-		case "ARPGPlayer":
-				//super.draw(canvas);
+		case "ARPGPlayer":		
 			if(!((ARPGPlayer)holder).getIsInShop())
-				drawInventory(canvas,null,"Inventory",1/3.65f,(float)4/5,1f); 
+				drawInventory(canvas,null,"Inventory",1/3.65f,(float)4/5,1f);  // when only the player's inventory is drawn 
 			else
-				drawInventory(canvas,"TAB : switch items   S:sellItems","Inventory",1/3.65f,(float)4/5,-0.5f); 
+				drawInventory(canvas,"TAB : switch items   S:sellItems","Inventory",1/3.65f,(float)4/5,-0.5f);   // when in shop change scale
 
 			break; 
 				
 		case "ShopMan":
-			drawInventory(canvas,"A : switch items   B:buyItems   ESC:quit","Shop Inventory",0.1f,(float)4/5,0.5f); 
+			drawInventory(canvas,"A : switch items   B:buyItems   ESC:quit","Shop Inventory",0.1f,(float)4/5,0.5f);   // draw shop inventory when asked
 			
 		}
 	}
 	
+	/**
+	 * @param canvas : window canvas
+	 * @param input : Inventory instructions
+	 * @param inventoryText : Inventory Title
+	 * @param widthText : width of the inventory title
+	 * @param heightText : height of the inventory title 
+	 * @param scale :  scale of the inventory (1 if drawed on all screen 0.5 or -0.5 when on half the screen )
+	 */
 	private void drawInventory(Canvas canvas,String input,  String inventoryText,float widthText, float heightText,float scale) {
 		float width = canvas.getScaledWidth();
 		float height = canvas.getScaledHeight();
@@ -196,9 +209,7 @@ public class ARPGInventory extends Inventory{
 		textInventory.draw(canvas);
 
 		for(int i=0;i<8;++i) {
-			slotsBackground[i] =slotBackground; 
-			
-			//slotsBackground.setParent(inventoryBackground);
+			slotsBackground[i] =slotBackground; 	
 			slotsBackground[i].setHeight((height/6)*scale);
 			slotsBackground[i].setWidth(width/6);
 			slotsBackground[i].setAnchor(anchor.add(new Vector(((i%4)+1)*(width/5)-width/11,((i/4)*(height/4)+height/4)*scale)));

@@ -18,6 +18,10 @@ import ch.epfl.cs107.play.math.RandomGenerator;
 import ch.epfl.cs107.play.math.RegionOfInterest;
 import ch.epfl.cs107.play.window.Canvas;
 
+/**
+ * FireSpell class
+ *
+ */
 public class FireSpell extends AreaEntity implements Interactor {
 
 	private static final int ANIMATTION_SPEED = 2;
@@ -29,17 +33,20 @@ public class FireSpell extends AreaEntity implements Interactor {
 	private int lifeTime;
 	private Animation idle;
 	private FireHandler handler;
-	private final static ARPGMonster.ARPGAttackType attack = ARPGMonster.ARPGAttackType.FIRE;
+	private final static Monster.AttackType attack = Monster.AttackType.FIRE;
 	
 	private boolean hasExecuted;
 	
+	/**FireSpell interaction handler
+	 *
+	 */
 	class FireHandler implements ARPGInteractionVisitor {
 		@Override
 		public void interactWith(ARPGPlayer player) {
 			player.addHealth(-force/10);
 		}
 		@Override
-		public void interactWith(ARPGMonster monster) {
+		public void interactWith(Monster monster) {
 			monster.receiveAttack(attack,force);
 		}
 		@Override
@@ -53,6 +60,12 @@ public class FireSpell extends AreaEntity implements Interactor {
 		
 	}
 	
+	/**
+	 * @param area : current area
+	 * @param orientation 
+	 * @param position
+	 * @param force 
+	 */
 	public FireSpell(Area area, Orientation orientation, DiscreteCoordinates position,float force) {
 		super(area, orientation, position);
 		
@@ -105,11 +118,13 @@ public class FireSpell extends AreaEntity implements Interactor {
 		if(lifeTime<=0) {
 			extenguish();
 		}
-		if(propagationTime<=0) {
+		if(propagationTime<=0) {  // executed when propagation time is over
 			if(!hasExecuted) {
 				if(force>0 ) {
-					FireSpell sibling = new FireSpell(getOwnerArea(),getOrientation(),getFieldOfViewCells().get(0),force-1);
-					getOwnerArea().registerActor(sibling);
+					FireSpell sibling = new FireSpell(getOwnerArea(),getOrientation(),getCurrentMainCellCoordinates().jump(getOrientation().toVector()),force-1);
+				    if(getOwnerArea().canEnterAreaCells(sibling, Collections.singletonList(getCurrentMainCellCoordinates().jump(getOrientation().toVector()))))
+				    	this.getOwnerArea().registerActor(sibling);
+					
 					
 				}
 				hasExecuted=true;
@@ -117,6 +132,9 @@ public class FireSpell extends AreaEntity implements Interactor {
 			
 		}	
 	}
+	/**
+	 * disappear after lifetime is over
+	 */
 	public void extenguish() {
 		getOwnerArea().unregisterActor(this);
 	}

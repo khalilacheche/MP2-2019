@@ -1,8 +1,7 @@
 package ch.epfl.cs107.play.game.arpg.handler;
 
-import ch.epfl.cs107.play.game.areagame.actor.CollectableAreaEntity;
-import ch.epfl.cs107.play.game.arpg.actor.ARPGMonster;
 import ch.epfl.cs107.play.game.arpg.ARPGBehavior.ARPGCell;
+import ch.epfl.cs107.play.game.arpg.actor.ARPGCollectableAreaEntity;
 import ch.epfl.cs107.play.game.arpg.actor.ARPGPlayer;
 import ch.epfl.cs107.play.game.arpg.actor.Bomb;
 import ch.epfl.cs107.play.game.arpg.actor.CastleDoor;
@@ -12,6 +11,7 @@ import ch.epfl.cs107.play.game.arpg.actor.DialogTrigger;
 import ch.epfl.cs107.play.game.arpg.actor.FireSpell;
 import ch.epfl.cs107.play.game.arpg.actor.Grass;
 import ch.epfl.cs107.play.game.arpg.actor.King;
+import ch.epfl.cs107.play.game.arpg.actor.Monster;
 import ch.epfl.cs107.play.game.arpg.actor.Orb;
 import ch.epfl.cs107.play.game.arpg.actor.Rock;
 import ch.epfl.cs107.play.game.arpg.actor.ShopMan;
@@ -52,7 +52,7 @@ public interface ARPGInteractionVisitor extends RPGInteractionVisitor {
      * Simulate and interaction between ARPG Interactor and a CollectableAreaEntity
      * @param item (CollectableAreaEntity), not null
      */
-	default void interactWith(CollectableAreaEntity item) {
+	default void interactWith(ARPGCollectableAreaEntity item) {
 		
 	}
 	
@@ -76,10 +76,10 @@ public interface ARPGInteractionVisitor extends RPGInteractionVisitor {
 	
 	
 	/**
-     * Simulate and interaction between ARPG Interactor and an ARPGMonster
-     * @param monster (ARPGMonster), not null
+     * Simulate and interaction between ARPG Interactor and an Monster
+     * @param monster (Monster), not null
      */
-	default void interactWith(ARPGMonster monster) {
+	default void interactWith(Monster monster) {
 		
 	}
 	
@@ -114,33 +114,39 @@ public interface ARPGInteractionVisitor extends RPGInteractionVisitor {
 	default void interactWith(Chest chest) {
 	}	
 	/**
-     * Simulate and interaction between ARPG Interactor and a Chest
-     * @param chest (Chest), not null
+     * Simulate and interaction between ARPG Interactor and an orb
+     * @param orb (orb), not null
      */
 	default void interactWith(Orb orb) {
 	}
 	
 	/**
-     * Simulate and interaction between ARPG Interactor and a Chest
-     * @param chest (Chest), not null
+     * Simulate and interaction between ARPG Interactor and a villager
+     * @param villager (Villager), not null
      */
 	default void interactWith(Villager villager) {
 	
 	}
 	/**
-     * Simulate and interaction between ARPG Interactor and a Chest
-     * @param chest (Chest), not null
+     * Simulate and interaction between ARPG Interactor and a dialogTrigger
+     * @param trigger (DialogTrigger), not null
      */
 	default void interactWith(DialogTrigger trigger) {
 		
 	}
 
-
+	/**
+     * Simulate and interaction between ARPG Interactor and a shopMan
+     * @param shop (ShopMan), not null
+     */
 	default void interactWith(ShopMan shop) {
 		
 	}
 
-
+	/**
+     * Simulate and interaction between ARPG Interactor and a king
+     * @param king (King), not null
+     */
 	default void interactWith(King king) {
 		
 	}

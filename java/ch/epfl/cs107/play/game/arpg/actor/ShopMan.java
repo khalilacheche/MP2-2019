@@ -24,6 +24,10 @@ import ch.epfl.cs107.play.math.Vector;
 import ch.epfl.cs107.play.window.Canvas;
 import ch.epfl.cs107.play.window.Keyboard;
 
+/**
+ * ShopMan character class
+ *
+ */
 public class ShopMan extends AreaEntity implements Interactor, Inventory.Holder {
     private ARPGInventory inventory;
     private Sprite sprite;
@@ -57,6 +61,9 @@ public class ShopMan extends AreaEntity implements Interactor, Inventory.Holder 
 
     }
 
+    /**update current item 
+     * 
+     */
     private void updateItem() {
 
         //Update the currentItem field
@@ -69,9 +76,10 @@ public class ShopMan extends AreaEntity implements Interactor, Inventory.Holder 
     public List < DiscreteCoordinates > getCurrentCells() {
         return Collections.singletonList(getCurrentMainCellCoordinates());
     }
+    
     @Override
     public boolean sell(InventoryItem item) {
-        if (!inventory.contains(item))
+        if (!possess(item))
             return false;
         else {
             inventory.removeItem(item);
@@ -166,6 +174,10 @@ public class ShopMan extends AreaEntity implements Interactor, Inventory.Holder 
         other.acceptInteraction(handler);
     }
 
+    /**
+     * ShopMan interaction handler 
+     *
+     */
     private class ShopManHandler implements ARPGInteractionVisitor {
 
         @Override
@@ -201,5 +213,11 @@ public class ShopMan extends AreaEntity implements Interactor, Inventory.Holder 
         // TODO Auto-generated method stub
         return "ShopMan";
     }
+    
+    @Override
+	public boolean possess(InventoryItem item) {
+		// TODO Auto-generated method stub
+		return inventory.contains(item);
+	}
 
 }

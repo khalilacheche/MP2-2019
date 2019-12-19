@@ -12,10 +12,18 @@ import ch.epfl.cs107.play.math.RegionOfInterest;
 import ch.epfl.cs107.play.math.Vector;
 import ch.epfl.cs107.play.window.Canvas;
 
+/**
+ * staff weapon class
+ *
+ */
 public class Staff extends ARPGCollectableAreaEntity {
 	ARPGItem item=ARPGItem.STAFF;
 	Animation animation;
 	
+	/**
+	 * @param area
+	 * @param position
+	 */
 	public Staff(Area area, DiscreteCoordinates position) {
 		super(area, position);
 		Sprite[] sprites = new Sprite[8];

@@ -10,8 +10,8 @@ import ch.epfl.cs107.play.signal.logic.And;
 import ch.epfl.cs107.play.signal.logic.Logic;
 
 public class Cave2 extends ARPGArea {
-	private And dropKeySignal;
-	private boolean hasDroppedKey;
+	private And dropKeySignal;  //spawn chest key signal 
+	private boolean hasDroppedKey;  
 	@Override
 	public String getTitle() {
 		return "Zelda/Cave.2";
@@ -30,7 +30,7 @@ public class Cave2 extends ARPGArea {
 	}
 	
 	@Override
-	public void update(float deltaTime) {
+	public void update(float deltaTime) {  // handles the spawning of the chest key 
 		if(dropKeySignal.isOn() && !hasDroppedKey) {
 			//TODO: Drop ChestKey
 			registerActor(new ChestKey(this,new DiscreteCoordinates(7,7)));

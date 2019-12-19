@@ -18,6 +18,10 @@ import ch.epfl.cs107.play.math.RegionOfInterest;
 import ch.epfl.cs107.play.signal.logic.Logic;
 import ch.epfl.cs107.play.window.Canvas;
 
+/**
+ * King Character Class
+ *
+ */
 public class King extends AreaEntity implements Interactor,Logic{
 	private RPGSprite sprite;
 	private KingHandler handler;
@@ -128,6 +132,10 @@ public class King extends AreaEntity implements Interactor,Logic{
 	public float getIntensity() {
 		return 0;
 	}
+	
+	/**
+	 * @return tagName from XMLFile
+	 */
 	protected String getKey() {
 		return key;
 	}

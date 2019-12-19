@@ -22,6 +22,13 @@ public enum ARPGItem implements InventoryItem {
 	int price;
 	String spriteName;
 	
+	/**
+	 * Constructor of ARPGItem
+	 * @param n : itemName
+	 * @param w : weight
+	 * @param p : price
+	 * @param spn : spriteName
+	 */
 	ARPGItem(String n,float w, int p, String spn){
 		name=n;
 		weight=w;
@@ -29,6 +36,7 @@ public enum ARPGItem implements InventoryItem {
 		spriteName="zelda/"+spn;
 	}
 
+	
 	@Override
 	public String getName() {
 		// TODO Auto-generated method stub
@@ -47,6 +55,9 @@ public enum ARPGItem implements InventoryItem {
 		return price;
 	}
 	
+	/**
+	 * @return spriteName
+	 */
 	public String getSpriteName() {
 		return spriteName;
 	} 

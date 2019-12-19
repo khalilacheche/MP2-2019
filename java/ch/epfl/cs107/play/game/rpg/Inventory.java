@@ -8,20 +8,48 @@ import ch.epfl.cs107.play.window.Canvas;
 
 
 
+/**
+ * Inventory class
+ *
+ */
 public class Inventory implements Graphics {
+	
+	/**
+	 * Inventory.Holder implemented by inventory holder
+	 *
+	 */
 	public interface Holder{
-	     public void showInventory(boolean bool);
-	     public String getName();
-	     public boolean sell(InventoryItem item); 
-	     public boolean  buy(InventoryItem item); 
+	     /**showInventory
+	     * @param bool : inventory is show if true 
+	     */
+	    public void showInventory(boolean bool);
+	     /**
+	     * @return name of the holder
+	     */
+	    public String getName();
+	     /** sell the given item
+	     * @param item to sell 
+	     * @return sell is completed or not 
+	     */
+	    public boolean sell(InventoryItem item); 
+	     /**buy the given item
+	     * @param item to buy
+	     * @return buy is successful or not
+	     */
+	    public boolean  buy(InventoryItem item); 
+	    
+	    /**checks if Holder possess the item
+	     * @param item to check
+	     * @return doesPosessItem
+	     */
+	    public boolean possess(InventoryItem item);
 	}
 	
-	//TODO: Inventory.Holder /// move to ARPG.actor package
 	protected Holder holder; 
 	protected float capacity;
 	protected float weight;
 	protected Map<InventoryItem,Integer > items;
-	//protected Player holder;
+	
 	
 	
 	

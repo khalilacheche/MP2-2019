@@ -17,10 +17,10 @@ public class MagicWaterProjectile extends Projectile {
 	
 	private MagicWaterHandler handler;
 	private Animation idleAnimation;
-	private ARPGMonster.ARPGAttackType attack= ARPGMonster.ARPGAttackType.MAGIC;
+	private Monster.AttackType attack= Monster.AttackType.MAGIC;
 	private class MagicWaterHandler implements ARPGInteractionVisitor{
 		@Override
-		public void interactWith(ARPGMonster monster) {
+		public void interactWith(Monster monster) {
 			finishRun();
 			monster.receiveAttack(attack, 0.5f);
 		}

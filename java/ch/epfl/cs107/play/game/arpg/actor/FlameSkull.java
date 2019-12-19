@@ -17,18 +17,22 @@ import ch.epfl.cs107.play.math.RandomGenerator;
 import ch.epfl.cs107.play.math.Vector;
 import ch.epfl.cs107.play.window.Canvas;
 
-public class FlameSkull extends ARPGMonster implements FlyableEntity {
+/**
+ * FlameSkull class implements FlyabaleEntity
+ *
+ */
+public class FlameSkull extends Monster implements FlyableEntity {
 	
 	
-	private static List<ARPGAttackType> vulnerabilities = new ArrayList<ARPGAttackType>(Arrays.asList(
-			ARPGAttackType.MAGIC,ARPGAttackType.PHYSICAL));
+	private static List<AttackType> vulnerabilities = new ArrayList<AttackType>(Arrays.asList(
+			AttackType.MAGIC,AttackType.PHYSICAL));
 	private final int ANIMATION_DURATION=8;
 	private final static float MAX_HEALTH=1;
 	private final static float DAMAGE=0.1f;
 	private FlameSkullHandler handler;
 	private Animation currentAnimation;
 	private Animation[] idleAnimations;
-	private ARPGAttackType attack =ARPGAttackType.FIRE;
+	private AttackType attack =AttackType.FIRE;
 	private boolean isImmortal;
 	
 	private final float MIN_LIFE_TIME=1f;
@@ -40,7 +44,7 @@ public class FlameSkull extends ARPGMonster implements FlyableEntity {
 	private class FlameSkullHandler implements ARPGInteractionVisitor{
 		
 		@Override
-		public void interactWith(ARPGMonster monster) {
+		public void interactWith(Monster monster) {
 			monster.receiveAttack(attack,DAMAGE);
 		}
 		@Override
@@ -77,14 +81,14 @@ public class FlameSkull extends ARPGMonster implements FlyableEntity {
 				Orientation.LEFT , Orientation.DOWN, Orientation.RIGHT});
 		idleAnimations=RPGSprite.createAnimations(ANIMATION_DURATION, sprites);
 		handler= new FlameSkullHandler();
-		health=1;
+		
 		
 		lifeTime =MIN_LIFE_TIME+RandomGenerator.getInstance().nextFloat()*(MAX_LIFE_TIME-MIN_LIFE_TIME);
 		this.isImmortal=isImmortal;
-		vulnerabilities = new ArrayList<ARPGAttackType>(Arrays.asList(
-				ARPGAttackType.MAGIC,ARPGAttackType.PHYSICAL));
+		vulnerabilities = new ArrayList<AttackType>(Arrays.asList(
+				AttackType.MAGIC,AttackType.PHYSICAL));
 		
-	 	this.healthBar.setAnchor(new Vector(-1.f*this.health/MAX_HEALTH,1.5f));
+	 	this.healthBar.setAnchor(new Vector(-1.f*this.getHealth()/MAX_HEALTH,1.5f));
 
 	}
     /**
@@ -111,14 +115,8 @@ public class FlameSkull extends ARPGMonster implements FlyableEntity {
 	@Override
 	public void update(float deltaTime) {
 		super.update(deltaTime);
-		if(isDead()) {			
-			deathAnimation.update(deltaTime);
-			if(deathAnimation.isCompleted()) {
-				dropLoot(new Heart(getOwnerArea(),getCurrentMainCellCoordinates()));
-				getOwnerArea().unregisterActor(this);
-			}
-			return;
-		}
+		
+		
 		if(!isImmortal)
 			lifeTime-=deltaTime;
 			
@@ -131,13 +129,20 @@ public class FlameSkull extends ARPGMonster implements FlyableEntity {
 			currentAnimation.reset();
 		}
 		if(lifeTime<=0) {
-			health=0;
+			receiveAttack(AttackType.PHYSICAL,1111);   // to fade out 
 		}
 		
 		
 	}
-	
-	
+	@Override
+	protected  void dropLoot() {
+		Heart heart = new Heart(getOwnerArea(),getCurrentMainCellCoordinates()); 
+		if(getOwnerArea().canEnterAreaCells(heart,getCurrentCells()))
+			getOwnerArea().registerActor(heart);
+	}
+	/**random movement handler
+	 * 
+	 */
 	private void moveOrientate() {
 		if(RandomGenerator.getInstance().nextDouble()<=0.9f) {
 			move(ANIMATION_DURATION);

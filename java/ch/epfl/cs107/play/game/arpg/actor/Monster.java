@@ -6,6 +6,7 @@ import java.util.List;
 import ch.epfl.cs107.play.game.actor.ImageGraphics;
 import ch.epfl.cs107.play.game.areagame.Area;
 import ch.epfl.cs107.play.game.areagame.actor.Animation;
+import ch.epfl.cs107.play.game.areagame.actor.CollectableAreaEntity;
 import ch.epfl.cs107.play.game.areagame.actor.Interactor;
 import ch.epfl.cs107.play.game.areagame.actor.MovableAreaEntity;
 import ch.epfl.cs107.play.game.areagame.actor.Orientation;
@@ -17,16 +18,24 @@ import ch.epfl.cs107.play.math.RegionOfInterest;
 import ch.epfl.cs107.play.math.Vector;
 import ch.epfl.cs107.play.window.Canvas;
 
-public abstract class ARPGMonster extends MovableAreaEntity implements Interactor{
-	protected enum ARPGAttackType {
+/**
+ * ARPGMonster : base class of all monsters
+ *
+ */
+public abstract class Monster extends MovableAreaEntity implements Interactor{
+	/**
+	 * Attack Types
+	 *
+	 */
+	public enum AttackType {
 		FIRE,
 		MAGIC,
 		PHYSICAL;
 	}
-	protected final float MAX_HEALTH;
-	protected Animation deathAnimation;
-	protected float health;
-	List<ARPGAttackType> vulnerabilities;
+	private  final float MAX_HEALTH;
+	private Animation deathAnimation;
+	private float health;
+	List<AttackType> vulnerabilities;
 	protected ImageGraphics healthBar; 
 	List<Vector> points;
 	
@@ -40,7 +49,7 @@ public abstract class ARPGMonster extends MovableAreaEntity implements Interacto
      * @param vuln (List<ARPGAttackType>): List of the monster's vulnerabilities.Can be empty, but not null
      */
 	
-	public ARPGMonster(Area area, Orientation orientation, DiscreteCoordinates position,List<ARPGAttackType> vuln, float maxHealth) {
+	public Monster(Area area, Orientation orientation, DiscreteCoordinates position,List<AttackType> vuln, float maxHealth) {
 		super(area, orientation, position);
 		Sprite[] sprites = new Sprite[7];
 		for(int i=0;i<7;++i) {
@@ -54,18 +63,37 @@ public abstract class ARPGMonster extends MovableAreaEntity implements Interacto
 		healthBar.setParent(this);
 	}
 	
-	protected void dropLoot(ARPGCollectableAreaEntity item) {
-		getOwnerArea().registerActor(item);
+	/**
+	 * dropLoot when Monster hasDied
+	 */
+	
+	protected abstract void dropLoot();
+	
+	@Override 
+	public void update(float deltaTime) {
+		super.update(deltaTime);
+		// handle death
+		if(isDead()) {			
+			deathAnimation.update(deltaTime);
+			if(deathAnimation.isCompleted()) {
+				dropLoot();
+				getOwnerArea().unregisterActor(this);
+			}
+			return;
+		}
 	}
 	
-	protected boolean isDead() {
+	/**
+	 * @return Monster hasDied or not
+	 */
+	public boolean isDead() {
 		return health<=0;
 	}
 	
     /** Add the health amount to the monster
      * @param: amount (float): The damage amount: Can be postive for adding health, negative for removing
      */
-	protected void addHealth(float amount) {
+	private void addHealth(float amount) {
 		health+=amount;
 	}
 	
@@ -73,7 +101,7 @@ public abstract class ARPGMonster extends MovableAreaEntity implements Interacto
      * @param: attack (ARPGAttackType): The type of the received attack
      * @param: damage (float): The damage amount
      */
-	protected void receiveAttack(ARPGAttackType attack, float damage) {
+	public void receiveAttack(AttackType attack, float damage) {
 		
 		if(vulnerabilities.contains(attack)) {
 			addHealth(-damage);
@@ -122,5 +150,9 @@ public abstract class ARPGMonster extends MovableAreaEntity implements Interacto
 	@Override
 	public boolean isViewInteractable() {
 		return true;
+	}
+	
+	protected float getHealth() {
+		return health ; 
 	}
 }

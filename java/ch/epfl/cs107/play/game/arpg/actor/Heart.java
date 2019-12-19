@@ -8,6 +8,10 @@ import ch.epfl.cs107.play.math.DiscreteCoordinates;
 import ch.epfl.cs107.play.math.RegionOfInterest;
 import ch.epfl.cs107.play.window.Canvas;
 
+/**
+ * Heart Class
+ *
+ */
 public class Heart extends ARPGCollectableAreaEntity{
 	private Animation animation;
 

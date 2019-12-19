@@ -18,7 +18,15 @@ import ch.epfl.cs107.play.math.RandomGenerator;
 import ch.epfl.cs107.play.math.Vector;
 import ch.epfl.cs107.play.window.Canvas;
 
-public class DarkLord extends ARPGMonster {
+/**
+ * Darklord Class
+ *
+ */
+public class DarkLord extends Monster {
+	/**
+	 * DarkLordState types
+	 *
+	 */
 	private  enum DarkLordState{
 		IDLE, 
 		ATTACKING, 
@@ -28,15 +36,15 @@ public class DarkLord extends ARPGMonster {
 	}
 	private static final float MAX_HEALTH = 3;
 	private static final float PROBABILITY_OF_ATTACK = 0.4f; 
-	private static final float PROBABILITY_OF_INACTIVE = 0.1f;
+	private static final float PROBABILITY_OF_INACTIVE = 0.05f;
 	private static final int ANIMATION_DURATION = 8;
 	private static final int RADIUS=2;
 	private static final int MIN_SPELL_WAIT_DURATION=50;
 	private static final int MAX_SPELL_WAIT_DURATION=100;
 	private static final int TELEPORTATION_RADIUS = 10 ;
-	private static final int MAX_INACTION_TIME = 24;
-	private static final List<ARPGAttackType> vulnerabilities = new ArrayList<ARPGAttackType>(Arrays.asList(
-			ARPGAttackType.MAGIC));
+	private static final int MAX_INACTION_TIME = 15;
+	private static final List<AttackType> vulnerabilities = new ArrayList<AttackType>(Arrays.asList(
+			AttackType.MAGIC));
 	private final  int CYCLE; 
 	private Animation[] idleAnimations; 
 	private Animation[] attackAnimations;
@@ -70,7 +78,7 @@ public class DarkLord extends ARPGMonster {
 		inactionTime=0;
 		state=DarkLordState.IDLE;
 		
-		this.healthBar.setAnchor(new Vector(-1.f,2.5f));
+		this.healthBar.setAnchor(new Vector(-1.f,2.5f)); // fix health bar anchor
 
 		
 	}
@@ -89,9 +97,8 @@ public class DarkLord extends ARPGMonster {
 	
 	@Override
 	public void update(float deltaTime) {
-		
 		++cycleCounter; 
-		if(cycleCounter == CYCLE) {
+		if(cycleCounter == CYCLE) {  // executed every cycle
 			this.currentAnimation.reset();
 			if(RandomGenerator.getInstance().nextDouble()>PROBABILITY_OF_ATTACK) {
 				setState(DarkLordState.ATTACKING);
@@ -100,10 +107,10 @@ public class DarkLord extends ARPGMonster {
 			setState(DarkLordState.INVOKING);
 			}
 			orientateToOpenSpace();
-			
+			cycleCounter=0;
 		}
 		switch(state) {
-		case IDLE : 
+		case IDLE :  
 			if(!this.isDisplacementOccurs() && inactionTime <=0) {
 				if(RandomGenerator.getInstance().nextDouble()<0.2) 
 					moveOrientate(Orientation.fromInt(RandomGenerator.getInstance().nextInt(4)));
@@ -124,8 +131,9 @@ public class DarkLord extends ARPGMonster {
 			break; 
 		case ATTACKING:
 			if(!this.isDisplacementOccurs())
-			{	
-				this.getOwnerArea().registerActor(new FireSpell(getOwnerArea(),getOrientation(),getCurrentMainCellCoordinates().jump(getOrientation().toVector()),4));
+			{	FireSpell fire = new FireSpell(getOwnerArea(),getOrientation(),getCurrentMainCellCoordinates().jump(getOrientation().toVector()),4);
+			    if(getOwnerArea().canEnterAreaCells(fire, Collections.singletonList(getCurrentMainCellCoordinates().jump(getOrientation().toVector()))))
+			    	this.getOwnerArea().registerActor(fire);
 				setState(DarkLordState.IDLE);
 			}
 			break; 
@@ -133,7 +141,10 @@ public class DarkLord extends ARPGMonster {
 			currentAnimation = setAnimation();
 			if(currentAnimation.isCompleted()) {
 	    	   currentAnimation.reset();
-	    	   this.getOwnerArea().registerActor(new FlameSkull(getOwnerArea(),getOrientation(),getCurrentMainCellCoordinates().jump(getOrientation().toVector())));
+	    	   FlameSkull skull = new FlameSkull(getOwnerArea(),getOrientation(),getCurrentMainCellCoordinates().jump(getOrientation().toVector()));
+			    if(getOwnerArea().canEnterAreaCells(skull, Collections.singletonList(getCurrentMainCellCoordinates().jump(getOrientation().toVector()))))
+			    	this.getOwnerArea().registerActor(skull);
+	    
 	    	   setState(DarkLordState.IDLE);
 	       }else {
 	    	   currentAnimation.update(deltaTime);   
@@ -162,26 +173,28 @@ public class DarkLord extends ARPGMonster {
 		
 		
 		
-		if(deathAnimation.isCompleted()) {
-			this.getOwnerArea().unregisterActor(this);
-			this.dropLoot(new CastleKey(this.getOwnerArea(), this.getCurrentMainCellCoordinates()));
-		}       
-	   if(isDead()) {
-		   this.deathAnimation.update(deltaTime);	
-	   }
 	   super.update(deltaTime);
 			
 	}
 	
 	
+	@Override
+	protected  void dropLoot() {
+		
+		getOwnerArea().registerActor(new CastleKey(getOwnerArea(),getCurrentMainCellCoordinates()));
+	}
+	
+	/**teleport function of the darklord
+	 * 
+	 */
 	private void teleport() {
 		int k=0 ; 
 		while(k<1000) {
-			int x= RandomGenerator.getInstance().nextInt(TELEPORTATION_RADIUS)+2*RADIUS; 
-			int y= RandomGenerator.getInstance().nextInt(TELEPORTATION_RADIUS)+2*RADIUS; 
-			if(this.getOwnerArea().leaveAreaCells(this,this.getCurrentCells()))		
+			int x= RandomGenerator.getInstance().nextInt(TELEPORTATION_RADIUS)+2*RADIUS;   // x coordinate of the teleport destination (we add twice the radius to avoid being near the player(it doesnt work always ) but much more less
+			int y= RandomGenerator.getInstance().nextInt(TELEPORTATION_RADIUS)+2*RADIUS;  // y coordinate of the teleport destination 
+			if(this.getOwnerArea().leaveAreaCells(this,this.getCurrentCells()))		// leave current cells
 			{
-				if(this.getOwnerArea().enterAreaCells(this,Collections.singletonList(new DiscreteCoordinates(x,y)))) {
+				if(this.getOwnerArea().enterAreaCells(this,Collections.singletonList(new DiscreteCoordinates(x,y)))) { // enter destination  cells
 					this.setCurrentPosition(new Vector(x,y));
 					
 					break;
@@ -212,6 +225,10 @@ public class DarkLord extends ARPGMonster {
 		
 	}
 	
+	
+	/**handles darklord movement
+	 * @param orientation
+	 */
 	private void moveOrientate(Orientation orientation){
 	    
 	      
@@ -219,6 +236,9 @@ public class DarkLord extends ARPGMonster {
         else orientate(orientation);
     
       }
+	/**orientate to an orientation that lets the darklord summon thnigs
+	 * 
+	 */
 	private void orientateToOpenSpace() {
 		int j= 0 ; 
 		while (j<8) {// getting a good orientation if the counter passes the conditon it stays the same		
@@ -231,7 +251,7 @@ public class DarkLord extends ARPGMonster {
 			++j; 
 					    
 		}
-		cycleCounter=0;
+		
 	}
 
 	private Animation setAnimation() {
@@ -289,10 +309,17 @@ public class DarkLord extends ARPGMonster {
 
 	}
 	
+	/**Change the current state of the draklord
+	 * @param state
+	 */
 	private void setState(DarkLordState state ) {
 		this.state= state; 
 	}
 	
+	/**
+	 * interaction handler of the darklord
+	 *
+	 */
 	private class DarkLordHandler implements ARPGInteractionVisitor {
 		 @Override 
 		 public void interactWith(ARPGPlayer player){

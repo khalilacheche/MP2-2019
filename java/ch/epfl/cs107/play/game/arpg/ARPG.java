@@ -19,6 +19,8 @@ import ch.epfl.cs107.play.window.Window;
 public class ARPG extends RPG {
 	
 	
+	 
+	
 	private void createAreas() {
 		super.addArea(new Ferme());
 		super.addArea(new Village());
@@ -35,6 +37,7 @@ public class ARPG extends RPG {
 		return "Mini projet 2";
 	}
 	
+	
 	@Override
 	public boolean begin (Window window, FileSystem fileSystem) {
 		if(super.begin(window, fileSystem)) {
@@ -48,11 +51,14 @@ public class ARPG extends RPG {
 		return false;
 	}
 	
+	/* 
+	 * handle the restart and quit game 
+	 */
 	@Override
 	public void update(float deltaTime) {
-	     if(((ARPGPlayer)(this.getPlayer())).responded&&((ARPGPlayer)(this.getPlayer())).wantsRestart) 
+	     if(((ARPGPlayer)(this.getPlayer())).getResponded()&&((ARPGPlayer)(this.getPlayer())).getWantsRestart()) 
 			this.begin(this.getWindow(), this.getFileSystem()); 
-		else if(((ARPGPlayer)(this.getPlayer())).responded&&!((ARPGPlayer)(this.getPlayer())).wantsRestart)
+		else if(((ARPGPlayer)(this.getPlayer())).getResponded()&&!((ARPGPlayer)(this.getPlayer())).getWantsRestart())
 			this.end();
 			
 		
