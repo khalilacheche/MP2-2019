@@ -49,9 +49,9 @@ public class ARPGPlayer extends Player implements Inventory.Holder{
 	 */
 	private enum State{
 		IDLE,
-		SwordAttack,
-		BowAttack,
-		StaffAttack;
+		SWORDATTACK,
+		BOWATTACK,
+		STAFFATTACK;
 	}
 	
 	private final static int ANIMATION_DURATION =4;
@@ -435,7 +435,7 @@ public class ARPGPlayer extends Player implements Inventory.Holder{
 			break;
 		case SWORD:
 			currentInteraction = InteractionType.SWORD;
-			currentState=State.SwordAttack;
+			currentState=State.SWORDATTACK;
 			wantsViewInteraction=true;
 			break;
 		case CASTLEKEY:
@@ -444,12 +444,12 @@ public class ARPGPlayer extends Player implements Inventory.Holder{
 			currentInteraction = InteractionType.USEKEY;
 			break;
 		case BOW:
-			currentState=State.BowAttack;
+			currentState=State.BOWATTACK;
 			break;
 		case ARROW:
 			break;
 		case STAFF:
-			currentState=State.StaffAttack;
+			currentState=State.STAFFATTACK;
 			break;
 		}
 		
@@ -554,7 +554,7 @@ public class ARPGPlayer extends Player implements Inventory.Holder{
 		inventory.setCurrentItem(currentItem); 
 	}
 	
-	/** Handles the current state the player is in : IDLE,SwordAttack,BowAttack,StaffAttack;
+	/** Handles the current state the player is in : IDLE,SWORDATTACK,BOWATTACK,STAFFATTACK;
      */
 	private void handlePlayerState(float deltaTime) {
 		switch(currentState) {
@@ -568,7 +568,7 @@ public class ARPGPlayer extends Player implements Inventory.Holder{
 				currentAnimation.reset();
 			}
 			break;
-		case SwordAttack:
+		case SWORDATTACK:
 			
 			currentAnimation=swordHitAnimations[this.getOrientation().ordinal()];
 			if(currentAnimation.isCompleted()) {
@@ -576,7 +576,7 @@ public class ARPGPlayer extends Player implements Inventory.Holder{
 				currentState=State.IDLE;
 			}
 			break;
-		case BowAttack:
+		case BOWATTACK:
 			currentAnimation= bowHitAnimations[this.getOrientation().ordinal()];
 			if(currentAnimation.isCompleted()) {
 				if(inventory.contains(ARPGItem.ARROW))
@@ -587,7 +587,7 @@ public class ARPGPlayer extends Player implements Inventory.Holder{
 				currentState=State.IDLE;
 			}
 			break;
-		case StaffAttack:
+		case STAFFATTACK:
 			currentAnimation= staffHitAnimations[this.getOrientation().ordinal()];
 			if(currentAnimation.isCompleted()) {
 				castWaterSpell();
