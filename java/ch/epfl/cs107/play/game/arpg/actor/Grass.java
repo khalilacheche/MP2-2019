@@ -25,9 +25,14 @@ public class Grass extends AreaEntity{
 	private static final double PROBABILITY_TO_DROP_ITEM=0.5f;
 	private static final double PROBABILITY_TO_DROP_HEART=0.5f;
 	
-	private boolean wasExecuted=false;
+	private boolean wasExecuted=false;//To drop an item only once
 	
-
+	/** Grass constructor 
+	 * 
+	 * @param area
+	 * @param orientation
+	 * @param position
+	 */
 	public Grass(Area area, Orientation orientation, DiscreteCoordinates position) {
 		super(area, orientation, position);
 		
@@ -61,7 +66,9 @@ public class Grass extends AreaEntity{
 		
 	}
 	
-	 
+	 /**
+	  * Drop a coin or a heart
+	  */
 	 private void dropLoot() {
 		 if(!wasExecuted) {
 			 double rand = RandomGenerator.getInstance().nextDouble();
@@ -79,7 +86,15 @@ public class Grass extends AreaEntity{
 		wasExecuted=true;
 		
 	 }
-
+	 public void cut() {//// TODO: add fire method
+		 this.signal=Logic.TRUE;
+	 }
+	 @Override
+	 public void draw(Canvas canvas) {
+		 if(!current.isCompleted())
+			 current.draw(canvas);
+	 }
+////////////////////////////Interactable / Interactor ////////////////////////////////////////////////////////////////
 	@Override
 	public List<DiscreteCoordinates> getCurrentCells() {
 		return Collections.singletonList(getCurrentMainCellCoordinates());
@@ -104,13 +119,5 @@ public class Grass extends AreaEntity{
 	public void acceptInteraction(AreaInteractionVisitor v) {
 		((ARPGInteractionVisitor)v).interactWith(this);	
 	}
-	@Override
-	public void draw(Canvas canvas) {
-		if(!current.isCompleted())
-			current.draw(canvas);
-	}
 
-	public void cut() {//// TODO: add fire method
-		this.signal=Logic.TRUE;
-	}
 }

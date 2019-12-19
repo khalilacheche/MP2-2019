@@ -12,6 +12,15 @@ import ch.epfl.cs107.play.window.Canvas;
 
 public class LadderDoor extends Door {
 	private Sprite sprite;
+	/**Ladder Door constructor
+	 * 
+	 * @param destination
+	 * @param otherSideCoordinates
+	 * @param signal
+	 * @param area
+	 * @param orientation
+	 * @param position
+	 */
 	public LadderDoor(String destination, DiscreteCoordinates otherSideCoordinates, Logic signal, Area area,
 			Orientation orientation, DiscreteCoordinates position) {
 		super(destination, otherSideCoordinates, signal, area, orientation, position);

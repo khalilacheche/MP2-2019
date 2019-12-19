@@ -28,8 +28,16 @@ public class CastleKey extends ARPGCollectableAreaEntity {
 	public void acceptInteraction(AreaInteractionVisitor v) {
 			((ARPGInteractionVisitor)v).interactWith(this);
 	}
+	
+	/**
+	 * 
+	 * @return key
+	 */
 	protected ARPGItem getItem() {
-		return type;
+		for(ARPGItem i : ARPGItem.values())
+			if(i==type)
+				return i;
+		return null;
 	}
 	
 

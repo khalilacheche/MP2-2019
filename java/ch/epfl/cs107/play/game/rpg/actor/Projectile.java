@@ -4,6 +4,7 @@ import java.util.Collections;
 import java.util.List;
 
 import ch.epfl.cs107.play.game.areagame.Area;
+import ch.epfl.cs107.play.game.areagame.actor.Animation;
 import ch.epfl.cs107.play.game.areagame.actor.Interactor;
 import ch.epfl.cs107.play.game.areagame.actor.MovableAreaEntity;
 import ch.epfl.cs107.play.game.areagame.actor.Orientation;
@@ -12,14 +13,17 @@ import ch.epfl.cs107.play.game.rpg.FlyableEntity;
 import ch.epfl.cs107.play.math.DiscreteCoordinates;
 import ch.epfl.cs107.play.window.Canvas;
 
+
 abstract public class Projectile extends MovableAreaEntity implements Interactor,FlyableEntity {
 	
 	protected int maxDistance;
 	protected int traveledDistance; 
 	protected int speed;
-	protected boolean hasFinishedRun;
+	protected boolean hasFinishedRun;//indicates if the projectile ahsFinishedRun
+	private Animation idleAnimation;
 	
-
+	/**
+	 */
 	public Projectile(Area area, Orientation orientation, DiscreteCoordinates position,int maxDistance , int speed) {
 		super(area, orientation, position);
 		
@@ -33,26 +37,10 @@ abstract public class Projectile extends MovableAreaEntity implements Interactor
 	protected void finishRun() {
 		hasFinishedRun=true;
 	}
-
-	@Override
-	public boolean takeCellSpace() {
-		return false;
+	protected void setAnimation(Animation anim) {
+		idleAnimation = anim;
 	}
 
-	@Override
-	public boolean isCellInteractable() {
-		return false;
-	}
-
-	@Override
-	public boolean isViewInteractable() {
-		return false;
-	}
-
-	@Override
-	public void acceptInteraction(AreaInteractionVisitor v) {
-		
-	}
 	
 	@Override
 	public void update(float deltaTime) {
@@ -60,8 +48,8 @@ abstract public class Projectile extends MovableAreaEntity implements Interactor
 		if(!hasFinishedRun) {
 			move(speed);
 			++traveledDistance;
-			if(traveledDistance>maxDistance)
-				hasFinishedRun=true;
+			if(traveledDistance>maxDistance) // End run when the maxDistance was travelled
+				finishRun();
 		}else {
 			getOwnerArea().unregisterActor(this);
 		}
@@ -69,9 +57,10 @@ abstract public class Projectile extends MovableAreaEntity implements Interactor
 
 	@Override
 	public void draw(Canvas canvas) {
-		
+		idleAnimation.draw(canvas);
 	}
 
+////////////////////////////////Interactable / Interactor ////////////////////////////////////////////////////////////////	
 	@Override
 	public List<DiscreteCoordinates> getCurrentCells() {
 		return Collections.singletonList(getCurrentMainCellCoordinates());
@@ -92,6 +81,26 @@ abstract public class Projectile extends MovableAreaEntity implements Interactor
 		return false;
 	}
 
+	@Override
+	public boolean takeCellSpace() {
+		return false;
+	}
 	
+	@Override
+	public boolean isCellInteractable() {
+		return false;
+	}
+	
+	@Override
+	public boolean isViewInteractable() {
+		return false;
+	}
+	
+	@Override
+	public void acceptInteraction(AreaInteractionVisitor v) {
+		
+	}
+////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
 
 }

@@ -6,22 +6,25 @@ import ch.epfl.cs107.play.math.DiscreteCoordinates;
 import ch.epfl.cs107.play.signal.logic.Logic;
 
 public class CaveFlameSkull extends FlameSkull implements Logic {
+	
+	/** CaveFlameSkull Constructor
+	 * 
+	 */
 	public CaveFlameSkull(Area area, Orientation orientation, DiscreteCoordinates position) {
 		super(area, orientation, position,true);
 	}
+	
+	///////////////////////// Logic //////////////////////////////////////////////////
 	@Override
 	public boolean isOn() {
-		// TODO Auto-generated method stub
 		return isDead();
 	}
 	@Override
 	public boolean isOff() {
-		// TODO Auto-generated method stub
 		return !isDead();
 	}
 	@Override
 	public float getIntensity() {
-		// TODO Auto-generated method stub
 		return isDead()?1:0;
 	}
 

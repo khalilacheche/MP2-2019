@@ -24,6 +24,11 @@ public class Chest extends AreaEntity {
 	private Logic signal;
 	private ARPGItem content= ARPGItem.BOW;
 
+	/**Chest Constructor
+	 * 
+	 * @param area
+	 * @param position
+	 */
 	public Chest(Area area, DiscreteCoordinates position) {
 		super(area, Orientation.UP, position);
 		open = new RPGSprite("zelda/chest.open",1,1,this,new RegionOfInterest(0,0,16,16),new Vector(0, 0.5f));
@@ -31,11 +36,23 @@ public class Chest extends AreaEntity {
 		signal=Logic.FALSE;
 	}
 	
+	@Override
+	public void draw(Canvas canvas) {
+		if(signal.isOn())
+			open.draw(canvas);
+		else
+			closed.draw(canvas);
+		
+	}
+	/** retruns the Chest Content
+	 * 
+	 * @return Chest content
+	 */
 	protected ARPGItem takeContent() {
 		signal=Logic.TRUE;
 		return content;
 	}
-	
+//////////////////////////////Interactable / Interactor ////////////////////////////////////////////////////////////////
 
 	@Override
 	public List<DiscreteCoordinates> getCurrentCells() {
@@ -62,13 +79,5 @@ public class Chest extends AreaEntity {
 		((ARPGInteractionVisitor)v).interactWith(this);
 	}
 
-	@Override
-	public void draw(Canvas canvas) {
-		if(signal.isOn())
-			open.draw(canvas);
-		else
-			closed.draw(canvas);
-		
-	}
 
 }

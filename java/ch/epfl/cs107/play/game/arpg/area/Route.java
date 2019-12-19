@@ -12,7 +12,6 @@ import ch.epfl.cs107.play.game.arpg.actor.Orb;
 import ch.epfl.cs107.play.game.arpg.actor.Waterfall;
 import ch.epfl.cs107.play.game.rpg.actor.Door;
 import ch.epfl.cs107.play.math.DiscreteCoordinates;
-import ch.epfl.cs107.play.signal.Signal;
 import ch.epfl.cs107.play.signal.logic.Logic;
 
 public class Route extends ARPGArea {
@@ -24,7 +23,6 @@ public class Route extends ARPGArea {
 	}
 	@Override
 	protected void createArea() {
-		//TODO: improve door declaration
 		
 		registerActor(new Background (this));
 		registerActor(new Foreground(this));

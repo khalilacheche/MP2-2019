@@ -16,14 +16,28 @@ import ch.epfl.cs107.play.signal.logic.Logic;
 import ch.epfl.cs107.play.window.Canvas;
 
 public class Bridge extends AreaEntity {
-	Sprite sprite;
-	Logic signal;
-	
+	private Sprite sprite;
+	private Logic signal;
+	/**Bridge constructor
+	 * 
+	 * @param area
+	 * @param position
+	 * @param signal to make the bridge appear
+	 */
 	public Bridge(Area area, DiscreteCoordinates position,Logic signal) {
 		super(area, Orientation.UP, position);
 		sprite =  new RPGSprite("zelda/bridge",3.7f,3.5f,this,new RegionOfInterest(0,0,64,48),new Vector(-0.9f, -1f));
 		this.signal=signal;
 	}
+	
+	@Override
+	public void draw(Canvas canvas) {
+		if(signal.isOn())//Draw only when signal is On
+			sprite.draw(canvas);
+		
+	}
+	
+//////////////////////////////Interactable / Interactor ////////////////////////////////////////////////////////////////
 	
 	@Override
 	public List<DiscreteCoordinates> getCurrentCells() {
@@ -50,11 +64,6 @@ public class Bridge extends AreaEntity {
 		
 	}
 
-	@Override
-	public void draw(Canvas canvas) {
-		if(signal.isOn())
-			sprite.draw(canvas);
-		
-	}
+
 
 }

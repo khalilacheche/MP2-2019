@@ -24,12 +24,16 @@ public class ChestKey extends ARPGCollectableAreaEntity {
 		key.draw(canvas);
 	}
 	
+	protected ARPGItem getItem() {
+		for(ARPGItem i : ARPGItem.values())
+			if(i==type)
+				return i;
+		return null;
+	}
+	
 	@Override
 	public void acceptInteraction(AreaInteractionVisitor v) {
-			((ARPGInteractionVisitor)v).interactWith(this);
-	}
-	protected ARPGItem getItem() {
-		return type;
+		((ARPGInteractionVisitor)v).interactWith(this);
 	}
 	
 

@@ -16,6 +16,15 @@ public class CaveDoor extends Door {
 	
 	private Sprite closed;
 	private Sprite open;
+	/**
+	 * Cave door
+	 * @param destination
+	 * @param otherSideCoordinates
+	 * @param signal
+	 * @param area
+	 * @param orientation
+	 * @param position
+	 */
 	public CaveDoor(String destination, DiscreteCoordinates otherSideCoordinates, Logic signal, Area area,
 			Orientation orientation, DiscreteCoordinates position) {
 		super(destination, otherSideCoordinates, signal, area, orientation, position);
@@ -23,14 +32,12 @@ public class CaveDoor extends Door {
 		open = new RPGSprite("zelda/cave.open",1,1,this,new RegionOfInterest(0,0,16,16));
 	}
 	
-	@Override
-	public void update(float deltaTime) {
-		super.update(deltaTime);
-	}
+	//Door can be walked on only if it is open
 	@Override
 	public boolean takeCellSpace() {
 		return !isOpen();
 	}
+	
 	@Override
 	public void draw (Canvas canvas) {
 		super.draw(canvas);

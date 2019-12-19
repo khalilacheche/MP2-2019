@@ -5,19 +5,16 @@ import ch.epfl.cs107.play.game.areagame.actor.Animation;
 import ch.epfl.cs107.play.game.areagame.actor.Interactable;
 import ch.epfl.cs107.play.game.areagame.actor.Orientation;
 import ch.epfl.cs107.play.game.areagame.actor.Sprite;
-import ch.epfl.cs107.play.game.areagame.handler.AreaInteractionVisitor;
 import ch.epfl.cs107.play.game.arpg.handler.ARPGInteractionVisitor;
 import ch.epfl.cs107.play.game.rpg.actor.Projectile;
 import ch.epfl.cs107.play.game.rpg.actor.RPGSprite;
 import ch.epfl.cs107.play.math.DiscreteCoordinates;
 import ch.epfl.cs107.play.math.RegionOfInterest;
-import ch.epfl.cs107.play.window.Canvas;
 
 public class Arrow extends Projectile {
 	
 	private ArrowHandler handler;
-	private Animation idleAnimation;
-	private ARPGMonster.ARPGAttackType attack= ARPGMonster.ARPGAttackType.PHYSICAL;
+	private Monster.AttackType attack= Monster.AttackType.PHYSICAL;
 	private class ArrowHandler implements ARPGInteractionVisitor{
 		@Override
 		public void interactWith(Grass grass) {
@@ -25,7 +22,7 @@ public class Arrow extends Projectile {
 			//finishRun();
 		}
 		@Override
-		public void interactWith(ARPGMonster monster) {
+		public void interactWith(Monster monster) {
 			finishRun();
 			monster.receiveAttack(attack, 0.1f);
 		}
@@ -49,7 +46,7 @@ public class Arrow extends Projectile {
 		handler=new ArrowHandler();
 		Sprite[] sprite = new Sprite[1];
 		sprite[0]= new RPGSprite("zelda/arrow",1,1,this,new RegionOfInterest(32*this.getOrientation().ordinal(),0,32,32));
-		idleAnimation= new Animation(speed,sprite);	
+		super.setAnimation(new Animation(speed,sprite));	
 	}
 	
 	public Arrow(Area area, Orientation orientation, DiscreteCoordinates position) {
@@ -63,17 +60,9 @@ public class Arrow extends Projectile {
 	}
 	
 	@Override
-	public void acceptInteraction(AreaInteractionVisitor v) {
-		
-	}
-	@Override
 	public void interactWith(Interactable other) {
 		other.acceptInteraction(handler);
 	}
-	
-	@Override
-	public void draw(Canvas canvas) {
-		idleAnimation.draw(canvas);
-	}
+
 
 }

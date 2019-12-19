@@ -5,18 +5,16 @@ import ch.epfl.cs107.play.game.areagame.actor.Animation;
 import ch.epfl.cs107.play.game.areagame.actor.Interactable;
 import ch.epfl.cs107.play.game.areagame.actor.Orientation;
 import ch.epfl.cs107.play.game.areagame.actor.Sprite;
-import ch.epfl.cs107.play.game.areagame.handler.AreaInteractionVisitor;
+
 import ch.epfl.cs107.play.game.arpg.handler.ARPGInteractionVisitor;
 import ch.epfl.cs107.play.game.rpg.actor.Projectile;
 import ch.epfl.cs107.play.game.rpg.actor.RPGSprite;
 import ch.epfl.cs107.play.math.DiscreteCoordinates;
 import ch.epfl.cs107.play.math.RegionOfInterest;
-import ch.epfl.cs107.play.window.Canvas;
 
 public class MagicWaterProjectile extends Projectile {
 	
 	private MagicWaterHandler handler;
-	private Animation idleAnimation;
 	private Monster.AttackType attack= Monster.AttackType.MAGIC;
 	private class MagicWaterHandler implements ARPGInteractionVisitor{
 		@Override
@@ -37,7 +35,7 @@ public class MagicWaterProjectile extends Projectile {
 		for(int i=0;i<4;++i) {
 			sprites[i]= new RPGSprite("zelda/magicWaterProjectile",1,1,this,new RegionOfInterest(32*i,0,32,32));
 		}
-		idleAnimation= new Animation(speed,sprites);	
+		setAnimation(new Animation(speed,sprites));	
 	}
 	
 	public MagicWaterProjectile(Area area, Orientation orientation, DiscreteCoordinates position) {
@@ -48,21 +46,12 @@ public class MagicWaterProjectile extends Projectile {
 		super.update(deltaTime);
 		if(!isDisplacementOccurs())
 			finishRun();
-		idleAnimation.update(deltaTime);
 	}
 	
-	@Override
-	public void acceptInteraction(AreaInteractionVisitor v) {
-		
-	}
 	@Override
 	public void interactWith(Interactable other) {
 		other.acceptInteraction(handler);
 	}
 	
-	@Override
-	public void draw(Canvas canvas) {
-		idleAnimation.draw(canvas);
-	}
 
 }

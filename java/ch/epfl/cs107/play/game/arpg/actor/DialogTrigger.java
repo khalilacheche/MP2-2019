@@ -13,13 +13,26 @@ import ch.epfl.cs107.play.window.Canvas;
 
 public class DialogTrigger extends AreaEntity {
 	private String dialogKey;
+	
+	/** Dialog trigger constructor
+	 * 
+	 */
 	public DialogTrigger(Area area ,DiscreteCoordinates position, String key) {
 		super(area, Orientation.UP, position);
 		dialogKey = key;
 	}
+	
+	
+	/**
+	 * 
+	 * @return dialog name key in XML file
+	 */
 	protected String getDialogKey() {
 		return dialogKey;
 	}
+	
+	
+////////////////////////////Interactable / Interactor ////////////////////////////////////////////////////////////////
 	@Override
 	public List<DiscreteCoordinates> getCurrentCells() {
 		return Collections.singletonList(getCurrentMainCellCoordinates());

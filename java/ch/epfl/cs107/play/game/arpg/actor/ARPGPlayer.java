@@ -12,6 +12,7 @@ import ch.epfl.cs107.play.game.areagame.handler.AreaInteractionVisitor;
 import ch.epfl.cs107.play.game.arpg.ARPGItem;
 import ch.epfl.cs107.play.game.arpg.ARPGPlayerStatusGUI;
 import ch.epfl.cs107.play.game.arpg.DeathScreenGUI;
+import ch.epfl.cs107.play.game.arpg.Test;
 import ch.epfl.cs107.play.game.arpg.WinScreenGUI;
 import ch.epfl.cs107.play.game.arpg.area.ARPGArea;
 import ch.epfl.cs107.play.game.arpg.handler.ARPGInteractionVisitor;
@@ -246,14 +247,16 @@ public class ARPGPlayer extends Player implements Inventory.Holder{
 		
 		inventory= new ARPGInventory(1000,this);
 
-		inventory.addItem(ARPGItem.CASTLEKEY);
-		inventory.addItem(ARPGItem.CHESTKEY);
-		inventory.addItem(ARPGItem.BOMB,3);
-		//inventory.addItem(ARPGItem.ARROW,10);
-		//inventory.addItem(ARPGItem.STAFF);
-		//inventory.addItem(ARPGItem.BOW);
-		
-		
+		/////Get all items in test Mode
+			if(Test.MODE) {
+				inventory.addItem(ARPGItem.CASTLEKEY);
+				inventory.addItem(ARPGItem.CHESTKEY);
+				inventory.addItem(ARPGItem.ARROW,10);
+				inventory.addItem(ARPGItem.STAFF);
+				inventory.addItem(ARPGItem.BOMB,10);
+				inventory.addItem(ARPGItem.BOW);
+				
+			}
 		
 		inventory.addMoney(10);
 		inventory.addItem(ARPGItem.SWORD);

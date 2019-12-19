@@ -25,6 +25,11 @@ public class Orb  extends AreaEntity implements Logic{
 	private Animation currentAnimation;
 	private boolean wasHit;
 	
+	/**Orb constructor
+	 * 
+	 * @param area
+	 * @param position
+	 */
 	public Orb(Area area, DiscreteCoordinates position) {
 		super(area, Orientation.UP, position);
 		wasHit=false;
@@ -40,6 +45,9 @@ public class Orb  extends AreaEntity implements Logic{
 		amorced= new Animation (ANIMATION_DURATION,sprites);
 	}
 	
+	/** set signal On
+	 * 
+	 */
 	protected void amorceSignal () {
 		wasHit =true;
 	}
@@ -50,7 +58,8 @@ public class Orb  extends AreaEntity implements Logic{
 		currentAnimation = wasHit? amorced: idle;
 		currentAnimation.update(deltaTime);
 	}
-
+	
+//////////////////////////Interactable / Interactor ////////////////////////////////////////////////////////////////
 	@Override
 	public List<DiscreteCoordinates> getCurrentCells() {
 		return Collections.singletonList(getCurrentMainCellCoordinates());
@@ -82,7 +91,7 @@ public class Orb  extends AreaEntity implements Logic{
 		currentAnimation.draw(canvas);
 		
 	}
-
+//////////////////////////Logic////////////////////////////////////////////////////////////////
 	@Override
 	public boolean isOn() {
 		// TODO Auto-generated method stub
@@ -97,7 +106,7 @@ public class Orb  extends AreaEntity implements Logic{
 
 	@Override
 	public float getIntensity() {
-		return 0;
+		return wasHit? 1:0;
 	}
 
 }

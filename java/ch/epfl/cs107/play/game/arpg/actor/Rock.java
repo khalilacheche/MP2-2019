@@ -16,13 +16,23 @@ import ch.epfl.cs107.play.window.Canvas;
 
 public class Rock extends AreaEntity{
 
-	Sprite sprite;
+	private Sprite sprite;
 	
+	/**Rock constructor
+	 * 
+	 * @param area
+	 * @param position
+	 */
 	public Rock(Area area, DiscreteCoordinates position) {
 		super(area, Orientation.UP, position);
 		sprite =new RPGSprite("rock.1",1,1,this,new RegionOfInterest(0,0,32,32),new Vector(0, 0.25f)); 
 	}
-
+	
+	@Override
+	public void draw(Canvas canvas) {
+		sprite.draw(canvas);
+	}
+//////////////////////////Interactable / Interactor ////////////////////////////////////////////////////////////////
 	@Override
 	public List<DiscreteCoordinates> getCurrentCells() {
 		return Collections.singletonList(getCurrentMainCellCoordinates());
@@ -49,9 +59,5 @@ public class Rock extends AreaEntity{
 		
 	}
 
-	@Override
-	public void draw(Canvas canvas) {
-		sprite.draw(canvas);
-	}
 
 }
