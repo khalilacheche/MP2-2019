@@ -1,0 +1,78 @@
+
+=================================================================
+                    PAQUETAGE               
+=================================================================
+Au niveau du paquetage:
+ch.epfl.cs107.play.game.arpg: contient les classes définissant un mécanisme du jeu ARPG comme (ARPGItem, deathScreen gui ,ARPG...)
+ch.epfl.cs107.play.game.arpg.actor : contient les acteurrs qui figurent dans le jeu ARPG 
+ch.epfl.cs107.game.arpg.area: contient les classes de Areas
+ch.epfl.cs107.game.arpg.handler : contient l'interface ARPGInteractionVisitor qui est héritée par les classes handler de tous les ARPGInteractors
+
+
+
+
+=================================================================
+                    SHOP               
+=================================================================
+les méthodes buy() et sell() qui permettent l’échange d’équipements sont délégués à l'interface Inventory.Holder
+qui seront redéfinies dans les classes des personnages qui puissent faire ces échanges d'équipements comme l'ARPGPlayer et le ShopMan 
+sans falloir à connaitre les inventaires des personnages concernées.
+cette implémentation du concept du shop nous laisse au futur le choix de définir de nouveaux Actors qui puissent faire ces échanges 
+sans rien modifier .
+=================================================================
+                    GUI                  
+=================================================================
+
+Au niveau du GUI: 
+on a choisi de positionner les différents éléments du GUI relativement aux dimensions de la fenêtre du jeu 
+en effet si on voulait rendre la fenêtre du jeu Resizable ou en plein écran tous les éléments s'adapteront aux nouveaux dimensions
+
+
+=================================================================
+                    CAMERA                    
+=================================================================
+Au niveau de la caméra :
+on a choisi de ne pas laisser la caméra centré sur le joueur tous le temps 
+en effet , la position du caméra dans l'aire est limité pour ne pas englober une partie hors de l'aire courante(les zones noires dans la fenêtre) 
+et ceci pour augmenter l'immersion dans le jeu 
+
+=================================================================
+                    INTERACTIONS               
+=================================================================
+Au niveau des interactions;
+Quand le joueur appuie sur une touche d’interaction(ESPACE ou la touche T), cela va rendre le joueur demandeur d’interaction a distance(wantsViewInteraction true), pendant une seule frame, et qui va être remise a zéro au cours de la prochaine update(une fois l’interaction finie)
+De cette manière, l’interaction ne ce fait qu’une seule fois.
+
+On a choisi d’intégrer avec le joueur une énumération sur le type d’interaction qui nous a permis d’avoir plusieurs interaction avec un même élément dans le jeu.
+Par exemple, en choisissant de d’interagir avec un villageois par une interaction de parole( par l’appui sur le bouton T), le villageois va nous afficher un texte spécifique, et en choisissant de le frapper avec une épée, il aura une autre expression, en lui présentant une clé il nous indiquera quel type de clé c’est et ou l’utiliser.
+De même avec le coffre (chest)
+En conclusion, les interactions du player avec les autres acteurs du jeu changent avec chaque type d’interaction, en effet cette implémentation nous permettra au futur de définir de nouveaux types d’interactions sans changer l’implémentation actuelle
+
+On a aussi intègre une classe DialogTrigger, qui est un simple élément si sur lequel le player marche affichera une boite de dialogue qui pourra donner une certaine indication au joueur.
+Ce type d’acteur peut éventuellement être étendu et mettre en place une interaction plus évoluée avec le joueur
+
+=================================================================
+                    SIGNAUX                
+=================================================================
+En ce qui concerne les signaux, pour la partie de la cave,
+Les deux flameSkull, étant considérés comme des signaux, l’aire de la cave va surveiller ces deux éléments, et une fois que leur deux signaux sont activés (lorsqu’il sont morts, avec l’interface And héritant de signal) ,l’aire va ajouter une clé de coffre 
+En choisissant d’implémenter l’interface Signal de cette manière, cela nous permet  de prendre les objets qui sont des signaux en tant que signaux et non en tant qu’entité de jeux, ce qui est meilleur pour l’encapsulation et de point de vu fonctionnel
+
+
+=================================================================
+                    EXTENSIONS                 
+=================================================================
+Résumé des extensions:
+-Interactions avancées
+-Evénements dépendants de signaux
+-Nouvelles aires: cave 1 + cave2+ temple
+-Menu inventaire
+-Magasin + vendeur
+-Villageois interactif
+-Barre de niveau de vie des monstres
+-Cascade d’eau animée
+-GameOver
+-Fin de jeu
+-DialogTrigger: éléments de jeu déclencheur de dialogue
+-Camera qui n’affiche pas les zone hors de l’aire
+-Baguette magique ramassabale de l’aire du temple

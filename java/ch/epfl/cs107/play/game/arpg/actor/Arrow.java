@@ -19,12 +19,11 @@ public class Arrow extends Projectile {
 		@Override
 		public void interactWith(Grass grass) {
 			grass.cut();
-			//finishRun();
 		}
 		@Override
 		public void interactWith(Monster monster) {
+			monster.receiveAttack(attack, 0.5f);
 			finishRun();
-			monster.receiveAttack(attack, 0.1f);
 		}
 		@Override
 		public void interactWith(Bomb bomb) {

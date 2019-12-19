@@ -16,10 +16,10 @@ import ch.epfl.cs107.play.window.Canvas;
 
 abstract public class Projectile extends MovableAreaEntity implements Interactor,FlyableEntity {
 	
-	protected int maxDistance;
-	protected int traveledDistance; 
-	protected int speed;
-	protected boolean hasFinishedRun;//indicates if the projectile ahsFinishedRun
+	private int maxDistance;
+	private int traveledDistance; 
+	private int speed;
+	private boolean hasFinishedRun;//indicates if the projectile ahsFinishedRun
 	private Animation idleAnimation;
 	
 	/**

@@ -66,7 +66,7 @@ public class King extends AreaEntity implements Interactor,Logic{
 	@Override
 	public boolean takeCellSpace() {
 		// TODO Auto-generated method stub
-		return false;
+		return true;
 	}
 
 	@Override

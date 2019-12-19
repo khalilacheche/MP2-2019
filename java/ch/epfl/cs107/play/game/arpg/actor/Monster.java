@@ -34,9 +34,9 @@ public abstract class Monster extends MovableAreaEntity implements Interactor{
 	private  final float MAX_HEALTH;
 	private Animation deathAnimation;
 	private float health;
-	List<AttackType> vulnerabilities;
+	private List<AttackType> vulnerabilities;
 	protected ImageGraphics healthBar; 
-	List<Vector> points;
+
 	
 	
 	
@@ -101,7 +101,6 @@ public abstract class Monster extends MovableAreaEntity implements Interactor{
      * @param: damage (float): The damage amount
      */
 	public void receiveAttack(AttackType attack, float damage) {
-		
 		if(vulnerabilities.contains(attack)) {
 			addHealth(-damage);
 			if(!isDead()) {
