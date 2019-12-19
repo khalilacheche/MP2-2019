@@ -17,10 +17,10 @@ public class ARPGPlayerStatusGUI implements Graphics {
 
 	
 	
-	int money;
-	float health;
-	ARPGItem item;
-	RegionOfInterest[] digitsRoi;
+	private int money;
+	private float health;
+	private ARPGItem item;
+	private RegionOfInterest[] digitsRoi;
 	 
 	
 	

@@ -9,7 +9,7 @@ import ch.epfl.cs107.play.math.RegionOfInterest;
 import ch.epfl.cs107.play.window.Canvas;
 
 public class Coin extends ARPGCollectableAreaEntity {
-	Animation animation;
+	private Animation animation;
 
 	public Coin(Area area, DiscreteCoordinates position) {
 		super(area, position);

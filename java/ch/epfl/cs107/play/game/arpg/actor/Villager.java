@@ -29,7 +29,7 @@ public class Villager extends MovableAreaEntity implements Interactor{
 	private boolean canMove;
 	private boolean isMobile;
 	private TextGraphics  text; 
-	protected VillagerHandler handler;
+	private VillagerHandler handler;
 	
 	private boolean drawTip;
 

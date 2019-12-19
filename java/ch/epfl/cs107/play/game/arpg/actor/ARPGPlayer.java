@@ -369,7 +369,7 @@ public class ARPGPlayer extends Player implements Inventory.Holder{
      * hasWon getter
      * @return (boolean) returns true if the player has finished the game
      */
-	protected boolean hasWon() {
+	private boolean hasWon() {
 		return signal.isOn();
 	}
 	
@@ -377,7 +377,7 @@ public class ARPGPlayer extends Player implements Inventory.Holder{
      * isInshop getter
      * @return (boolean) returns true if the player is shopping
      */
-	public boolean getIsInShop() {
+	protected boolean getIsInShop() {
 		return isInShop; 
 	}
 	
@@ -394,7 +394,7 @@ public class ARPGPlayer extends Player implements Inventory.Holder{
      * wantsToBuy getter
      * @return (boolean) returns true if the player wants to buy something from the shop
      */
-	public boolean getWantsToBuy() {
+	protected boolean getWantsToBuy() {
 		return wantsToBuy;
 	}
 	
@@ -402,7 +402,7 @@ public class ARPGPlayer extends Player implements Inventory.Holder{
      * wantsToSell getter
      * @return (boolean) returns true if the player wants to sell something to the shop
      */
-	public boolean getWantsToSell() {
+	protected boolean getWantsToSell() {
 		return wantsToSell;
 	}
 	
@@ -410,7 +410,7 @@ public class ARPGPlayer extends Player implements Inventory.Holder{
      * currentItem getter
      * @return (ARPGItem) returns the current item the player is holding
      */
-	public ARPGItem getCurrentItem() {
+	protected ARPGItem getCurrentItem() {
 		return currentItem; 
 	}
 	
@@ -425,7 +425,7 @@ public class ARPGPlayer extends Player implements Inventory.Holder{
      * isDead getter
      * @return (boolean) returns true if the player is dead
      */
-	public boolean  isDead() {
+	private boolean  isDead() {
 		return health<=0; 
 	}
 	
@@ -497,7 +497,7 @@ public class ARPGPlayer extends Player implements Inventory.Holder{
 	/** Adds an item to the inventory
      * @param: item (ARPGItem): the item to add
      */
-	protected boolean addItem(ARPGItem item) {
+	private boolean addItem(ARPGItem item) {
 		return inventory.addItem(item);
 	}
 	
@@ -540,7 +540,7 @@ public class ARPGPlayer extends Player implements Inventory.Holder{
      * @param: key (String): The key to extract the string from XMLFile
      */
 	
-	protected void startDialog(String key) {
+	private void startDialog(String key) {
 		canMove=false;
 		isTalking=true;
 		dialog.resetDialog(XMLTexts.getText(key));
@@ -551,7 +551,7 @@ public class ARPGPlayer extends Player implements Inventory.Holder{
     /**
      * Instanciates Arrow in the field of view 
      */
-	protected boolean throwArrow() {
+	private boolean throwArrow() {
 		Arrow arrow =new Arrow(getOwnerArea(),getOrientation(),getCurrentMainCellCoordinates().jump(getOrientation().toVector()));
 		//If the arrow can enter the area at those coordinates, we register it in the currentArea 
 		//(because of the conditional AND, that executes the other half of the operand only if the fist operand is true)
@@ -561,7 +561,7 @@ public class ARPGPlayer extends Player implements Inventory.Holder{
 	/**
      * Instanciates MagicWaterProjectile in the field of view 
      */
-	protected boolean castWaterSpell() {
+	private boolean castWaterSpell() {
 		MagicWaterProjectile water =new MagicWaterProjectile(getOwnerArea(),getOrientation(),getCurrentMainCellCoordinates().jump(getOrientation().toVector()));
 		//If the water projectile can enter the area at those coordinates, we register it in the currentArea 
 		//(because of the conditional AND, that executes the other half of the operand only if the fist operand is true)
@@ -793,6 +793,8 @@ public class ARPGPlayer extends Player implements Inventory.Holder{
 	}
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
+	
+	
 
 
 }

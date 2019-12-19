@@ -16,9 +16,9 @@ public class ARPGBehavior extends AreaBehavior {
 		INTERACT(-256, true,true), // #FFFF00 , RGB color of yellow
 		DOOR(-195580, true,true), // #FD0404 , RGB color of red
 		WALKABLE(-1, true,true),; // #FFFFFF , RGB color of white
-		final int type;
-		final boolean isWalkable;
-		final boolean isFlyable;
+		private 	final int type;
+		private final boolean isWalkable;
+		private final boolean isFlyable;
 		
 		ARPGCellType(int type , boolean isWalkable,boolean isFlyable){
 			this.type = type;

@@ -17,10 +17,10 @@ public enum ARPGItem implements InventoryItem {
 	SWORD("sword",4,10,"sword.icon"),
 	CHESTKEY("key",0,0,"key");
 
-	String name;
-	float weight;
-	int price;
-	String spriteName;
+	private String name;
+	private float weight;
+	private int price;
+	private String spriteName;
 	
 	/**
 	 * Constructor of ARPGItem
@@ -29,12 +29,14 @@ public enum ARPGItem implements InventoryItem {
 	 * @param p : price
 	 * @param spn : spriteName
 	 */
-	ARPGItem(String n,float w, int p, String spn){
+	 ARPGItem(String n,float w, int p, String spn){
 		name=n;
 		weight=w;
 		price=p;	
 		spriteName="zelda/"+spn;
 	}
+	
+	
 
 	
 	@Override
