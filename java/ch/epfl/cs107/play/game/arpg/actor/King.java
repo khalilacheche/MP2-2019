@@ -53,6 +53,44 @@ public class King extends AreaEntity implements Interactor,Logic{
 		text.setParent(this);
 	}
 
+
+	@Override
+	public void update (float deltaTime) {
+		showTip=false;
+	}
+
+	@Override
+	public void draw(Canvas canvas) {
+		if(showTip)
+			text.draw(canvas);
+		sprite.draw(canvas);
+	}
+	/**
+	 * @return tagName from XMLFile
+	 */
+	protected String getKey() {
+		return key;
+	}
+	
+/////////////////////////////////// Interactable / Interactor /////////////////////////////////////////////	
+
+	@Override
+	public boolean wantsCellInteraction() {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public boolean wantsViewInteraction() {
+		// TODO Auto-generated method stub
+		return true;
+	}
+
+	@Override
+	public void interactWith(Interactable other) {
+		other.acceptInteraction(handler);
+		
+	}
 	@Override
 	public List<DiscreteCoordinates> getCurrentCells() {
 		return Collections.singletonList(getCurrentMainCellCoordinates());
@@ -86,35 +124,7 @@ public class King extends AreaEntity implements Interactor,Logic{
 		((ARPGInteractionVisitor)v).interactWith(this);
 		
 	}
-	@Override
-	public void update (float deltaTime) {
-		showTip=false;
-	}
-
-	@Override
-	public void draw(Canvas canvas) {
-		if(showTip)
-			text.draw(canvas);
-		sprite.draw(canvas);
-	}
-
-	@Override
-	public boolean wantsCellInteraction() {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-	@Override
-	public boolean wantsViewInteraction() {
-		// TODO Auto-generated method stub
-		return true;
-	}
-
-	@Override
-	public void interactWith(Interactable other) {
-		other.acceptInteraction(handler);
-		
-	}
+/////////////////////////////// Logic ///////////////////////////////////////////////////////	
 
 	@Override
 	public boolean isOn() {
@@ -133,11 +143,5 @@ public class King extends AreaEntity implements Interactor,Logic{
 		return 0;
 	}
 	
-	/**
-	 * @return tagName from XMLFile
-	 */
-	protected String getKey() {
-		return key;
-	}
 
 }

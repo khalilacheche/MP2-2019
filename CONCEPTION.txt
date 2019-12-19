@@ -34,7 +34,8 @@ en effet si on voulait rendre la fenêtre du jeu Resizable ou en plein écran to
 Au niveau de la caméra :
 on a choisi de ne pas laisser la caméra centré sur le joueur tous le temps 
 en effet , la position du caméra dans l'aire est limité pour ne pas englober une partie hors de l'aire courante(les zones noires dans la fenêtre) 
-et ceci pour augmenter l'immersion dans le jeu 
+et ceci pour augmenter l'immersion dans le jeu
+On a aussi ajoute une methode a la classe Vector qui prend en parametre un vecteur et rend un autre vecteur avec les valeurs plafonnee x et y du parametre
 
 =================================================================
                     INTERACTIONS               

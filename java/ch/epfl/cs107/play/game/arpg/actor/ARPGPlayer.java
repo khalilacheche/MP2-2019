@@ -282,7 +282,7 @@ public class ARPGPlayer extends Player implements Inventory.Holder{
 	
 	
 	
-////////////////////////////////////////////////////////////////////////////////////////////////////////////	
+///////////////////////////////////////// UPDATABLE/ DRAWABLE /////////////////////////////////////////////////	
 	@Override
 	public void update(float deltaTime) {
 		super.update(deltaTime);
@@ -334,8 +334,29 @@ public class ARPGPlayer extends Player implements Inventory.Holder{
 	}
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////	
 
-//////////////////////////////////////GETTERS////////////////////////////////////////////////////////////////////////	
+////////////////////////////////////// GETTERS / SETTERS ////////////////////////////////////////////////////////////////////////	
 	
+	/**
+	 * @return getWantsRestart
+	 */
+	public boolean getWantsRestart() {
+		return wantsRestart;
+	}
+
+	/**
+	 * @return responded
+	 */
+	public boolean getResponded() {
+		return responded;
+	}
+	
+	@Override
+	public boolean possess(InventoryItem item) {
+		// TODO Auto-generated method stub
+		return inventory.contains(item);
+	}
+
+
     /**
      * Max health getter
      * @return (float). The Player's Maximum Health
@@ -407,6 +428,24 @@ public class ARPGPlayer extends Player implements Inventory.Holder{
 	public boolean  isDead() {
 		return health<=0; 
 	}
+	
+	
+	/**set wantsRestart
+	 * @param wantsRestart
+	 */
+	private void setWantsRestart(boolean wantsRestart) {
+		this.wantsRestart = wantsRestart;
+	}
+
+
+
+	/**setResponded
+	 * @param responded
+	 */
+	private void setResponded(boolean responded) {
+		this.responded = responded;
+	}
+
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	
 	
@@ -554,7 +593,7 @@ public class ARPGPlayer extends Player implements Inventory.Holder{
 		inventory.setCurrentItem(currentItem); 
 	}
 	
-	/** Handles the current state the player is in : IDLE,SWORDATTACK,BOWATTACK,STAFFATTACK;
+	/** Handles the current state the player is in
      */
 	private void handlePlayerState(float deltaTime) {
 		switch(currentState) {
@@ -753,59 +792,6 @@ public class ARPGPlayer extends Player implements Inventory.Holder{
 		((ARPGInteractionVisitor)v).interactWith(this);
 	}
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-
-
-
-	/**
-	 * @return getWantsRestart
-	 */
-	public boolean getWantsRestart() {
-		return wantsRestart;
-	}
-
-
-
-
-	/**set wantsRestart
-	 * @param wantsRestart
-	 */
-	private void setWantsRestart(boolean wantsRestart) {
-		this.wantsRestart = wantsRestart;
-	}
-
-
-
-
-	/**
-	 * @return responded
-	 */
-	public boolean getResponded() {
-		return responded;
-	}
-
-
-
-
-	/**setResponded
-	 * @param responded
-	 */
-	private void setResponded(boolean responded) {
-		this.responded = responded;
-	}
-
-
-
-
-	@Override
-	public boolean possess(InventoryItem item) {
-		// TODO Auto-generated method stub
-		return inventory.contains(item);
-	}
-
-
-	
-	
 
 
 

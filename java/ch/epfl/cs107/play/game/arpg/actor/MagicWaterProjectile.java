@@ -16,6 +16,9 @@ public class MagicWaterProjectile extends Projectile {
 	
 	private MagicWaterHandler handler;
 	private Monster.AttackType attack= Monster.AttackType.MAGIC;
+	private static int defaultDistance = 100;
+	private static int defaultSpeed = 2;
+	
 	private class MagicWaterHandler implements ARPGInteractionVisitor{
 		@Override
 		public void interactWith(Monster monster) {
@@ -39,8 +42,9 @@ public class MagicWaterProjectile extends Projectile {
 	}
 	
 	public MagicWaterProjectile(Area area, Orientation orientation, DiscreteCoordinates position) {
-		this(area,orientation,position,100,2);
+		this(area,orientation,position,defaultDistance,defaultSpeed);
 	}
+	
 	@Override
 	public void update(float deltaTime) {
 		super.update(deltaTime);

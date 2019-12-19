@@ -62,11 +62,6 @@ public abstract class Monster extends MovableAreaEntity implements Interactor{
 		healthBar.setParent(this);
 	}
 	
-	/**
-	 * dropLoot when Monster hasDied
-	 */
-	
-	protected abstract void dropLoot();
 	
 	@Override 
 	public void update(float deltaTime) {
@@ -81,6 +76,12 @@ public abstract class Monster extends MovableAreaEntity implements Interactor{
 			return;
 		}
 	}
+	@Override
+	public void draw(Canvas canvas) {
+		deathAnimation.draw(canvas);
+	}
+	
+	
 	
 	/**
 	 * @return Monster hasDied or not
@@ -109,12 +110,11 @@ public abstract class Monster extends MovableAreaEntity implements Interactor{
 			}
 		}
 	}
-	@Override
-	public void draw(Canvas canvas) {
-		deathAnimation.draw(canvas);
-	}
+	/**
+	 * dropLoot when Monster hasDied
+	 */
 	
-	
+	protected abstract void dropLoot();
 	
 
 	/**

@@ -36,6 +36,18 @@ public class ARPGBehavior extends AreaBehavior {
 		}
 		
 	}
+	
+	public ARPGBehavior(Window window, String name) {
+		super(window, name);
+		ARPGCellType  cellType;
+		for(int x=0;x<this.getWidth();++x) {
+			for(int y=0;y<this.getHeight();++y) {
+				 cellType =ARPGCellType.toType(getRGB(this.getHeight() -1-y, x));
+				 setCell(x,y,new ARPGCell(x,y,cellType));
+			}
+		}
+	}
+	
 	public class ARPGCell extends Cell{
 		public ARPGCellType type;
 		
@@ -78,16 +90,7 @@ public class ARPGBehavior extends AreaBehavior {
 	}
 	
 	
-	public ARPGBehavior(Window window, String name) {
-		super(window, name);
-		ARPGCellType  cellType;
-		for(int x=0;x<this.getWidth();++x) {
-			for(int y=0;y<this.getHeight();++y) {
-				 cellType =ARPGCellType.toType(getRGB(this.getHeight() -1-y, x));
-				 setCell(x,y,new ARPGCell(x,y,cellType));
-			}
-		}
-	}
+
 
 
 }
