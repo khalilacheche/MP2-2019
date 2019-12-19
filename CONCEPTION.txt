@@ -7,7 +7,7 @@ ch.epfl.cs107.play.game.arpg: contient les classes définissant un mécanisme du
 ch.epfl.cs107.play.game.arpg.actor : contient les acteurrs qui figurent dans le jeu ARPG 
 ch.epfl.cs107.game.arpg.area: contient les classes de Areas
 ch.epfl.cs107.game.arpg.handler : contient l'interface ARPGInteractionVisitor qui est héritée par les classes handler de tous les ARPGInteractors
-
+la classe de base abstraite Monster est dans le paquet rpg.actor et ceci car il sert de baase � differents ennemis de differents jeux possibles
 
 
 
